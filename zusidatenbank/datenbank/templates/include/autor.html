@@ -1,0 +1,10 @@
+
+<div class="panel-heading">Autoren</div>
+<table class="table table-hover">
+    <thead><tr><th>#</th><th>Name</th></tr></thead>
+    <tbody>
+    {% for autor in object.autor.all %}
+    <tr><td>{{ autor.autor_id }}</td><td><a href="{% url 'db:autordetail' autor.autor_id %}">{{ autor.name }}</a></td>
+    {% endfor %}
+    </tbody>
+</table>

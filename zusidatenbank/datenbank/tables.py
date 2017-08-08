@@ -5,7 +5,7 @@ from .helpers.columns import *
 
 class StreckenModuleTable(tables.Table):
     name = tables.LinkColumn()
-    nachbaren_count = tables.Column()
+    nachbaren_count = tables.Column(verbose_name='Nachbar Modules')
 
     class Meta:
         model = StreckenModule
@@ -31,10 +31,12 @@ class FuehrerstandTable(tables.Table):
 
 class FahrplanZugTable(tables.Table):
     name = tables.LinkColumn()
-    is_reisezug = tables.BooleanColumn(verbose_name='Reisezug')
-    zug_lauf = tables.Column(verbose_name='Lauf')
     deko = tables.BooleanColumn(verbose_name='Dekozug')
-    fz_max_speed = tables.Column(verbose_name='Speed Max')
+    fz_max_speed = SpeedColumn(verbose_name='Speed Max*')
+    speed_anfang = SpeedColumn()
+
+    def render_is_reisezug(self, value):
+        return 'Reisezug' if value else 'Güterzug'
 
     class Meta:
         model = FahrplanZug
@@ -43,3 +45,14 @@ class FahrplanZugTable(tables.Table):
         order_by = ('name',)
         attrs = {'class': 'table table-striped table-hover'}
         row_attrs = {'class': lambda record: 'danger' if record.deko else None}
+
+class FahrplanTable(tables.Table):
+    #name = tables.LinkColumn()
+    #nachbaren_count = tables.Column(verbose_name='Nachbar Modules')
+
+    class Meta:
+        model = Fahrplan
+        #exclude = ('standorte',)
+        #sequence = ('name', 'path', 'nachbaren_count')
+        order_by = ('name',)
+        attrs = {'class': 'table table-striped table-hover'}

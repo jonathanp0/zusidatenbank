@@ -1,0 +1,27 @@
+
+{% extends "base.html" %}
+{% load render_table from django_tables2 %}
+
+{% block head %}Führerstand {{object.name}}{% endblock %}
+{% block title %}Führerstand {{object.name}} <small>{{object.path}}</small>{% endblock %}
+
+
+{% block content %}
+<div class="row">
+  <div class="col-md-6">
+      <div class="panel panel-primary">
+        <div class="panel-heading">SIFA</div>
+        <ul class="list-group">
+            {% for sifa in object.sifa %}
+                <li class="list-group-item">{{sifa}}</li>
+            {% endfor %}
+        </ul>
+      </div>
+</div>
+   <div class="col-md-6">
+   <div class="panel panel-info">{% include "include/autor.html" %}</div>
+   </div>
+</div>
+
+
+{% endblock %}

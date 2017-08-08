@@ -1,0 +1,32 @@
+
+{% extends "base.html" %}
+{% load render_table from django_tables2 %}
+
+{% block head %}Streckemodule {{object.name}}{% endblock %}
+{% block title %}Streckenmodule {{object.name}} <small>{{object.path}}</small>{% endblock %}
+
+
+{% block content %}
+<div class="row">
+  <div class="col-md-6">
+      <div class="panel panel-primary">
+        <div class="panel-heading">Standorte</div>
+        <ul class="list-group">
+            {% for standort in object.standorte %}
+                <li class="list-group-item">{{standort}}</li>
+            {% endfor %}
+        </ul>
+      </div>
+</div>
+   <div class="col-md-6">
+   <div class="panel panel-info">{% include "include/autor.html" %}</div>
+   </div>
+</div>
+
+<h3>Nachbar Modules</h4>
+{% render_table tables.0 %}
+<h3>Fahrpläne für Module</h4>
+{% render_table tables.1 %}
+
+
+{% endblock %}

@@ -73,8 +73,8 @@ class FahrzeugVariante(models.Model):
 class FahrplanZug(InventoryItem):
   gattung = models.CharField(max_length=20)
   nummer = models.CharField(max_length=40)
-  is_reisezug = models.BooleanField()
-  zug_lauf = models.CharField(max_length=200, null=True)
+  is_reisezug = models.BooleanField(verbose_name='Zugart')
+  zug_lauf = models.CharField(max_length=200, null=True, verbose_name='Lauf')
   fahrplan_gruppe = models.CharField(max_length=200, null=True)
   deko = models.BooleanField(default=False)
 
