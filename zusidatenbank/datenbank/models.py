@@ -13,6 +13,9 @@ class Autor(models.Model):
   def __str__(self):
     return str(self.autor_id) + ": " + self.name
 
+  class Meta:
+    ordering = ['autor_id']
+
 #Complete
 class InventoryItem(models.Model):
   path = models.CharField(max_length=200, primary_key=True)

@@ -8,18 +8,17 @@
 
 {% block content %}
 <div class="row">
-  <div class="col-md-6">
+    <div class="col-md-6">
       <div class="panel panel-primary">
-        <div class="panel-heading">SIFA</div>
-        <ul class="list-group">
-            {% for sifa in object.sifa %}
-                <li class="list-group-item">{{sifa}}</li>
-            {% endfor %}
-        </ul>
+        {% include "include/panel_list.html" with heading="SIFA" items=object.sifa %}
+        {% include "include/panel_list.html" with heading="Zugsicherung(PZB/LZB)" items=object.zugsicherung %}
+        {% include "include/panel_list.html" with heading="Schleuderschutz" items=object.schleuderschutz %}
+        {% include "include/panel_list.html" with heading="Tür System" items=object.tuer_system %}
+        {% include "include/panel_list.html" with heading="Notbremse System" items=object.notbremse_system %}
       </div>
-</div>
-   <div class="col-md-6">
-   <div class="panel panel-info">{% include "include/autor.html" %}</div>
+    </div>
+    <div class="col-md-6">
+        <div class="panel panel-info">{% include "include/autor.html" %}</div>
    </div>
 </div>
 

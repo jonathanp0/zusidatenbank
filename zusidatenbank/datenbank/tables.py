@@ -6,11 +6,12 @@ from .helpers.columns import *
 class StreckenModuleTable(tables.Table):
     name = tables.LinkColumn()
     nachbaren_count = tables.Column(verbose_name='Nachbar Modules')
+    fahrplan_count = tables.Column(verbose_name='Fahrpläne')
 
     class Meta:
         model = StreckenModule
         exclude = ('standorte',)
-        sequence = ('name', 'path', 'nachbaren_count')
+        sequence = ('name', 'path', 'nachbaren_count', 'fahrplan_count')
         order_by = ('name',)
         attrs = {'class': 'table table-striped table-hover'}
 
@@ -22,12 +23,15 @@ class FuehrerstandTable(tables.Table):
   tuer_system = ArrayListColumn(verbose_name='Türsteuerung',orderable=False)
   schleuderschutz = ArrayBooleanColumn()
   notbremse_system = ArrayBooleanColumn(verbose_name='Notbremse')
+  fahrzeug_count = tables.Column(verbose_name='Fahrzeugnutzen')
+  zug_count = tables.Column(verbose_name='Fahrplanzüge')
 
   class Meta:
         model = Fuehrerstand
         exclude = ('path',)
         order_by = ('name',)
         attrs = {'class': 'table table-striped table-hover'}
+        row_attrs = {'class': lambda record: 'danger' if not record.fahrzeug_count else 'warning' if not record.zug_count else None}
 
 class FahrplanZugTable(tables.Table):
     name = tables.LinkColumn()

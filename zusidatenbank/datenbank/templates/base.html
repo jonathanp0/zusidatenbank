@@ -20,6 +20,12 @@
     <link href="{% static 'django_tables2/bootstrap.css' %}" rel="stylesheet" />
 
     <link href="{% static 'template.css' %}" rel="stylesheet">
+
+    <script>
+      $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+      })
+    </script>
   </head>
   <body>
     {% bootstrap_messages %}

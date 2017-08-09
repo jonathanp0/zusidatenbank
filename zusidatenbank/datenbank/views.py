@@ -11,7 +11,7 @@ from django_tables2 import SingleTableView, MultiTableMixin
 
 class StreckenModuleList(SingleTableView):
     table_class = StreckenModuleTable
-    queryset = StreckenModule.objects.annotate(nachbaren_count=Count('nachbaren'))
+    queryset = StreckenModule.objects.annotate(nachbaren_count=Count('nachbaren', distinct=True),fahrplan_count=Count('fahrplaene',distinct=True))
     template_name = 'streckenmodule/list.html'
 
 class StreckenModuleDetail(MultiTableMixin, generic.DetailView):
@@ -28,7 +28,8 @@ class StreckenModuleDetail(MultiTableMixin, generic.DetailView):
 
 
 class FuehrerstandList(SingleTableView):
-    model = Fuehrerstand
+    queryset = Fuehrerstand.objects.annotate(fahrzeug_count=Count('fahrzeuge', distinct=True),zug_count=Count('fahrzeuge__fahrplanzuege', distinct=True))
+
     table_class = FuehrerstandTable
     template_name = 'fuehrerstand/list.html'
 
