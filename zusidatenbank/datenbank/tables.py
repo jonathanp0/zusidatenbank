@@ -1,3 +1,5 @@
+import ntpath
+
 import django_tables2 as tables
 
 from .models import *
@@ -59,4 +61,19 @@ class FahrplanTable(tables.Table):
         #exclude = ('standorte',)
         #sequence = ('name', 'path', 'nachbaren_count')
         order_by = ('name',)
+        attrs = {'class': 'table table-striped table-hover'}
+
+class FahrzeugTable(tables.Table):
+    root_file = tables.LinkColumn(verbose_name='File', text = lambda r : ntpath.basename(r.root_file))
+    variant = tables.Column()
+    speedMax = SpeedColumn(verbose_name='Speed Max')
+    antrieb = ArrayListColumn()
+    masse = tables.TemplateColumn('{{ value }} kg')
+    laenge = tables.TemplateColumn('{{ value }} m')
+    zug_count = tables.Column(verbose_name='Züge*')
+
+    class Meta:
+        model = FahrzeugVariante
+        exclude = ('id', 'einsatz_ab', 'einsatz_bis', 'bremse', 'tuersystem', 'fuehrerstand', 'neben_id', 'haupt_id', 'masse','laenge')
+        sequence = ('root_file', 'variant', 'br', 'beschreibung','farbgebung','speedMax','antrieb','neigetechnik','dekozug', 'zug_count')
         attrs = {'class': 'table table-striped table-hover'}

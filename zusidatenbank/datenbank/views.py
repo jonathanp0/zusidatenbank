@@ -1,6 +1,6 @@
 from django.views import generic
-from django.db.models import Count, Min, F
-from django.db.models.functions import Least
+from django.db.models import Count, Min, F, Value, CharField
+from django.db.models.functions import Least, Concat
 
 from .models import *
 from .tables import *
@@ -42,3 +42,8 @@ class FahrplanZugList(SingleTableView):
     queryset = FahrplanZug.objects.annotate(fz_max_speed=Least(F('speed_zug'),Min('fahrzeuge__speedMax')))
     table_class = FahrplanZugTable
     template_name = 'fahrplanzug/list.html'
+
+class FahrzeugList(SingleTableView):
+    queryset = FahrzeugVariante.objects.annotate(variant=Concat(F('haupt_id'), Value('/'), F('neben_id'),output_field=CharField()), zug_count=Count('fahrplanzuege'))
+    table_class = FahrzeugTable
+    template_name = 'fahrzeug/list.html'

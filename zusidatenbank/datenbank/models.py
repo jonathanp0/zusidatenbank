@@ -53,8 +53,8 @@ class FahrzeugVariante(models.Model):
   autor = models.ManyToManyField(Autor)
 
   #Variantedaten
-  br = models.CharField(max_length=50)
-  dekozug = models.BooleanField()
+  br = models.CharField(max_length=50,verbose_name='BR')
+  dekozug = models.BooleanField(verbose_name='Deko')
   beschreibung = models.CharField(max_length=200, null=True)
   farbgebung = models.CharField(max_length=200, null=True)
   einsatz_ab = models.DateTimeField(null=True)
@@ -68,9 +68,15 @@ class FahrzeugVariante(models.Model):
   bremse = ArrayField(models.CharField(max_length=50),null=True)
   tuersystem = ArrayField(models.CharField(max_length=6),null=True) #TB5,TB0,SAT.SST,TAV,UICWTB
   antrieb = ArrayField(models.CharField(max_length=50),null=True)
-  neigetechnik = models.BooleanField(default=False)
+  neigetechnik = models.BooleanField(default=False,verbose_name='Neige')
 
   fuehrerstand = models.ForeignKey(Fuehrerstand, related_name='fahrzeuge', null=True)
+
+  def get_absolute_url(self):
+    return reverse('db:fzedetail', args=[self.root_file])
+
+  class Meta:
+    ordering = ['root_file','haupt_id','neben_id']
 
 #Complete
 class FahrplanZug(InventoryItem):
