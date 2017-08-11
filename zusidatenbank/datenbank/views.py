@@ -47,3 +47,12 @@ class FahrzeugList(SingleTableView):
     queryset = FahrzeugVariante.objects.annotate(variant=Concat(F('haupt_id'), Value('/'), F('neben_id'),output_field=CharField()), zug_count=Count('fahrplanzuege'))
     table_class = FahrzeugTable
     template_name = 'fahrzeug/list.html'
+
+class FahrzeugDetail(generic.DetailView):
+    model = FahrzeugVariante
+    template_name = 'fahrzeug/detail.html'
+
+    def get_object(self):
+        return self.get_queryset().filter(**self.kwargs).get()
+
+    

@@ -73,7 +73,7 @@ class FahrzeugVariante(models.Model):
   fuehrerstand = models.ForeignKey(Fuehrerstand, related_name='fahrzeuge', null=True)
 
   def get_absolute_url(self):
-    return reverse('db:fzedetail', args=[self.root_file])
+    return reverse('db:fzedetail', args=[self.root_file, self.haupt_id, self.neben_id])
 
   class Meta:
     ordering = ['root_file','haupt_id','neben_id']

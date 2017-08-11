@@ -1,0 +1,24 @@
+
+{% extends "base.html" %}
+{% load render_table from django_tables2 %}
+
+{% block head %}Fahrzeug {{object.br}}{% endblock %}
+{% block title %}Fahrzeug {{object.br}} - {{object.beschreibung}} <small>{{object.farbgebung}}</small>{% endblock %}
+
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+      <div class="panel panel-primary">
+        {% include "include/panel_list.html" with heading="Antrieb" items=object.antrieb %}
+        {% include "include/panel_list.html" with heading="Bremse" items=object.bremse %}
+        {% include "include/panel_list.html" with heading="Tür System" items=object.tuersystem %}
+      </div>
+    </div>
+    <div class="col-md-6">
+        <div class="panel panel-info">{% include "include/autor.html" %}</div>
+    </div>
+</div>
+
+
+{% endblock %}
