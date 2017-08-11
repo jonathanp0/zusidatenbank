@@ -16,6 +16,7 @@ class StreckenModuleTable(tables.Table):
         sequence = ('name', 'path', 'nachbaren_count', 'fahrplan_count')
         order_by = ('name',)
         attrs = {'class': 'table table-striped table-hover'}
+        row_attrs = {'class': lambda record: 'danger' if not record.nachbaren_count else 'warning' if not record.fahrplan_count else None}
 
 class FuehrerstandTable(tables.Table):
   name = tables.LinkColumn()
@@ -75,4 +76,4 @@ class FahrzeugTable(tables.Table):
         exclude = ('id', 'einsatz_ab', 'einsatz_bis', 'bremse', 'tuersystem', 'fuehrerstand', 'neben_id', 'haupt_id', 'masse','laenge')
         sequence = ('root_file', 'variant', 'br', 'beschreibung','farbgebung','speedMax','antrieb','neigetechnik','dekozug', 'zug_count')
         attrs = {'class': 'table table-striped table-hover'}
-        row_attrs = {'class': lambda record: 'danger' if not record.zug_count else 'warning' if record.dekozug else None}
+        row_attrs = {'class': lambda record: 'danger' if not record.zug_count else 'warning' if record.dekozug else 'active' if len(record.antrieb) else None}

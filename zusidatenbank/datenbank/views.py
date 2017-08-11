@@ -33,10 +33,15 @@ class FuehrerstandList(SingleTableView):
     table_class = FuehrerstandTable
     template_name = 'fuehrerstand/list.html'
 
-class FuehrerstandDetail(generic.DetailView):
+class FuehrerstandDetail(MultiTableMixin, generic.DetailView):
 
     model = Fuehrerstand
     template_name = 'fuehrerstand/detail.html'
+
+    def get_tables(self):
+        fstand = self.get_object()
+        return (FahrzeugTable(fstand.fahrzeuge.annotate(variant=Concat(F('haupt_id'), Value('/'), F('neben_id'),output_field=CharField()), zug_count=Count('fahrplanzuege')).distinct()),
+                FahrplanZugTable(FahrplanZug.objects.filter(fahrzeuge__fuehrerstand=fstand).annotate(fz_max_speed=Least(F('speed_zug'),Min('fahrzeuge__speedMax')))))
 
 class FahrplanZugList(SingleTableView):
     queryset = FahrplanZug.objects.annotate(fz_max_speed=Least(F('speed_zug'),Min('fahrzeuge__speedMax')))
@@ -44,15 +49,28 @@ class FahrplanZugList(SingleTableView):
     template_name = 'fahrplanzug/list.html'
 
 class FahrzeugList(SingleTableView):
-    queryset = FahrzeugVariante.objects.annotate(variant=Concat(F('haupt_id'), Value('/'), F('neben_id'),output_field=CharField()), zug_count=Count('fahrplanzuege'))
+    #queryset = FahrzeugVariante.objects.annotate(variant=Concat(F('haupt_id'), Value('/'), F('neben_id'),output_field=CharField()), zug_count=Count('fahrplanzuege'))
     table_class = FahrzeugTable
     template_name = 'fahrzeug/list.html'
 
-class FahrzeugDetail(generic.DetailView):
+    def get_queryset(self):
+        base = FahrzeugVariante.objects
+        if 'root_file' in self.kwargs:
+            base = base.filter(root_file=self.kwargs['root_file'])
+        return base.annotate(variant=Concat(F('haupt_id'), Value('/'), F('neben_id'),output_field=CharField()), zug_count=Count('fahrplanzuege'))
+
+
+class FahrzeugDetail(MultiTableMixin, generic.DetailView):
     model = FahrzeugVariante
     template_name = 'fahrzeug/detail.html'
 
     def get_object(self):
+        return self.get_queryset().select_related('fuehrerstand').filter(**self.kwargs).get()
+
+    def get_plain_object(self):
         return self.get_queryset().filter(**self.kwargs).get()
 
-    
+    def get_tables(self):
+        fahrzeug = self.get_plain_object()
+        return (FahrplanZugTable(fahrzeug.fahrplanzuege.annotate(fz_max_speed=Least(F('speed_zug'),Min('fahrzeuge__speedMax')))),
+                FahrplanTable(Fahrplan.objects.filter(zuege__fahrzeuge__id=fahrzeug.id).distinct()))

@@ -8,7 +8,7 @@
 
 {% block content %}
 <div class="row">
-  <div class="col-md-6">
+    <div class="col-md-6">
       <div class="panel panel-primary">
         <div class="panel-heading">Standorte</div>
         <ul class="list-group">
@@ -17,16 +17,16 @@
             {% endfor %}
         </ul>
       </div>
-</div>
-   <div class="col-md-6">
-   <div class="panel panel-info">{% include "include/autor.html" %}</div>
-   </div>
+    </div>
+    <div class="col-md-6">
+     <div class="panel panel-info">{% include "include/autor.html" %}</div>
+    </div>
 </div>
 
 <h3>Nachbar Modules</h4>
-{% render_table tables.0 %}
+{% render_table tables.0 'django_tables2/bootstrap.html' %}
 <h3>Fahrpläne für Module</h4>
-{% render_table tables.1 %}
+{% render_table tables.1 'django_tables2/bootstrap.html' %}
 
 
 {% endblock %}

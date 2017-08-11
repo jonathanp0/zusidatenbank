@@ -8,17 +8,52 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-7">
       <div class="panel panel-primary">
-        {% include "include/panel_list.html" with heading="Antrieb" items=object.antrieb %}
-        {% include "include/panel_list.html" with heading="Bremse" items=object.bremse %}
-        {% include "include/panel_list.html" with heading="Tür System" items=object.tuersystem %}
+          <div class="panel-heading"><h3 class="panel-title">Grunddaten</h3></div>
+          <div class="panel-body">
+            <dl class="">
+              <dt>Root File</dt>
+              <dd><a href="{% url 'db:fzevariantlist' object.root_file %}">{{object.root_file}}</a></dd>
+              <dt>Variant</dt>
+              <dd>{{object.haupt_id}}/{{object.neben_id}}</dd>
+              <dt>Baureihe</dt>
+              <dd>{{object.br}}</dd>
+              <dt>Beschreibung</dt>
+              <dd>{{object.beschreibung}}</dd>
+              <dt>Farbgebung</dt>
+              <dd>{{object.farbgebung}}</dd>
+              <dt>Einsatz</dt>
+              <dd>{{ object.einsatz_ab|date:"d/m/y" }} - {{ object.einsatz_bis|date:"d/m/y" }}</dd>
+              <dt>Masse</dt>
+              <dd>{{object.masse}} kg</dd>
+              <dt>Länge</dt>
+              <dd>{{object.laenge}} m</dd>
+              <dt>Maximum Speed</dt>
+              <dd>{{object.speedMax}} km/h</dd>
+              <dt>Neigetechnik</dt>
+              <dd>{% if object.neigetechnik %}Ja{% else %}Nein{% endif %}</dd>
+              {% if object.fuehrerstand %}
+                <dt>Führerstand</dt>
+                <dd><a href="{% url 'db:fsdetail' object.fuehrerstand.path %}">{{object.fuehrerstand.name}}</a></dd>
+              {% endif %}
+            </dl>
+          </div>
       </div>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-5">
         <div class="panel panel-info">{% include "include/autor.html" %}</div>
+        <div class="panel panel-primary">
+          {% include "include/panel_list.html" with heading="Antrieb" items=object.antrieb %}
+          {% include "include/panel_list.html" with heading="Bremse" items=object.bremse %}
+          {% include "include/panel_list.html" with heading="Tür System" items=object.tuersystem %}
+        </div>
     </div>
 </div>
 
+<h3>Züge mit diesem Fahrzeug</h4>
+{% render_table tables.0 'django_tables2/bootstrap.html' %}
+<h3>Fahrpläne mit diesem Fahrzeug</h4>
+{% render_table tables.1 'django_tables2/bootstrap.html' %}
 
 {% endblock %}

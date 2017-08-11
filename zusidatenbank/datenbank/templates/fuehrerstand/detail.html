@@ -21,6 +21,9 @@
         <div class="panel panel-info">{% include "include/autor.html" %}</div>
     </div>
 </div>
-
+<h3>Fahrzeugevarianten mit diesem Führerstand</h4>
+{% render_table tables.0 'django_tables2/bootstrap.html' %}
+<h3>Züge mit diesem Führerstand</h4>
+{% render_table tables.1 'django_tables2/bootstrap.html' %}
 
 {% endblock %}

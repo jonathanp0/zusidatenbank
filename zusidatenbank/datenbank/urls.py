@@ -12,6 +12,6 @@ urlpatterns = [
     url(r'^fuehrerstand$', views.FuehrerstandList.as_view(), name='fslist'),
     url(r'^autor/(?P<pk>[^/]+)$', views.StreckenModuleDetail.as_view(), name='autordetail'),
     url(r'^fahrzeug/(?P<root_file>[^/]+)/(?P<haupt_id>[0-9]+)/(?P<neben_id>[0-9]+)/$', views.FahrzeugDetail.as_view(), name='fzedetail'),
-    url(r'^fahrzeug/(?P<root_file>[^/]+)/$', views.FahrzeugList.as_view(), name='fzedetail'),
+    url(r'^fahrzeug/(?P<root_file>[^/]+)/$', views.FahrzeugList.as_view(), name='fzevariantlist'),
     url(r'^fahrzeug$', views.FahrzeugList.as_view(), name='fzelist'),
 ]
