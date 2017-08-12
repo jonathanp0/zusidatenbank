@@ -84,7 +84,7 @@ class FtdParser(ZusiParser):
                 stand.schleuderschutz.append(tag)
             elif tag.startswith('Tueren'):
                 stand.tuer_system.append(tag.replace('Tueren', ''))
-            elif tag.startswith('NotbremssystemUICNBUe'):
+            elif tag.startswith('Notbremssystem'):
                 stand.notbremse_system.append(tag.replace('Notbremssystem',''))
             elif tag.startswith('Indusi') or tag.startswith('PZ') or tag.startswith('LZB'):
                 stand.zugsicherung.append(tag)

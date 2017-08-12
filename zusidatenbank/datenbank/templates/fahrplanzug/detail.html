@@ -1,0 +1,76 @@
+
+{% extends "base.html" %}
+{% load render_table from django_tables2 %}
+
+{% block head %}Fahrplanzug {{object.name}}{% endblock %}
+{% block title %}Fahrplanzug {{object.gattung}}{{object.nummer}} <small>{{object.path}}</small>{% endblock %}
+
+
+{% block content %}
+<div class="row">
+    <div class="col-md-7">
+      <div class="panel panel-primary">
+        <div class="panel-heading"><h3 class="panel-title">Grunddaten</h3></div>
+          <div class="panel-body">
+            <dl class="">
+              <dt>Fahrplangruppe</dt>
+              <dd>{{object.fahrplan_gruppe}}</dd>
+              <dt>Zug Lauf</dt>
+              <dd>{{object.zug_lauf}}</dd>
+              <dt>Zugart</dt>
+              <dd>{% if object.is_reisezug %}Reisezug{% else %}Güterzug{% endif %}</dd>
+              <dt>Dekozug</dt>
+              <dd>{% if object.deko %}Ja{% else %}Nein{% endif %}</dd>
+              <dt>Speed(tatsächlich)</dt>
+              <dd>{{object.zug_max_speed}} km/h</dd>
+              <dt>Speed(Fahrzeuge)</dt>
+              <dd>{{object.fz_max_speed}} km/h</dd>
+              {% if object.speed_zug %}
+                <dt>Speed(besonderen Eintrag im Fahrplan)</dt>
+                <dd>{{object.speed_zug}} km/h</dd>
+              {% endif %}
+              <dt>Anfang Speed</dt>
+              <dd>{% if object.speed_anfang %}{{object.speed_anfang}}{% else %}0{% endif %} km/h</dd>
+            </dl>
+          </div>
+          <div class="panel-heading"><h3 class="panel-title">Fahrzeuge</h3></div>
+          <div class="panel-body">
+            
+              {% include "fahrplanzug/treenode.html" with item=object.fahrzeug_tree_with_data %}
+          </div>
+            <div class="panel-footer">Legend</div>
+          <div class="panel-body">
+            <ul class="tree">
+              <li class="highlight">Triebfahrzeug</li>
+              <li>Fahrzeug ohne Antrieb</li>
+              <li>↓ Fahrzeug Gedreht</li>
+              <li><span style="color:red">✖</span> Gesperrter Triebfahrzeug</li>
+              <li><span style="color:blue">▲</span> Multi Traktion Triebfahrzeug</li>
+            </ul>
+          </div>
+        </div>
+    </div>
+    <div class="col-md-5">
+        <div class="panel panel-info">{% include "include/autor.html" %}</div>
+        <div class="panel panel-primary">
+          <div class="panel-heading"><h3 class="panel-title">Einträge</h3></div>
+          <table class="table table-hover">
+              <thead><tr><th>Ort</th><th>An</th><th>Ab</th><th></th></tr></thead>
+              <tbody>
+              {% for eintrag in object.eintraege.all %}
+              <tr {% if not eintrag.an %}class="active"{% endif %}>
+                <td>{{ eintrag.ort }}</td>
+                <td>{% if eintrag.an %}{{ eintrag.an|time:"H:i:s" }}{% endif %}</td>
+                <td>{{ eintrag.ab|time:"H:i:s" }}</td>
+                <td>{% if eintrag.bedarfshalt %}<abbr title="Bedarfshalt">✖</abbr>{% endif %}
+                    {% if eintrag.kopf_machen %}<abbr title="Kopf Machen">↺</abbr>{% endif %}
+                    {% if eintrag.ereignis %}<abbr title="Ereignis">✻</abbr>{% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+              </tbody>
+          </table>
+        </div>
+</div>
+
+{% endblock %}

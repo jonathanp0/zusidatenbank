@@ -1,0 +1,25 @@
+{% if item.type == 'gruppe' and item.name == 'default' %}
+    <b>Root</b>
+    <ul class="tree">
+        {% for subitem in item.items %}
+            {% include "fahrplanzug/treenode.html" with item=subitem %}
+        {% endfor %}
+    </ul>
+{% elif item.type == 'gruppe' %}
+    <li>
+        <b>{{ item.name }}</b> {{ item.zufall|yesno:"(Zufallauswahl),(Alle)" }}
+        <ul class="tree">
+            {% for subitem in item.items %}
+                {% include "fahrplanzug/treenode.html" with item=subitem %}
+            {% endfor %}
+        </ul>
+    </li>
+{% elif item.type == 'fahrzeug' %}
+    <li {% if item.data.antrieb %}class="highlight"{% endif %}>
+        {% if item.gedreht %}↓{% endif %}
+        {% if item.multi_traktion %}<span style="color:blue">▲</span>{% endif %}
+        {% if item.kein_traktion %}<span style="color:red">✖</span>{% endif %}
+        <a href="{{ item.data.get_absolute_url }}">{{ item.data.br }}</a>
+        ({{ item.data.beschreibung|truncatechars:35 }}/{{ item.data.farbgebung|truncatechars:25 }}) {{ item.data.masse_tonne }} t/{{ item.data.laenge }} m
+    </li>
+{% endif %}

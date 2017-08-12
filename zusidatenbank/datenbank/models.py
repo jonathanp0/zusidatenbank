@@ -1,3 +1,5 @@
+import copy
+
 from django.db import models
 from django.core.validators import *
 from django.urls import reverse
@@ -75,6 +77,9 @@ class FahrzeugVariante(models.Model):
   def get_absolute_url(self):
     return reverse('db:fzedetail', args=[self.root_file, self.haupt_id, self.neben_id])
 
+  def masse_tonne(self):
+    return self.masse / 1000
+
   class Meta:
     ordering = ['root_file','haupt_id','neben_id']
 
@@ -97,6 +102,25 @@ class FahrplanZug(InventoryItem):
   def get_absolute_url(self):
     return reverse('db:fzdetail', args=[self.path])
 
+  def fahrzeug_tree_with_data(self):
+
+    fz = dict()
+    for fahrzeug in self.fahrzeuge.all():
+      fz[fahrzeug.id] = fahrzeug
+
+    def walk(node):
+      for item in node['items']:
+          if item['type'] =='gruppe':
+              walk(item)
+          elif item['type'] == 'fahrzeug':
+              item['data'] = fz[item['id']]
+
+    tree = copy.deepcopy(self.fahrzeug_tree)
+    walk(tree)
+
+    return tree
+
+
 #Complete
 class FahrplanZugEintrag(models.Model):
   position = models.IntegerField()
@@ -108,6 +132,9 @@ class FahrplanZugEintrag(models.Model):
   ereignis = models.BooleanField(default=False)
 
   zug = models.ForeignKey(FahrplanZug, related_name='eintraege')
+
+  class Meta:
+    ordering = ['position']
 
 class Fahrplan(InventoryItem):
   strecken_modules = models.ManyToManyField(StreckenModule, related_name='fahrplaene')
