@@ -41,6 +41,7 @@ class FahrplanZugTable(tables.Table):
     deko = tables.BooleanColumn(verbose_name='Dekozug')
     fz_max_speed = SpeedColumn(verbose_name='Speed Max*')
     speed_anfang = SpeedColumn()
+    gesamt_zeit = tables.Column()
 
     def render_is_reisezug(self, value):
         return 'Reisezug' if value else 'Güterzug'
@@ -82,6 +83,7 @@ class FahrzeugTable(tables.Table):
         row_attrs = {'class': lambda record: 'danger' if not record.zug_count else 'warning' if record.dekozug else 'active' if len(record.antrieb) else None}
 
 class AutorTable(tables.Table):
+    name = tables.LinkColumn()
     module_count = tables.Column(verbose_name='Streckenmodules')
     fahrplan_count = tables.Column(verbose_name='Fahrpläne')
     ftd_count = tables.Column(verbose_name='Führerstande')

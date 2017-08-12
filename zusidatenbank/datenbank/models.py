@@ -15,6 +15,9 @@ class Autor(models.Model):
   def __str__(self):
     return str(self.autor_id) + ": " + self.name
 
+  def get_absolute_url(self):
+    return reverse('db:autordetail', args=[self.autor_id])
+
   class Meta:
     ordering = ['autor_id']
 

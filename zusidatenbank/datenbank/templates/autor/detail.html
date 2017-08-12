@@ -1,0 +1,23 @@
+
+{% extends "base.html" %}
+{% load render_table from django_tables2 %}
+
+{% block head %}Autor {{object.name}}{% endblock %}
+{% block title %}Autor {{object.name}} <small>ID: {{object.autor_id}}</small>{% endblock %}
+
+
+{% block content %}
+
+<h3>Strecken Modules</h3>
+{% render_table tables.0 'django_tables2/bootstrap.html' %}
+
+<h3>Fahrpläne</h3>
+{% render_table tables.1 'django_tables2/bootstrap.html' %}
+
+<h3>Führerstande</h3>
+{% render_table tables.2 'django_tables2/bootstrap.html' %}
+
+<h3>Fahrzeuge</h3>
+{% render_table tables.3 'django_tables2/bootstrap.html' %}
+
+{% endblock %}

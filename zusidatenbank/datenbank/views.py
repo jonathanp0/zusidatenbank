@@ -1,6 +1,6 @@
 from django.views import generic
-from django.db.models import Count, Min, F, Value, CharField, Subquery, OuterRef
-from django.db.models.functions import Least, Concat
+from django.db.models import Count, Min, Max, Sum, F, Q, Value, CharField, Subquery, OuterRef, Case, When
+from django.db.models.functions import Least, Greatest, Concat, Coalesce
 
 from .models import *
 from .tables import *
@@ -8,6 +8,24 @@ from .tables import *
 from django_tables2 import SingleTableView, MultiTableMixin
 
 # Create your views here.
+
+class Annotater(object):
+
+    def annotateModule(self, object):
+        return object.annotate(nachbaren_count=Count('nachbaren', distinct=True),fahrplan_count=Count('fahrplaene__path', distinct=True))
+
+    def annotateFahrplan(self, object):
+        return object.annotate(zug_count=Count('zuege', distinct=True),module_count=Count('strecken_modules', distinct=True))
+
+    def annotateFahrzeug(self, object):
+        return object.annotate(variant=Concat(F('haupt_id'), Value('/'), F('neben_id'),output_field=CharField()), zug_count=Count('fahrplanzuege'))
+
+    def annotateFuehrerstand(self, object):
+        return object.annotate(fahrzeug_count=Count('fahrzeuge', distinct=True),zug_count=Count('fahrzeuge__fahrplanzuege', distinct=True))
+
+    def annotateFahrplanZug(self, object):
+        return object.annotate(fz_max_speed=Least(F('speed_zug'),Min('fahrzeuge__speedMax')), 
+                         gesamt_zeit=Max(Coalesce('eintraege__an','eintraege__ab')) - Min(Coalesce('eintraege__ab','eintraege__an')))
 
 class StreckenModuleList(SingleTableView):
     table_class = StreckenModuleTable
@@ -33,7 +51,7 @@ class FuehrerstandList(SingleTableView):
     table_class = FuehrerstandTable
     template_name = 'fuehrerstand/list.html'
 
-class FuehrerstandDetail(MultiTableMixin, generic.DetailView):
+class FuehrerstandDetail(Annotater, MultiTableMixin, generic.DetailView):
 
     model = Fuehrerstand
     template_name = 'fuehrerstand/detail.html'
@@ -41,10 +59,12 @@ class FuehrerstandDetail(MultiTableMixin, generic.DetailView):
     def get_tables(self):
         fstand = self.get_object()
         return (FahrzeugTable(fstand.fahrzeuge.annotate(variant=Concat(F('haupt_id'), Value('/'), F('neben_id'),output_field=CharField()), zug_count=Count('fahrplanzuege')).distinct()),
-                FahrplanZugTable(FahrplanZug.objects.filter(fahrzeuge__fuehrerstand=fstand).annotate(fz_max_speed=Least(F('speed_zug'),Min('fahrzeuge__speedMax')))))
+                FahrplanZugTable(self.annotateFahrplanZug(FahrplanZug.objects).filter(fahrzeuge__fuehrerstand=fstand)))
 
 class FahrplanZugList(SingleTableView):
-    queryset = FahrplanZug.objects.annotate(fz_max_speed=Least(F('speed_zug'),Min('fahrzeuge__speedMax')))
+    queryset = FahrplanZug.objects.annotate(fz_max_speed=Least(F('speed_zug'),Min('fahrzeuge__speedMax')), 
+                                            gesamt_zeit=Max(Coalesce('eintraege__an','eintraege__ab')) - Min(Coalesce('eintraege__ab','eintraege__an')),
+                                            )
     table_class = FahrplanZugTable
     template_name = 'fahrplanzug/list.html'
 
@@ -62,7 +82,7 @@ class FahrzeugList(SingleTableView):
             base = base.filter(root_file=self.kwargs['root_file'])
         return base.annotate(variant=Concat(F('haupt_id'), Value('/'), F('neben_id'),output_field=CharField()), zug_count=Count('fahrplanzuege'))
 
-class FahrzeugDetail(MultiTableMixin, generic.DetailView):
+class FahrzeugDetail(Annotater, MultiTableMixin, generic.DetailView):
     model = FahrzeugVariante
     template_name = 'fahrzeug/detail.html'
 
@@ -74,7 +94,7 @@ class FahrzeugDetail(MultiTableMixin, generic.DetailView):
 
     def get_tables(self):
         fahrzeug = self.get_plain_object()
-        return (FahrplanZugTable(fahrzeug.fahrplanzuege.annotate(fz_max_speed=Least(F('speed_zug'),Min('fahrzeuge__speedMax')))),
+        return (FahrplanZugTable(self.annotateFahrplanZug(fahrzeug.fahrplanzuege)),
                 FahrplanTable(Fahrplan.objects.filter(zuege__fahrzeuge__id=fahrzeug.id).distinct()))
 
 class FahrplanList(SingleTableView):
@@ -100,4 +120,16 @@ class AutorList(SingleTableView):
                                       fahrplan_count=Count('fahrplan', distinct=True),
                                       fz_count=Count('fahrzeugvariante', distinct=True))
     table_class = AutorTable
-    template_name = 'autor.html'
+    template_name = 'autor/list.html'
+
+class AutorDetail(Annotater, MultiTableMixin, generic.DetailView):
+
+    model = Autor
+    template_name = 'autor/detail.html'
+
+    def get_tables(self):
+        return (StreckenModuleTable(self.annotateModule(self.get_object().streckenmodule_set)),
+                FahrplanTable(self.annotateFahrplan(self.get_object().fahrplan_set)),
+                FuehrerstandTable(self.annotateFuehrerstand(self.get_object().fuehrerstand_set)),
+                FahrzeugTable(self.annotateFahrzeug(self.get_object().fahrzeugvariante_set))
+                )
