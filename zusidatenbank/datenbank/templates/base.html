@@ -45,9 +45,11 @@
           <ul class="nav navbar-nav">
             <li class="{% if request.resolver_match.url_name == "index" %}active{% endif %}"><a href="/">Home</a></li>
             <li class="{% if request.resolver_match.url_name == "smlist" %}active{% endif %}"><a href="{% url 'db:smlist' %}">Streckenmodules</a></li>
-            <li class="{% if request.resolver_match.url_name == "fslist" %}active{% endif %}"><a href="{% url 'db:fslist' %}">Führerstande</a></li>
-            <li class="{% if request.resolver_match.url_name == "fzelist" %}active{% endif %}"><a href="{% url 'db:fzelist' %}">Fahrzeuge</a></li>
+            <li class="{% if request.resolver_match.url_name == "fplist" %}active{% endif %}"><a href="{% url 'db:fplist' %}">Fahrpläne</a></li>
             <li class="{% if request.resolver_match.url_name == "fzlist" %}active{% endif %}"><a href="{% url 'db:fzlist' %}">Fahrplanzüge</a></li>
+            <li class="{% if request.resolver_match.url_name == "fzelist" %}active{% endif %}"><a href="{% url 'db:fzelist' %}">Fahrzeuge</a></li>
+            <li class="{% if request.resolver_match.url_name == "fslist" %}active{% endif %}"><a href="{% url 'db:fslist' %}">Führerstande</a></li>
+            <li class="{% if request.resolver_match.url_name == "autorlist" %}active{% endif %}"><a href="{% url 'db:autorlist' %}">Autoren</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>

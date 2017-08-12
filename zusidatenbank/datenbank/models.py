@@ -140,3 +140,6 @@ class Fahrplan(InventoryItem):
   strecken_modules = models.ManyToManyField(StreckenModule, related_name='fahrplaene')
   zuege = models.ManyToManyField(FahrplanZug, related_name='fahrplaene')
   anfang = models.DateTimeField()
+
+  def get_absolute_url(self):
+    return reverse('db:fpdetail', args=[self.path])

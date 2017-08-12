@@ -54,12 +54,14 @@ class FahrplanZugTable(tables.Table):
         row_attrs = {'class': lambda record: 'danger' if record.deko else None}
 
 class FahrplanTable(tables.Table):
-    #name = tables.LinkColumn()
-    #nachbaren_count = tables.Column(verbose_name='Nachbar Modules')
+    name = tables.LinkColumn()
+    anfang = tables.DateTimeColumn()
+    module_count = tables.Column(verbose_name='Modules')
+    zug_count = tables.Column(verbose_name='Züge')
 
     class Meta:
         model = Fahrplan
-        order_by = ('name',)
+        order_by = ('path',)
         attrs = {'class': 'table table-striped table-hover'}
 
 class FahrzeugTable(tables.Table):

@@ -23,7 +23,7 @@ class StreckenModuleDetail(MultiTableMixin, generic.DetailView):
         return False
 
     def get_tables(self):
-        return (StreckenModuleTable(self.get_object().nachbaren.annotate(nachbaren_count=Count('nachbaren'))),
+        return (StreckenModuleTable(self.get_object().nachbaren.annotate(nachbaren_count=Count('nachbaren', distinct=True),fahrplan_count=Count('fahrplaene',distinct=True))),
                 FahrplanTable(self.get_object().fahrplaene))
 
 
@@ -48,8 +48,11 @@ class FahrplanZugList(SingleTableView):
     table_class = FahrplanZugTable
     template_name = 'fahrplanzug/list.html'
 
+class FahrplanZugDetail(generic.DetailView):
+    template_name = 'fahrplanzug/detail.html'
+    queryset = FahrplanZug.objects.annotate(zug_max_speed=Least(F('speed_zug'),Min('fahrzeuge__speedMax')), fz_max_speed=Min('fahrzeuge__speedMax'))
+
 class FahrzeugList(SingleTableView):
-    #queryset = FahrzeugVariante.objects.annotate(variant=Concat(F('haupt_id'), Value('/'), F('neben_id'),output_field=CharField()), zug_count=Count('fahrplanzuege'))
     table_class = FahrzeugTable
     template_name = 'fahrzeug/list.html'
 
@@ -58,7 +61,6 @@ class FahrzeugList(SingleTableView):
         if 'root_file' in self.kwargs:
             base = base.filter(root_file=self.kwargs['root_file'])
         return base.annotate(variant=Concat(F('haupt_id'), Value('/'), F('neben_id'),output_field=CharField()), zug_count=Count('fahrplanzuege'))
-
 
 class FahrzeugDetail(MultiTableMixin, generic.DetailView):
     model = FahrzeugVariante
@@ -74,3 +76,8 @@ class FahrzeugDetail(MultiTableMixin, generic.DetailView):
         fahrzeug = self.get_plain_object()
         return (FahrplanZugTable(fahrzeug.fahrplanzuege.annotate(fz_max_speed=Least(F('speed_zug'),Min('fahrzeuge__speedMax')))),
                 FahrplanTable(Fahrplan.objects.filter(zuege__fahrzeuge__id=fahrzeug.id).distinct()))
+
+class FahrplanList(SingleTableView):
+    queryset = Fahrplan.objects.annotate(zug_count=Count('zuege', distinct=True),module_count=Count('strecken_modules', distinct=True))
+    table_class = FahrplanTable
+    template_name = 'fahrplanzug/list.html'
