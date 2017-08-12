@@ -36,7 +36,7 @@ class StreckenModule(InventoryItem):
     return reverse('db:smdetail', args=[self.path])
 
 #Complete(partial)
-class Fuehrerstand(InventoryItem): #TODO
+class Fuehrerstand(InventoryItem):
   mit_afb = models.BooleanField(default=False)
   zugsicherung = ArrayField(models.CharField(max_length=20),default=list)
   sifa = ArrayField(models.CharField(max_length=30),default=list)

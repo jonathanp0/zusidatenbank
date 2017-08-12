@@ -12,7 +12,13 @@
       <div class="panel panel-primary">
         <div class="panel-heading"><h3 class="panel-title">Grunddaten</h3></div>
           <div class="panel-body">
-            <dl class="">
+            <dl>
+              <dt>Fahrpläne</dt>
+              {% for fahrplan in object.fahrplaene.all %}
+                <dd>
+                  <a href="{% url 'db:fpdetail' fahrplan.path %}">{{fahrplan.name}}</a>
+                </dd>
+              {% endfor %}
               <dt>Fahrplangruppe</dt>
               <dd>{{object.fahrplan_gruppe}}</dd>
               <dt>Zug Lauf</dt>
