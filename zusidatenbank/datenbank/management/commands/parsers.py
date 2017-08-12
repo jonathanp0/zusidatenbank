@@ -2,6 +2,7 @@ from datenbank.models import *
 
 import xml.etree.ElementTree as ET
 import os
+import sys
 import logging
 import copy
 from datetime import datetime
@@ -9,13 +10,17 @@ from datetime import datetime
 class ZusiParser(object):
 
     def parseFile(self, full_path, rel_path):
-        self.logger = logging.getLogger(rel_path)
+        self.logger = logging.getLogger('parse.'+rel_path)
 
         fh = logging.FileHandler('scan.log', 'a')
         fh.setLevel(logging.WARN)
         formatter = logging.Formatter('%(asctime)s|%(levelname)s|%(name)s|%(message)s')
         fh.setFormatter(formatter)
+        sh = logging.StreamHandler(sys.stdout)
+        sh.setLevel(logging.INFO)
+        sh.setFormatter(formatter)
         self.logger.addHandler(fh)
+        self.logger.addHandler(sh)
 
         xml = ET.parse(full_path).getroot()
         info = {'name': os.path.basename(rel_path),
@@ -240,6 +245,9 @@ class FzgParser(ZusiParser):
         full_path = os.path.join(root_path, rel_path)
         fzg = ET.parse(full_path).getroot()
 
+        #Add authors from the file
+        info['autor'].extend(self.getAutor(fzg))
+
         #Process basic data for this file
         grund_el = fzg.find('Fahrzeug/FahrzeugGrunddaten')
         if(grund_el != None):
@@ -269,7 +277,8 @@ class FzgParser(ZusiParser):
         varianten = fzg.findall('Fahrzeug/FahrzeugVariante')
         for variante in varianten:
             var_fzg_data = copy.deepcopy(fzg_data) #Make a copy for additional data for this variante only
-            self.processVariante(variante, root_path, rel_path, var_fzg_data, info)
+            var_info = copy.deepcopy(info)
+            self.processVariante(variante, root_path, rel_path, var_fzg_data, var_info)
 
     def processVariante(self, var_el, root_path, rel_path, fzg_data, info):
 
@@ -293,4 +302,7 @@ class FzgParser(ZusiParser):
                 logging.warn("Non matching Führerstand " + fuehrerstand_el.get("Dateiname"))
 
         variante.save()
-        variante.autor.add(*info['autor'])
+
+        #Add the authors
+        autor_dict = {int(a.autor_id): a for a in info['autor']}
+        variante.autor.add(*autor_dict.values())
