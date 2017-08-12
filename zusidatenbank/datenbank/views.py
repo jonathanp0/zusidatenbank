@@ -80,4 +80,14 @@ class FahrzeugDetail(MultiTableMixin, generic.DetailView):
 class FahrplanList(SingleTableView):
     queryset = Fahrplan.objects.annotate(zug_count=Count('zuege', distinct=True),module_count=Count('strecken_modules', distinct=True))
     table_class = FahrplanTable
-    template_name = 'fahrplanzug/list.html'
+    template_name = 'fahrplan/list.html'
+
+class FahrplanDetail(MultiTableMixin, generic.DetailView):
+
+    model = Fahrplan
+    template_name = 'fahrplan/detail.html'
+
+    def get_tables(self):
+        return (FahrplanZugTable(self.get_object().zuege.annotate(zug_max_speed=Least(F('speed_zug'),Min('fahrzeuge__speedMax')), fz_max_speed=Min('fahrzeuge__speedMax'))),
+                StreckenModuleTable(StreckenModule.objects.annotate(nachbaren_count=Count('nachbaren', distinct=True),fahrplan_count=Count('fahrplaene__path', distinct=True)).filter(fahrplaene__path=self.get_object().path)))
+
