@@ -1,5 +1,5 @@
 from django.views import generic
-from django.db.models import Count, Min, F, Value, CharField
+from django.db.models import Count, Min, F, Value, CharField, Subquery, OuterRef
 from django.db.models.functions import Least, Concat
 
 from .models import *
@@ -93,3 +93,11 @@ class FahrplanDetail(MultiTableMixin, generic.DetailView):
 
 class IndexView(generic.TemplateView):
     template_name = 'home.html'
+
+class AutorList(SingleTableView):
+    queryset = Autor.objects.annotate(module_count=Count('streckenmodule',distinct=True),
+                                      ftd_count=Count('fuehrerstand', distinct=True),
+                                      fahrplan_count=Count('fahrplan', distinct=True),
+                                      fz_count=Count('fahrzeugvariante', distinct=True))
+    table_class = AutorTable
+    template_name = 'autor.html'

@@ -80,3 +80,14 @@ class FahrzeugTable(tables.Table):
         sequence = ('root_file', 'variant', 'br', 'beschreibung','farbgebung','speedMax','antrieb','neigetechnik','dekozug', 'zug_count')
         attrs = {'class': 'table table-striped table-hover'}
         row_attrs = {'class': lambda record: 'danger' if not record.zug_count else 'warning' if record.dekozug else 'active' if len(record.antrieb) else None}
+
+class AutorTable(tables.Table):
+    module_count = tables.Column(verbose_name='Streckenmodules')
+    fahrplan_count = tables.Column(verbose_name='Fahrpläne')
+    ftd_count = tables.Column(verbose_name='Führerstande')
+    fz_count = tables.Column(verbose_name='Fahrzeug Variante')
+
+    class Meta:
+        model = Autor
+        exclude = ('email',)
+        attrs = {'class': 'table table-striped table-hover'}

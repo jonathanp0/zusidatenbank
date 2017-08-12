@@ -8,7 +8,7 @@ from django.contrib.postgres.fields import JSONField, ArrayField
 
 #Complete(partial)
 class Autor(models.Model):
-  autor_id = models.IntegerField(primary_key=True)
+  autor_id = models.IntegerField(primary_key=True, verbose_name='ID')
   name = models.CharField(max_length=100)
   email = models.CharField(max_length=100, null=True)
 
@@ -119,7 +119,6 @@ class FahrplanZug(InventoryItem):
     walk(tree)
 
     return tree
-
 
 #Complete
 class FahrplanZugEintrag(models.Model):
