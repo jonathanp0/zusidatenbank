@@ -91,3 +91,5 @@ class FahrplanDetail(MultiTableMixin, generic.DetailView):
         return (FahrplanZugTable(self.get_object().zuege.annotate(zug_max_speed=Least(F('speed_zug'),Min('fahrzeuge__speedMax')), fz_max_speed=Min('fahrzeuge__speedMax'))),
                 StreckenModuleTable(StreckenModule.objects.annotate(nachbaren_count=Count('nachbaren', distinct=True),fahrplan_count=Count('fahrplaene__path', distinct=True)).filter(fahrplaene__path=self.get_object().path)))
 
+class IndexView(generic.TemplateView):
+    template_name = 'home.html'

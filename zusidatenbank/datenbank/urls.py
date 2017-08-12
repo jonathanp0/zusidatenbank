@@ -17,4 +17,5 @@ urlpatterns = [
     url(r'^fahrzeug/(?P<root_file>[^/]+)/(?P<haupt_id>[0-9]+)/(?P<neben_id>[0-9]+)/$', views.FahrzeugDetail.as_view(), name='fzedetail'),
     url(r'^fahrzeug/(?P<root_file>[^/]+)/$', views.FahrzeugList.as_view(), name='fzevariantlist'),
     url(r'^fahrzeug$', views.FahrzeugList.as_view(), name='fzelist'),
+    url(r'^$', views.IndexView.as_view(), name='index'),
 ]
