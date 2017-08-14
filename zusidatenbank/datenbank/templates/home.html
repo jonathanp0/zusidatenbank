@@ -1,11 +1,76 @@
-
 {% extends "base.html" %}
 
+{% load bootstrap3 %}
 {% block head %}Zusi Datenbank{% endblock %}
 {% block title %}Zusi Datenbank{% endblock %}
 
 
 {% block content %}
+
+<div class="row">
+     <div class="col-md-5">
+        <h2>Wilkommen</h2>
+        
+        <p>Wilkommen!</p>
+        <p>
+            Es gibt <b>{{zug_count}}</b> Züge, <b>{{fahrzeug_count}}</b> Fahrzeugvarianten, <b>{{module_count}}</b> Streckenmodules und <b>{{fstand_count}}</b> Führerstande in unser Datenbank!
+        </p>
+        <h3>Aktuell</h3>
+        <h3>Datenstand</h3>
+        Die aktuelle Datenbank enthält diese Addon-Pakets:
+        <p>
+            
+<pre>03/06/2016 21:58:06: 1,  000001_zubehoer.zao
+03/06/2016 21:58:12: 2,  000002_zubehoer.zao
+03/06/2016 22:00:22: 3,  000003_korrekturen.zao
+11/07/2016 01:05:46: 4,  000004_fahrzeuge.zao
+11/07/2016 01:05:55: 5,  000005_korrekturpaket4.zao
+01/09/2016 22:55:35: 6,  000006_fuehrerstaende.zao
+24/09/2016 01:06:18: 7,  000007_korrekturpaket6.zao
+06/12/2016 22:25:30: 8,  000008_fahrzeugeusw.zao
+31/01/2017 21:12:21: 9,  000009_datenupdate.zao
+22/04/2017 13:15:13: 10, 000010_datenupdate.zao
+13/06/2017 09:22:35: 11, 000011_marschbahn_diverses.zao
+28/07/2017 00:21:53: 12, 000012_datenupdate.zao</pre>
+        </p>
+    </div>
+    <div class="col-md-7">
+        <div>
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active"><a href="#zug" aria-controls="zug" role="tab" data-toggle="tab">Suche Zug</a></li>
+            <li role="presentation"><a href="#fahrzeug" aria-controls="fahrzeug" role="tab" data-toggle="tab">Suche Fahrzeug</a></li>
+            <li role="presentation"><a href="#fstand" aria-controls="fstand" role="tab" data-toggle="tab">Suche Führerstand</a></li>
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="zug">
+                <form method="POST">
+                {% csrf_token %}
+                {% bootstrap_form zug_form %}
+                {% buttons submit='Suche' reset="Frei" %}{% endbuttons %}
+                </form>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="fahrzeug">
+                <form method="POST">
+                {% csrf_token %}
+                {% bootstrap_form fahrzeug_form %}
+                {% buttons submit='Suche' reset="Frei" %}{% endbuttons %}
+                </form>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="fstand">
+                <form method="POST">
+                {% csrf_token %}
+                {% bootstrap_form fstand_form %}
+                {% buttons submit='Suche' reset="Frei" %}{% endbuttons %}
+                </form>
+            </div>
+        </div>
+
+        </div>
+    </div>
+</div>
 
 
 {% endblock %}

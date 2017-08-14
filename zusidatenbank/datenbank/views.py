@@ -4,6 +4,7 @@ from django.db.models.functions import Least, Greatest, Concat, Coalesce
 
 from .models import *
 from .tables import *
+from .forms import *
 
 from django_tables2 import SingleTableView, MultiTableMixin
 
@@ -113,6 +114,19 @@ class FahrplanDetail(MultiTableMixin, generic.DetailView):
 
 class IndexView(generic.TemplateView):
     template_name = 'home.html'
+
+    def get_context_data(self, **kwargs):
+            context = super(IndexView, self).get_context_data(**kwargs)
+
+            context['zug_form'] = ZugSearchForm()
+            context['fstand_form'] = FStandSearchForm()
+            context['fahrzeug_form'] = FahrzeugSearchForm()
+
+            context['zug_count'] = FahrplanZug.objects.all().count()
+            context['fahrzeug_count'] = FahrzeugVariante.objects.all().count()
+            context['module_count'] = StreckenModule.objects.all().count()
+            context['fstand_count'] = Fuehrerstand.objects.all().count()
+            return context
 
 class AutorList(SingleTableView):
     queryset = Autor.objects.annotate(module_count=Count('streckenmodule',distinct=True),
