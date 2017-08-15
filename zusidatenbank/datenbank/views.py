@@ -62,12 +62,30 @@ class FuehrerstandDetail(Annotater, MultiTableMixin, generic.DetailView):
         return (FahrzeugTable(fstand.fahrzeuge.annotate(variant=Concat(F('haupt_id'), Value('/'), F('neben_id'),output_field=CharField()), zug_count=Count('fahrplanzuege')).distinct()),
                 FahrplanZugTable(self.annotateFahrplanZug(FahrplanZug.objects).filter(fahrzeuge__fuehrerstand=fstand)))
 
-class FahrplanZugList(SingleTableView):
-    queryset = FahrplanZug.objects.annotate(fz_max_speed=Least(F('speed_zug'),Min('fahrzeuge__speedMax')), 
-                                            gesamt_zeit=Max(Coalesce('eintraege__an','eintraege__ab')) - Min(Coalesce('eintraege__ab','eintraege__an')),
-                                            )
+class FahrplanZugList(Annotater, SingleTableView):
     table_class = FahrplanZugTable
     template_name = 'fahrplanzug/list.html'
+    form = None
+
+    def post(self, request, *args, **kwargs):
+        self.form = ZugSearchForm(self.request.POST)
+        if not self.form.is_valid():
+            print(self.form.errors)
+            self.form = None
+        return self.get(request, *args, **kwargs)
+
+    def get_queryset(self):
+        qs = self.annotateFahrplanZug(FahrplanZug.objects)
+
+        if self.form:
+            if(self.form.cleaned_data['gattung']):
+                qs = qs.filter(gattung__in=self.form.cleaned_data['gattung'])
+            if(self.form.cleaned_data['baureihe']):
+                qs = qs.filter(fahrzeuge__br=self.form.cleaned_data['baureihe'])
+            if(self.form.cleaned_data['dekozug'] and self.form.cleaned_data['dekozug'] != '-1'):
+                qs = qs.filter(deko=self.form.cleaned_data['dekozug'])
+
+        return qs
 
 class FahrplanZugDetail(generic.DetailView):
     template_name = 'fahrplanzug/detail.html'

@@ -46,7 +46,7 @@
         <!-- Tab panes -->
         <div class="tab-content">
             <div role="tabpanel" class="tab-pane active" id="zug">
-                <form method="POST">
+                <form method="POST" action="/fahrplanzug">
                 {% csrf_token %}
                 {% bootstrap_form zug_form %}
                 {% buttons submit='Suche' reset="Frei" %}{% endbuttons %}
