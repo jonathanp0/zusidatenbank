@@ -52,6 +52,13 @@ class Fuehrerstand(InventoryItem):
 
 #Complete(partial)
 class FahrzeugVariante(models.Model):
+  ANTRIEB_CHOICES = (
+    ('DieselHydraulisch','Diesel Hydraulisch',), 
+    ('Einfach','Einfach'), 
+    ('ElektrischDrehstrom', 'Elektrisch Drehstrom'), 
+    ('ElektrischReihenschluss','Elektrisch Reihenschluss')
+  )
+
   root_file = models.CharField(max_length=200)
   haupt_id = models.IntegerField()
   neben_id = models.IntegerField()

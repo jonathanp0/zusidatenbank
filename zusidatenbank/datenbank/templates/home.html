@@ -46,23 +46,23 @@
         <!-- Tab panes -->
         <div class="tab-content">
             <div role="tabpanel" class="tab-pane active" id="zug">
-                <form method="POST" action="/fahrplanzug">
-                {% csrf_token %}
+                <form method="GET" action="/fahrplanzug">
                 {% bootstrap_form zug_form %}
+                {% csrf_token %}
                 {% buttons submit='Suche' reset="Frei" %}{% endbuttons %}
                 </form>
             </div>
             <div role="tabpanel" class="tab-pane" id="fahrzeug">
                 <form method="POST">
-                {% csrf_token %}
                 {% bootstrap_form fahrzeug_form %}
+                {% csrf_token %}
                 {% buttons submit='Suche' reset="Frei" %}{% endbuttons %}
                 </form>
             </div>
             <div role="tabpanel" class="tab-pane" id="fstand">
                 <form method="POST">
-                {% csrf_token %}
                 {% bootstrap_form fstand_form %}
+                {% csrf_token %}
                 {% buttons submit='Suche' reset="Frei" %}{% endbuttons %}
                 </form>
             </div>

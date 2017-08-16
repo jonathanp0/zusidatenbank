@@ -75,15 +75,41 @@ class FahrplanZugList(Annotater, SingleTableView):
         return self.get(request, *args, **kwargs)
 
     def get_queryset(self):
+        self.form = ZugSearchForm(self.request.GET)
+        if not self.form.is_valid():
+            print(self.form.errors)
+            self.form = None
+        #return self.get(request, *args, **kwargs)
+
         qs = self.annotateFahrplanZug(FahrplanZug.objects)
 
         if self.form:
             if(self.form.cleaned_data['gattung']):
                 qs = qs.filter(gattung__in=self.form.cleaned_data['gattung'])
-            if(self.form.cleaned_data['baureihe']):
-                qs = qs.filter(fahrzeuge__br=self.form.cleaned_data['baureihe'])
+            if(self.form.cleaned_data['nummer']):
+                qs = qs.filter(nummer=self.form.cleaned_data['nummer'])
+            if(self.form.cleaned_data['zugart']):
+                qs = qs.filter(is_reisezug=self.form.cleaned_data['zugart'])
+            if(self.form.cleaned_data['zuglauf']):
+                qs = qs.filter(zug_lauf__icontains=self.form.cleaned_data['zuglauf'])
             if(self.form.cleaned_data['dekozug'] and self.form.cleaned_data['dekozug'] != '-1'):
                 qs = qs.filter(deko=self.form.cleaned_data['dekozug'])
+            if(self.form.cleaned_data['anfang']):
+                qs = qs.filter(speed_anfang__gt=self.form.cleaned_data['anfang'])
+            if(self.form.cleaned_data['maximalgeschwindigkeit']):
+                bound = self.form.cleaned_data['maximalgeschwindigkeit']
+                if bound.lower:
+                    qs = qs.filter(fz_max_speed__gte=self.form.cleaned_data['maximalgeschwindigkeit'].lower)
+                if bound.upper:
+                    qs = qs.filter(fz_max_speed__lte=self.form.cleaned_data['maximalgeschwindigkeit'].upper)
+            if(self.form.cleaned_data['eintragort']):
+                qs = qs.filter(eintraege__ort=self.form.cleaned_data['eintragort'])
+            if(self.form.cleaned_data['fahrplan']):
+                qs = qs.filter(fahrplaene__path__in=self.form.cleaned_data['fahrplan'])
+            if(self.form.cleaned_data['baureihe']):
+                qs = qs.filter(fahrzeuge__br=self.form.cleaned_data['baureihe'])
+            if(self.form.cleaned_data['antrieb']):
+                qs = qs.filter(fahrzeuge__antrieb__overlap=self.form.cleaned_data['antrieb'])
 
         return qs
 
