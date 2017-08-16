@@ -53,7 +53,7 @@
                 </form>
             </div>
             <div role="tabpanel" class="tab-pane" id="fahrzeug">
-                <form method="POST">
+                <form method="GET" action="/fahrzeug">
                 {% bootstrap_form fahrzeug_form %}
                 {% csrf_token %}
                 {% buttons submit='Suche' reset="Frei" %}{% endbuttons %}

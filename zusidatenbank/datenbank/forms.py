@@ -2,7 +2,7 @@ from django.forms import ModelForm
 from django import forms
 from django.db.models import Q
 
-from django.contrib.postgres.forms.ranges import IntegerRangeField, DateRangeField
+from django.contrib.postgres.forms.ranges import IntegerRangeField, DateRangeField, FloatRangeField
 
 from .models import FahrplanZug, FahrplanZugEintrag, Fahrplan, FahrzeugVariante
 
@@ -23,7 +23,6 @@ class ZugSearchForm(forms.Form):
 
     def fahrplan_choices(self):
         return ((obj,obj.replace("Timetables\\Deutschland\\", '')) for obj in Fahrplan.objects.values_list('path', flat=True).order_by('path'))
-    
     
     gattung = forms.ChoiceField()
     nummer = forms.CharField(required=False)
@@ -50,18 +49,22 @@ class FStandSearchForm(forms.Form):
     notbremse_system = forms.MultipleChoiceField(required=False)
 
 class FahrzeugSearchForm(forms.Form):
-    #baureihe = forms.CharField(required=False)
-    baureihe = forms.ModelChoiceField(queryset=FahrzeugVariante.objects.values_list('br', flat=True).distinct().order_by('br'), to_field_name='br',required=False)
+
+    def __init__(self, *args, **kwargs):
+        super(FahrzeugSearchForm, self).__init__(*args, **kwargs)
+            
+        self.fields['baureihe'] = forms.ChoiceField(choices=qs_to_opt_choice(FahrzeugVariante.objects.values_list('br', flat=True).distinct().order_by('br')),required=False,help_text='Sucht alle Fahrzeuge in Zugreihung')
+
+
+    baureihe = forms.ChoiceField()
     deko = forms.ChoiceField(choices=[(-1, ''), (0, 'Nein'), (1,'Ja')], initial=0)
     beschreibung = forms.CharField(help_text='(Teilweise vergleichen)',required=False)
     farbgebung = forms.CharField(help_text='(Teilweise vergleichen)',required=False)
-    einsatz = DateRangeField(required=False)
+    einsatz = forms.DateField(required=False)
     masse = IntegerRangeField(help_text='? < x < ? kg',required=False)
-    laenge = IntegerRangeField(help_text='? < x < ? m',required=False)
+    laenge = FloatRangeField(help_text='? < x < ? m',required=False)
     maximalgeschwindigkeit = IntegerRangeField(help_text='? < x < ? km/h',required=False)
-
-    antrieb = forms.MultipleChoiceField(required=False)
-
+    antrieb = forms.MultipleChoiceField(required=False, choices=FahrzeugVariante.ANTRIEB_CHOICES)
     neigetechnik = forms.ChoiceField(choices=[(0, 'Nein'), (1,'Ja')],widget=forms.RadioSelect, required=False)
 
 

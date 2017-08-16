@@ -65,12 +65,10 @@ class FuehrerstandDetail(Annotater, MultiTableMixin, generic.DetailView):
 class FahrplanZugList(Annotater, SingleTableView):
     table_class = FahrplanZugTable
     template_name = 'fahrplanzug/list.html'
-    form = None
 
     def get_queryset(self):
         form = ZugSearchForm(self.request.GET)
         if not form.is_valid():
-            print(form.errors)
             form = None
 
         qs = self.annotateFahrplanZug(FahrplanZug.objects)
@@ -111,15 +109,54 @@ class FahrplanZugDetail(generic.DetailView):
     template_name = 'fahrplanzug/detail.html'
     queryset = FahrplanZug.objects.annotate(zug_max_speed=Least(F('speed_zug'),Min('fahrzeuge__speedMax')), fz_max_speed=Min('fahrzeuge__speedMax'))
 
-class FahrzeugList(SingleTableView):
+class FahrzeugList(Annotater, SingleTableView):
     table_class = FahrzeugTable
     template_name = 'fahrzeug/list.html'
 
     def get_queryset(self):
-        base = FahrzeugVariante.objects
+        qs = self.annotateFahrzeug(FahrzeugVariante.objects)
+
         if 'root_file' in self.kwargs:
-            base = base.filter(root_file=self.kwargs['root_file'])
-        return base.annotate(variant=Concat(F('haupt_id'), Value('/'), F('neben_id'),output_field=CharField()), zug_count=Count('fahrplanzuege'))
+            qs = qs.filter(root_file=self.kwargs['root_file'])
+        
+        form = FahrzeugSearchForm(self.request.GET)
+
+        if form.is_valid():
+            if(form.cleaned_data['baureihe']):
+                qs = qs.filter(br=form.cleaned_data['baureihe'])
+            if(form.cleaned_data['deko'] and form.cleaned_data['deko'] != '-1'):
+                qs = qs.filter(dekozug=form.cleaned_data['deko'])
+            if(form.cleaned_data['beschreibung']):
+                qs = qs.filter(beschreibung__icontains=form.cleaned_data['beschreibung'])
+            if(form.cleaned_data['farbgebung']):
+                qs = qs.filter(farbgebung__icontains=form.cleaned_data['farbgebung'])
+            if(form.cleaned_data['einsatz']):
+                qs = qs.filter(Q(einsatz_ab__gte=form.cleaned_data['einsatz']) & Q(einsatz_bis__lte=form.cleaned_data['einsatz']))
+            if(form.cleaned_data['masse']):
+                bound = form.cleaned_data['masse']
+                if bound.lower:
+                    qs = qs.filter(masse__gte=form.cleaned_data['masse'].lower)
+                if bound.upper:
+                    qs = qs.filter(masse__lte=form.cleaned_data['masse'].upper)
+            if(form.cleaned_data['laenge']):
+                bound = form.cleaned_data['laenge']
+                if bound.lower:
+                    qs = qs.filter(laenge__gte=form.cleaned_data['laenge'].lower)
+                if bound.upper:
+                    qs = qs.filter(laenge__lte=form.cleaned_data['laenge'].upper)
+            if(form.cleaned_data['maximalgeschwindigkeit']):
+                bound = form.cleaned_data['maximalgeschwindigkeit']
+                if bound.lower:
+                    qs = qs.filter(speedMax__gte=form.cleaned_data['maximalgeschwindigkeit'].lower)
+                if bound.upper:
+                    qs = qs.filter(speedMax__lte=form.cleaned_data['maximalgeschwindigkeit'].upper)
+            if(form.cleaned_data['antrieb']):
+                qs = qs.filter(antrieb__overlap=form.cleaned_data['antrieb'])
+            if(form.cleaned_data['neigetechnik']):
+                qs = qs.filter(neigetechnik=form.cleaned_data['neigetechnik'])
+
+
+        return qs
 
 class FahrzeugDetail(Annotater, MultiTableMixin, generic.DetailView):
     model = FahrzeugVariante
