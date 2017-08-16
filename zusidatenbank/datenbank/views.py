@@ -67,49 +67,43 @@ class FahrplanZugList(Annotater, SingleTableView):
     template_name = 'fahrplanzug/list.html'
     form = None
 
-    def post(self, request, *args, **kwargs):
-        self.form = ZugSearchForm(self.request.POST)
-        if not self.form.is_valid():
-            print(self.form.errors)
-            self.form = None
-        return self.get(request, *args, **kwargs)
-
     def get_queryset(self):
-        self.form = ZugSearchForm(self.request.GET)
-        if not self.form.is_valid():
-            print(self.form.errors)
-            self.form = None
-        #return self.get(request, *args, **kwargs)
+        form = ZugSearchForm(self.request.GET)
+        if not form.is_valid():
+            print(form.errors)
+            form = None
 
         qs = self.annotateFahrplanZug(FahrplanZug.objects)
 
-        if self.form:
-            if(self.form.cleaned_data['gattung']):
-                qs = qs.filter(gattung__in=self.form.cleaned_data['gattung'])
-            if(self.form.cleaned_data['nummer']):
-                qs = qs.filter(nummer=self.form.cleaned_data['nummer'])
-            if(self.form.cleaned_data['zugart']):
-                qs = qs.filter(is_reisezug=self.form.cleaned_data['zugart'])
-            if(self.form.cleaned_data['zuglauf']):
-                qs = qs.filter(zug_lauf__icontains=self.form.cleaned_data['zuglauf'])
-            if(self.form.cleaned_data['dekozug'] and self.form.cleaned_data['dekozug'] != '-1'):
-                qs = qs.filter(deko=self.form.cleaned_data['dekozug'])
-            if(self.form.cleaned_data['anfang']):
-                qs = qs.filter(speed_anfang__gt=self.form.cleaned_data['anfang'])
-            if(self.form.cleaned_data['maximalgeschwindigkeit']):
-                bound = self.form.cleaned_data['maximalgeschwindigkeit']
+        if form:
+            if(form.cleaned_data['gattung']):
+                qs = qs.filter(gattung__in=form.cleaned_data['gattung'])
+            if(form.cleaned_data['nummer']):
+                qs = qs.filter(nummer=form.cleaned_data['nummer'])
+            if(form.cleaned_data['zugart']):
+                qs = qs.filter(is_reisezug=form.cleaned_data['zugart'])
+            if(form.cleaned_data['zuglauf']):
+                qs = qs.filter(zug_lauf__icontains=form.cleaned_data['zuglauf'])
+            if(form.cleaned_data['dekozug'] and form.cleaned_data['dekozug'] != '-1'):
+                qs = qs.filter(deko=form.cleaned_data['dekozug'])
+            if(form.cleaned_data['anfang']):
+                qs = qs.filter(speed_anfang__gt=form.cleaned_data['anfang'])
+            if(form.cleaned_data['maximalgeschwindigkeit']):
+                bound = form.cleaned_data['maximalgeschwindigkeit']
                 if bound.lower:
-                    qs = qs.filter(fz_max_speed__gte=self.form.cleaned_data['maximalgeschwindigkeit'].lower)
+                    qs = qs.filter(fz_max_speed__gte=form.cleaned_data['maximalgeschwindigkeit'].lower)
                 if bound.upper:
-                    qs = qs.filter(fz_max_speed__lte=self.form.cleaned_data['maximalgeschwindigkeit'].upper)
-            if(self.form.cleaned_data['eintragort']):
-                qs = qs.filter(eintraege__ort=self.form.cleaned_data['eintragort'])
-            if(self.form.cleaned_data['fahrplan']):
-                qs = qs.filter(fahrplaene__path__in=self.form.cleaned_data['fahrplan'])
-            if(self.form.cleaned_data['baureihe']):
-                qs = qs.filter(fahrzeuge__br=self.form.cleaned_data['baureihe'])
-            if(self.form.cleaned_data['antrieb']):
-                qs = qs.filter(fahrzeuge__antrieb__overlap=self.form.cleaned_data['antrieb'])
+                    qs = qs.filter(fz_max_speed__lte=form.cleaned_data['maximalgeschwindigkeit'].upper)
+            if(form.cleaned_data['eintragort']):
+                qs = qs.filter(eintraege__ort=form.cleaned_data['eintragort'])
+            if(form.cleaned_data['fahrplan']):
+                qs = qs.filter(fahrplaene__path__in=form.cleaned_data['fahrplan'])
+            if(form.cleaned_data['baureihe']):
+                qs = qs.filter(fahrzeuge__br=form.cleaned_data['baureihe'])
+            if(form.cleaned_data['antrieb']):
+                qs = qs.filter(fahrzeuge__antrieb__overlap=form.cleaned_data['antrieb'])
+            if(form.cleaned_data['neigezug']):
+                qs = qs.filter(fahrzeuge__neigetechnik=form.cleaned_data['neigezug'])
 
         return qs
 

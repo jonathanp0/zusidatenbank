@@ -18,9 +18,13 @@ class ZugSearchForm(forms.Form):
         self.fields['gattung'] = forms.MultipleChoiceField(required=False,choices=((obj,obj) for obj in FahrplanZug.objects.values_list('gattung', flat=True).distinct().order_by('gattung')))
         self.fields['eintragort'] = forms.ChoiceField(choices=qs_to_opt_choice(FahrplanZugEintrag.objects.exclude(Q(ort__startswith='Sbk'))
                                                                 .values_list('ort', flat=True).distinct().order_by('ort')), required=False)
-        self.fields['fahrplan'] = forms.MultipleChoiceField(choices=((obj,obj) for obj in Fahrplan.objects.values_list('path', flat=True).order_by('path')), required=False)
+        self.fields['fahrplan'] = forms.MultipleChoiceField(choices=self.fahrplan_choices(), required=False)
         self.fields['baureihe'] = forms.ChoiceField(choices=qs_to_opt_choice(FahrzeugVariante.objects.values_list('br', flat=True).distinct().order_by('br')),required=False,help_text='Sucht alle Fahrzeuge in Zugreihung')
 
+    def fahrplan_choices(self):
+        return ((obj,obj.replace("Timetables\\Deutschland\\", '')) for obj in Fahrplan.objects.values_list('path', flat=True).order_by('path'))
+    
+    
     gattung = forms.ChoiceField()
     nummer = forms.CharField(required=False)
     zugart = forms.ChoiceField(choices=[(0, 'Güterzug'), (1,'Reisezug')],widget=forms.RadioSelect,required=False)
