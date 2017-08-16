@@ -85,7 +85,7 @@ class FahrzeugVariante(models.Model):
   fuehrerstand = models.ForeignKey(Fuehrerstand, related_name='fahrzeuge', null=True)
 
   def get_absolute_url(self):
-    return reverse('db:fzedetail', args=[self.root_file, self.haupt_id, self.neben_id])
+    return reverse('db:fvdetail', args=[self.root_file, self.haupt_id, self.neben_id])
 
   def masse_tonne(self):
     return self.masse / 1000
