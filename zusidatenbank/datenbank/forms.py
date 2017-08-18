@@ -1,10 +1,10 @@
 from django.forms import ModelForm
+from django.forms.widgets import NumberInput
 from django import forms
 from django.db.models import Q
 
-from django.contrib.postgres.forms.ranges import IntegerRangeField, DateRangeField, FloatRangeField
-
-from .models import FahrplanZug, FahrplanZugEintrag, Fahrplan, FahrzeugVariante
+from django.contrib.postgres.forms.ranges import IntegerRangeField, DateRangeField, FloatRangeField, RangeWidget
+from .models import *
 
 def qs_to_opt_choice(qs):
     empty = [('',''),]
@@ -30,7 +30,13 @@ class ZugSearchForm(forms.Form):
     zuglauf = forms.CharField(help_text='(Teilweise vergleichen)',required=False)
     dekozug = forms.ChoiceField(choices=[(-1, ''), (0, 'Nein'), (1,'Ja')], initial=0)
     anfang = forms.ChoiceField(choices=[(0, 'Unbeweglich'), (1,'in Bewegung')],widget=forms.RadioSelect,required=False)
-    maximalgeschwindigkeit = IntegerRangeField(help_text='? < x < ? km/h',required=False)
+    #speedmin = forms.IntegerField(widget=forms.NumberInput(attrs={'placeholder':'','addon_before':'≥','addon_after':'km/h'}),
+    #                              label='Maximalgeschwindigkeit',required=False)
+    #speedmax = forms.IntegerField(widget=forms.NumberInput(attrs={'placeholder':'','addon_before':'≤','addon_after':'km/h'}),
+    #                              label='',required=False)
+    maximalgeschwindigkeit = IntegerRangeField(help_text='? < x < ? km/h',
+                                               widget=RangeWidget(forms.NumberInput()),
+                                               required=False)
     #fahrzeit = IntegerRangeField(help_text='? < x < ? minuten',required=False)
     eintragort = forms.ChoiceField()
     fahrplan = forms.MultipleChoiceField()
@@ -41,7 +47,7 @@ class ZugSearchForm(forms.Form):
 class FStandSearchForm(forms.Form):
     TUER_CHOICES = [('TB5','TB5'),('TB0','TB0'),('SAT','SAT'),('SST','SST'),('TAV','TAV'),('UICWTB','UIC WTB')]
 
-    afb = forms.ChoiceField(label='AFB', choices=[(0, 'Nein'), (1,'Ja')])
+    afb = forms.ChoiceField(label='AFB', choices=[(-1, ''), (0, 'Nein'), (1,'Ja')])
     zugsicherung = forms.MultipleChoiceField(required=False)
     sifa = forms.MultipleChoiceField(required=False)
     tuersystem = forms.MultipleChoiceField(required=False,choices=TUER_CHOICES) #TB5,TB0,SAT.SST,TAV,UICWTB
@@ -54,7 +60,6 @@ class FahrzeugSearchForm(forms.Form):
         super(FahrzeugSearchForm, self).__init__(*args, **kwargs)
             
         self.fields['baureihe'] = forms.ChoiceField(choices=qs_to_opt_choice(FahrzeugVariante.objects.values_list('br', flat=True).distinct().order_by('br')),required=False,help_text='Sucht alle Fahrzeuge in Zugreihung')
-
 
     baureihe = forms.ChoiceField()
     deko = forms.ChoiceField(choices=[(-1, ''), (0, 'Nein'), (1,'Ja')], initial=0)
