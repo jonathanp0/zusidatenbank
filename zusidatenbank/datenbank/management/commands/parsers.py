@@ -253,7 +253,7 @@ class FzgParser(ZusiParser):
         if(grund_el != None):
             fzg_data['masse'] = grund_el.get('Masse')
             fzg_data['laenge'] = grund_el.get('Laenge')
-            fzg_data['speedMax'] = self.toSpeed(self.getAsFloat(grund_el, 'spMax'))
+            fzg_data['speed_max'] = self.toSpeed(self.getAsFloat(grund_el, 'spMax'))
             neigeWinkel = grund_el.get('Neigewinkel')
             fzg_data['neigetechnik'] = (neigeWinkel != None and float(neigeWinkel) != 0.0)
 

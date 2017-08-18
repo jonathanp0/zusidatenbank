@@ -69,7 +69,7 @@ class FahrplanTable(tables.Table):
 class FahrzeugTable(tables.Table):
     root_file = tables.LinkColumn(verbose_name='File', text = lambda r : ntpath.basename(r.root_file))
     variant = tables.Column()
-    speedMax = SpeedColumn(verbose_name='Speed Max')
+    speed_max = SpeedColumn(verbose_name='Speed Max')
     antrieb = ArrayListColumn()
     masse = tables.TemplateColumn('{{ value }} kg')
     laenge = tables.TemplateColumn('{{ value }} m')
@@ -78,7 +78,7 @@ class FahrzeugTable(tables.Table):
     class Meta:
         model = FahrzeugVariante
         exclude = ('id', 'einsatz_ab', 'einsatz_bis', 'bremse', 'tuersystem', 'fuehrerstand', 'neben_id', 'haupt_id', 'masse','laenge')
-        sequence = ('root_file', 'variant', 'br', 'beschreibung','farbgebung','speedMax','antrieb','neigetechnik','dekozug', 'zug_count')
+        sequence = ('root_file', 'variant', 'br', 'beschreibung','farbgebung','speed_max','antrieb','neigetechnik','dekozug', 'zug_count')
         attrs = {'class': 'table table-striped table-hover'}
         row_attrs = {'class': lambda record: 'danger' if not record.zug_count else 'warning' if record.dekozug else 'active' if len(record.antrieb) else None}
 

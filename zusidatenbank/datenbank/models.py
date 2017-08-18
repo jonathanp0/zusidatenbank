@@ -75,7 +75,7 @@ class FahrzeugVariante(models.Model):
   #Grunddaten
   masse = models.IntegerField(null=True)
   laenge = models.FloatField()
-  speedMax = models.IntegerField()
+  speed_max = models.IntegerField()
 
   bremse = ArrayField(models.CharField(max_length=50),null=True)
   tuersystem = ArrayField(models.CharField(max_length=6),null=True) #TB5,TB0,SAT.SST,TAV,UICWTB

@@ -25,7 +25,7 @@ class Annotater(object):
         return object.annotate(fahrzeug_count=Count('fahrzeuge', distinct=True),zug_count=Count('fahrzeuge__fahrplanzuege', distinct=True))
 
     def annotateFahrplanZug(self, object):
-        return object.annotate(fz_max_speed=Least(F('speed_zug'),Min('fahrzeuge__speedMax')), 
+        return object.annotate(fz_max_speed=Least(F('speed_zug'),Min('fahrzeuge__speed_max')), 
                          gesamt_zeit=Max(Coalesce('eintraege__an','eintraege__ab')) - Min(Coalesce('eintraege__ab','eintraege__an')))
 
 class StreckenModuleList(SingleTableView):
@@ -107,7 +107,7 @@ class FahrplanZugList(Annotater, SingleTableView):
 
 class FahrplanZugDetail(generic.DetailView):
     template_name = 'fahrplanzug/detail.html'
-    queryset = FahrplanZug.objects.annotate(zug_max_speed=Least(F('speed_zug'),Min('fahrzeuge__speedMax')), fz_max_speed=Min('fahrzeuge__speedMax'))
+    queryset = FahrplanZug.objects.annotate(zug_max_speed=Least(F('speed_zug'),Min('fahrzeuge__speed_max')), fz_max_speed=Min('fahrzeuge__speed_max'))
 
 class FahrzeugList(Annotater, SingleTableView):
     table_class = FahrzeugTable
@@ -147,9 +147,9 @@ class FahrzeugList(Annotater, SingleTableView):
             if(form.cleaned_data['maximalgeschwindigkeit']):
                 bound = form.cleaned_data['maximalgeschwindigkeit']
                 if bound.lower:
-                    qs = qs.filter(speedMax__gte=form.cleaned_data['maximalgeschwindigkeit'].lower)
+                    qs = qs.filter(speed_max__gte=form.cleaned_data['maximalgeschwindigkeit'].lower)
                 if bound.upper:
-                    qs = qs.filter(speedMax__lte=form.cleaned_data['maximalgeschwindigkeit'].upper)
+                    qs = qs.filter(speed_max__lte=form.cleaned_data['maximalgeschwindigkeit'].upper)
             if(form.cleaned_data['antrieb']):
                 qs = qs.filter(antrieb__overlap=form.cleaned_data['antrieb'])
             if(form.cleaned_data['neigetechnik']):
@@ -184,7 +184,7 @@ class FahrplanDetail(MultiTableMixin, generic.DetailView):
     template_name = 'fahrplan/detail.html'
 
     def get_tables(self):
-        return (FahrplanZugTable(self.get_object().zuege.annotate(zug_max_speed=Least(F('speed_zug'),Min('fahrzeuge__speedMax')), fz_max_speed=Min('fahrzeuge__speedMax'))),
+        return (FahrplanZugTable(self.get_object().zuege.annotate(zug_max_speed=Least(F('speed_zug'),Min('fahrzeuge__speed_max')), fz_max_speed=Min('fahrzeuge__speed_max'))),
                 StreckenModuleTable(StreckenModule.objects.annotate(nachbaren_count=Count('nachbaren', distinct=True),fahrplan_count=Count('fahrplaene__path', distinct=True)).filter(fahrplaene__path=self.get_object().path)))
 
 class IndexView(generic.TemplateView):
