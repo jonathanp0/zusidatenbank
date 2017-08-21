@@ -46,11 +46,30 @@ class StreckenModuleDetail(MultiTableMixin, generic.DetailView):
                 FahrplanTable(self.get_object().fahrplaene))
 
 
-class FuehrerstandList(SingleTableView):
-    queryset = Fuehrerstand.objects.annotate(fahrzeug_count=Count('fahrzeuge', distinct=True),zug_count=Count('fahrzeuge__fahrplanzuege', distinct=True))
-
+class FuehrerstandList(Annotater, SingleTableView):
     table_class = FuehrerstandTable
     template_name = 'fuehrerstand/list.html'
+
+    def get_queryset(self):
+        qs = self.annotateFuehrerstand(Fuehrerstand.objects)
+        
+        form = FuehrerstandSearchForm(self.request.GET)
+
+        if form.is_valid():
+            if(form.cleaned_data['afb'] and form.cleaned_data['afb'] != '-1'):
+                qs = qs.filter(mit_afb=form.cleaned_data['afb'])
+            if(form.cleaned_data['zugsicherung']):
+                qs = qs.filter(zugsicherung__overlap=form.cleaned_data['zugsicherung'])
+            if(form.cleaned_data['sifa']):
+                qs = qs.filter(sifa__overlap=form.cleaned_data['sifa'])
+            if(form.cleaned_data['tuersystem']):
+                qs = qs.filter(tuer_system__overlap=form.cleaned_data['tuersystem'])
+            if(form.cleaned_data['schleuderschutz']):
+                qs = qs.filter(schleuderschutz__overlap=form.cleaned_data['schleuderschutz'])
+            if(form.cleaned_data['notbremse_system']):
+                qs = qs.filter(notbremse_system__overlap=form.cleaned_data['notbremse_system'])
+
+        return qs
 
 class FuehrerstandDetail(Annotater, MultiTableMixin, generic.DetailView):
 
@@ -86,12 +105,10 @@ class FahrplanZugList(Annotater, SingleTableView):
                 qs = qs.filter(deko=form.cleaned_data['dekozug'])
             if(form.cleaned_data['anfang']):
                 qs = qs.filter(speed_anfang__gt=form.cleaned_data['anfang'])
-            if(form.cleaned_data['maximalgeschwindigkeit']):
-                bound = form.cleaned_data['maximalgeschwindigkeit']
-                if bound.lower:
-                    qs = qs.filter(fz_max_speed__gte=form.cleaned_data['maximalgeschwindigkeit'].lower)
-                if bound.upper:
-                    qs = qs.filter(fz_max_speed__lte=form.cleaned_data['maximalgeschwindigkeit'].upper)
+            if form.cleaned_data['speed_min']:
+                qs = qs.filter(fz_max_speed__gte=form.cleaned_data['speed_min'])
+            if form.cleaned_data['speed_max']:
+                qs = qs.filter(fz_max_speed__lte=form.cleaned_data['speed_max'])
             if(form.cleaned_data['eintragort']):
                 qs = qs.filter(eintraege__ort=form.cleaned_data['eintragort'])
             if(form.cleaned_data['fahrplan']):
@@ -132,29 +149,22 @@ class FahrzeugList(Annotater, SingleTableView):
                 qs = qs.filter(farbgebung__icontains=form.cleaned_data['farbgebung'])
             if(form.cleaned_data['einsatz']):
                 qs = qs.filter(Q(einsatz_ab__gte=form.cleaned_data['einsatz']) & Q(einsatz_bis__lte=form.cleaned_data['einsatz']))
-            if(form.cleaned_data['masse']):
-                bound = form.cleaned_data['masse']
-                if bound.lower:
-                    qs = qs.filter(masse__gte=form.cleaned_data['masse'].lower)
-                if bound.upper:
-                    qs = qs.filter(masse__lte=form.cleaned_data['masse'].upper)
-            if(form.cleaned_data['laenge']):
-                bound = form.cleaned_data['laenge']
-                if bound.lower:
-                    qs = qs.filter(laenge__gte=form.cleaned_data['laenge'].lower)
-                if bound.upper:
-                    qs = qs.filter(laenge__lte=form.cleaned_data['laenge'].upper)
-            if(form.cleaned_data['maximalgeschwindigkeit']):
-                bound = form.cleaned_data['maximalgeschwindigkeit']
-                if bound.lower:
-                    qs = qs.filter(speed_max__gte=form.cleaned_data['maximalgeschwindigkeit'].lower)
-                if bound.upper:
-                    qs = qs.filter(speed_max__lte=form.cleaned_data['maximalgeschwindigkeit'].upper)
+            if form.cleaned_data['masse_min']:
+                qs = qs.filter(masse__gte=form.cleaned_data['masse_min'])
+            if form.cleaned_data['masse_max']:
+                qs = qs.filter(masse__lte=form.cleaned_data['masse_max'])
+            if form.cleaned_data['laenge_min']:
+                qs = qs.filter(laenge__gte=form.cleaned_data['laenge_min'])
+            if form.cleaned_data['laenge_max']:
+                qs = qs.filter(laenge__lte=form.cleaned_data['laenge_max'])
+            if form.cleaned_data['speed_min']:
+                qs = qs.filter(speed_max__gte=form.cleaned_data['speed_min'])
+            if form.cleaned_data['speed_max']:
+                qs = qs.filter(speed_max__lte=form.cleaned_data['speed_max'])
             if(form.cleaned_data['antrieb']):
                 qs = qs.filter(antrieb__overlap=form.cleaned_data['antrieb'])
             if(form.cleaned_data['neigetechnik']):
                 qs = qs.filter(neigetechnik=form.cleaned_data['neigetechnik'])
-
 
         return qs
 
@@ -194,7 +204,7 @@ class IndexView(generic.TemplateView):
             context = super(IndexView, self).get_context_data(**kwargs)
 
             context['zug_form'] = ZugSearchForm()
-            context['fstand_form'] = FStandSearchForm()
+            context['fstand_form'] = FuehrerstandSearchForm()
             context['fahrzeug_form'] = FahrzeugSearchForm()
 
             context['zug_count'] = FahrplanZug.objects.all().count()
