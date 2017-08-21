@@ -1,0 +1,7 @@
+Django==1.11.4
+django-bootstrap3==9.0.0
+django-flatblocks==0.9.4
+django-queryinspect==1.0.0
+django-tables2==1.10.0
+psycopg2==2.7.3
+pytz==2017.2
