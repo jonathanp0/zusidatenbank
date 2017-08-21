@@ -1,3 +1,4 @@
+#coding=utf8
 import ntpath
 
 import django_tables2 as tables
@@ -21,9 +22,9 @@ class StreckenModuleTable(tables.Table):
 class FuehrerstandTable(tables.Table):
   name = tables.LinkColumn()
   mit_afb = tables.BooleanColumn(verbose_name='AFB')
-  zugsicherung = ArrayListColumn()
-  sifa = ArrayListColumn()
-  tuer_system = ArrayListColumn(verbose_name='Türsteuerung',orderable=False)
+  zugsicherung = ArrayListColumn(choices=Fuehrerstand.ZUGSICHERUNG_CHOICES)
+  sifa = ArrayListColumn(choices=Fuehrerstand.SIFA_CHOICES)
+  tuer_system = ArrayListColumn(verbose_name='Türsteuerung',orderable=False,choices=Fuehrerstand.TUER_CHOICES)
   schleuderschutz = ArrayBooleanColumn()
   notbremse_system = ArrayBooleanColumn(verbose_name='Notbremse')
   fahrzeug_count = tables.Column(verbose_name='Fahrzeugnutzen')
@@ -70,9 +71,9 @@ class FahrzeugTable(tables.Table):
     root_file = tables.LinkColumn(verbose_name='File', text = lambda r : ntpath.basename(r.root_file))
     variant = tables.Column()
     speed_max = SpeedColumn(verbose_name='Speed Max')
-    antrieb = ArrayListColumn()
+    antrieb = ArrayListColumn(choices=FahrzeugVariante.ANTRIEB_CHOICES)
     masse = tables.TemplateColumn('{{ value }} kg')
-    laenge = tables.TemplateColumn('{{ value }} m')
+    laenge = tables.TemplateColumn('{{ value|floatformat }} m')
     zug_count = tables.Column(verbose_name='Züge*')
 
     class Meta:

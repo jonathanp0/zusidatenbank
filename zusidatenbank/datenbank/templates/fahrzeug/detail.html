@@ -28,7 +28,7 @@
               <dt>Masse</dt>
               <dd>{{object.masse}} kg</dd>
               <dt>Länge</dt>
-              <dd>{{object.laenge}} m</dd>
+              <dd>{{object.laenge|floatformat}} m</dd>
               <dt>Maximum Speed</dt>
               <dd>{{object.speed_max}} km/h</dd>
               <dt>Neigetechnik</dt>
@@ -44,9 +44,9 @@
     <div class="col-md-5">
         <div class="panel panel-info">{% include "include/autor.html" %}</div>
         <div class="panel panel-primary">
-          {% include "include/panel_list.html" with heading="Antrieb" items=object.antrieb %}
+          {% include "include/panel_list.html" with heading="Antrieb" items=object.antrieb_display %}
           {% include "include/panel_list.html" with heading="Bremse" items=object.bremse %}
-          {% include "include/panel_list.html" with heading="Tür System" items=object.tuersystem %}
+          {% include "include/panel_list.html" with heading="Tür System" items=object.tuersystem_display %}
         </div>
     </div>
 </div>

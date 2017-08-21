@@ -30,13 +30,10 @@ class ZugSearchForm(forms.Form):
     zuglauf = forms.CharField(help_text='(Teilweise vergleichen)',required=False)
     dekozug = forms.ChoiceField(choices=[(-1, ''), (0, 'Nein'), (1,'Ja')], initial=0)
     anfang = forms.ChoiceField(choices=[(0, 'Unbeweglich'), (1,'in Bewegung')],widget=forms.RadioSelect,required=False)
-    #speedmin = forms.IntegerField(widget=forms.NumberInput(attrs={'placeholder':'','addon_before':'≥','addon_after':'km/h'}),
-    #                              label='Maximalgeschwindigkeit',required=False)
-    #speedmax = forms.IntegerField(widget=forms.NumberInput(attrs={'placeholder':'','addon_before':'≤','addon_after':'km/h'}),
-    #                              label='',required=False)
-    maximalgeschwindigkeit = IntegerRangeField(help_text='? < x < ? km/h',
-                                               widget=RangeWidget(forms.NumberInput()),
-                                               required=False)
+    speed_min = forms.IntegerField(widget=forms.NumberInput(attrs={'placeholder':'','addon_before':'≥','addon_after':'km/h'}),
+                                  label='Maximalgeschwindigkeit',required=False)
+    speed_max = forms.IntegerField(widget=forms.NumberInput(attrs={'placeholder':'','addon_before':'≤','addon_after':'km/h'}),
+                                  label='',required=False)
     #fahrzeit = IntegerRangeField(help_text='? < x < ? minuten',required=False)
     eintragort = forms.ChoiceField()
     fahrplan = forms.MultipleChoiceField()
@@ -44,15 +41,14 @@ class ZugSearchForm(forms.Form):
     antrieb = forms.MultipleChoiceField(required=False, choices=FahrzeugVariante.ANTRIEB_CHOICES)
     neigezug = forms.ChoiceField(choices=[(0, 'Nein'), (1,'Ja')],widget=forms.RadioSelect,required=False)
 
-class FStandSearchForm(forms.Form):
-    TUER_CHOICES = [('TB5','TB5'),('TB0','TB0'),('SAT','SAT'),('SST','SST'),('TAV','TAV'),('UICWTB','UIC WTB')]
+class FuehrerstandSearchForm(forms.Form):
 
     afb = forms.ChoiceField(label='AFB', choices=[(-1, ''), (0, 'Nein'), (1,'Ja')])
-    zugsicherung = forms.MultipleChoiceField(required=False)
-    sifa = forms.MultipleChoiceField(required=False)
-    tuersystem = forms.MultipleChoiceField(required=False,choices=TUER_CHOICES) #TB5,TB0,SAT.SST,TAV,UICWTB
-    schleuderschutz = forms.MultipleChoiceField(required=False)
-    notbremse_system = forms.MultipleChoiceField(required=False)
+    zugsicherung = forms.MultipleChoiceField(required=False,choices=Fuehrerstand.ZUGSICHERUNG_CHOICES)
+    sifa = forms.MultipleChoiceField(required=False,choices=Fuehrerstand.SIFA_CHOICES)
+    tuersystem = forms.MultipleChoiceField(required=False,choices=Fuehrerstand.TUER_CHOICES) #TB5,TB0,SAT.SST,TAV,UICWTB
+    schleuderschutz = forms.MultipleChoiceField(required=False,choices=Fuehrerstand.SCHLEUDERSCHUTZ_CHOICES)
+    notbremse_system = forms.MultipleChoiceField(required=False,choices=Fuehrerstand.NOTBREMS_CHOICES)
 
 class FahrzeugSearchForm(forms.Form):
 
@@ -66,12 +62,17 @@ class FahrzeugSearchForm(forms.Form):
     beschreibung = forms.CharField(help_text='(Teilweise vergleichen)',required=False)
     farbgebung = forms.CharField(help_text='(Teilweise vergleichen)',required=False)
     einsatz = forms.DateField(required=False)
-    masse = IntegerRangeField(help_text='? < x < ? kg',required=False)
-    laenge = FloatRangeField(help_text='? < x < ? m',required=False)
-    maximalgeschwindigkeit = IntegerRangeField(help_text='? < x < ? km/h',required=False)
+    masse_min = forms.IntegerField(widget=forms.NumberInput(attrs={'placeholder':'','addon_before':'≥','addon_after':'kg'}),
+                                  label='Masse',required=False)
+    masse_max = forms.IntegerField(widget=forms.NumberInput(attrs={'placeholder':'','addon_before':'≤','addon_after':'kg'}),
+                                  label='',required=False)
+    laenge_min = forms.IntegerField(widget=forms.NumberInput(attrs={'placeholder':'','addon_before':'≥','addon_after':'m'}),
+                                  label='Länge',required=False)
+    laenge_max = forms.IntegerField(widget=forms.NumberInput(attrs={'placeholder':'','addon_before':'≤','addon_after':'m'}),
+                                  label='',required=False)
+    speed_min = forms.IntegerField(widget=forms.NumberInput(attrs={'placeholder':'','addon_before':'≥','addon_after':'km/h'}),
+                                  label='Maximalgeschwindigkeit',required=False)
+    speed_max = forms.IntegerField(widget=forms.NumberInput(attrs={'placeholder':'','addon_before':'≤','addon_after':'km/h'}),
+                                  label='',required=False)
     antrieb = forms.MultipleChoiceField(required=False, choices=FahrzeugVariante.ANTRIEB_CHOICES)
     neigetechnik = forms.ChoiceField(choices=[(0, 'Nein'), (1,'Ja')],widget=forms.RadioSelect, required=False)
-
-
-
-

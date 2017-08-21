@@ -1,3 +1,4 @@
+#coding=utf8
 import copy
 
 from django.db import models
@@ -5,6 +6,8 @@ from django.core.validators import *
 from django.urls import reverse
 
 from django.contrib.postgres.fields import JSONField, ArrayField
+
+from .helpers.utils import display_array
 
 #Complete(partial)
 class Autor(models.Model):
@@ -40,12 +43,68 @@ class StreckenModule(InventoryItem):
 
 #Complete(partial)
 class Fuehrerstand(InventoryItem):
+  ZUGSICHERUNG_CHOICES = (
+    ('IndusiI54','Indusi I54',), 
+    ('IndusiI60','Indusi I60'), 
+    ('IndusiI60M', 'Indusi I60M'), 
+    ('IndusiI60R_ZUB122','Indusi I60R + ZUB122'),
+    ('IndusiI60R_ZUB262', 'Indusi I60R + ZUB262'),
+    ('IndusiI60DR', 'Indusi I60DR'),
+    ('PZB80', 'PZB80'),
+    ('PZB90I60R_V15', 'PZB90/I60R - V1.5'),
+    ('PZB90I60R_V20', 'PZB90/I60R - V2.0'),
+    ('PZB90I60R_V20_ZUB122', 'PZB90/I60R - V2.0 + ZUB122'),
+    ('PZB90I60R_V20_ZUB262', 'PZB90/I60R - V2.0 + ZUB262'),
+    ('PZB90I60R_V20_SBahn', 'PZB90/I60R - V2.0 S-Bahn'),
+    ('LZB80_I80', 'LZB80/I80'),
+    ('LZB80_I80_ZUB262', 'LZB80/I80 + ZUB262'),
+    ('LZB80_PZB90_20', 'LZB80/I80 PZB90 V2.0'),
+    ('LZB80_PZB90_20_ZUB262', 'LZB80/I80 PZB90 V2.0 + ZUB262'),
+    ('PZB60', 'PZB60'),
+  )
+
+  SIFA_CHOICES = (
+    ('RZM','R.Z.M.-Sifa',),
+    ('ZeitWeg','Zeit-Weg-Sifa',),
+    ('ZeitZeit','Zeit-Zeit-Sifa',),
+    ('66','Sifa 66',),
+    ('86','Sifa 86',)
+  )
+
+  TUER_CHOICES = [('TB5','TB5'),('TB0','TB0'),('SAT','SAT'),('SST','SST'),('TAV','TAV'),('UICWTB','UIC WTB')]
+
+  SCHLEUDERSCHUTZ_CHOICES = (
+    ('Schleuderschutzbremse','Schleuderschutzbremse',),
+    ('SchleuderschutzDrosselung','Schleuderschutz (Motordrosselung)',),
+    ('SchleuderschutzElektr','Elektronischer Schleuderschutz',),
+  )
+
+  NOTBREMS_CHOICES = (
+    ('UICNBUe','UIC-NBÜ/UIC 541-5',),
+    ('NBUe2004','NBÜ 2004',)
+  )
+
   mit_afb = models.BooleanField(default=False)
   zugsicherung = ArrayField(models.CharField(max_length=20),default=list)
   sifa = ArrayField(models.CharField(max_length=30),default=list)
   tuer_system = ArrayField(models.CharField(max_length=10),default=list)
   schleuderschutz = ArrayField(models.CharField(max_length=40),default=list)
   notbremse_system = ArrayField(models.CharField(max_length=20),default=list)
+
+  def zugsicherung_display(self):
+    return display_array(self.zugsicherung, self.ZUGSICHERUNG_CHOICES)
+
+  def sifa_display(self):
+    return display_array(self.sifa, self.SIFA_CHOICES)
+
+  def tuer_system_display(self):
+    return display_array(self.tuer_system, self.TUER_CHOICES)
+
+  def schleuderschutz_display(self):
+    return display_array(self.schleuderschutz, self.SCHLEUDERSCHUTZ_CHOICES)
+
+  def notbremse_system_display(self):
+    return display_array(self.notbremse_system, self.NOTBREMS_CHOICES)
 
   def get_absolute_url(self):
     return reverse('db:fsdetail', args=[self.path])
@@ -83,6 +142,12 @@ class FahrzeugVariante(models.Model):
   neigetechnik = models.BooleanField(default=False,verbose_name='Neige')
 
   fuehrerstand = models.ForeignKey(Fuehrerstand, related_name='fahrzeuge', null=True)
+
+  def antrieb_display(self):
+    return display_array(self.antrieb, self.ANTRIEB_CHOICES)
+
+  def tuersystem_display(self):
+    return display_array(self.tuersystem, Fuehrerstand.TUER_CHOICES)
 
   def get_absolute_url(self):
     return reverse('db:fvdetail', args=[self.root_file, self.haupt_id, self.neben_id])

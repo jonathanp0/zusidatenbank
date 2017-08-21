@@ -10,11 +10,11 @@
 <div class="row">
     <div class="col-md-6">
       <div class="panel panel-primary">
-        {% include "include/panel_list.html" with heading="SIFA" items=object.sifa %}
-        {% include "include/panel_list.html" with heading="Zugsicherung(PZB/LZB)" items=object.zugsicherung %}
-        {% include "include/panel_list.html" with heading="Schleuderschutz" items=object.schleuderschutz %}
-        {% include "include/panel_list.html" with heading="Tür System" items=object.tuer_system %}
-        {% include "include/panel_list.html" with heading="Notbremse System" items=object.notbremse_system %}
+        {% include "include/panel_list.html" with heading="SIFA" items=object.sifa_display %}
+        {% include "include/panel_list.html" with heading="Zugsicherung(PZB/LZB)" items=object.zugsicherung_display %}
+        {% include "include/panel_list.html" with heading="Schleuderschutz" items=object.schleuderschutz_display %}
+        {% include "include/panel_list.html" with heading="Tür System" items=object.tuer_system_display %}
+        {% include "include/panel_list.html" with heading="Notbremse System" items=object.notbremse_system_display %}
       </div>
     </div>
     <div class="col-md-6">
