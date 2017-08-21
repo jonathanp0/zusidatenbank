@@ -34,7 +34,14 @@ class ZugSearchForm(forms.Form):
                                   label='Maximalgeschwindigkeit',required=False)
     speed_max = forms.IntegerField(widget=forms.NumberInput(attrs={'placeholder':'','addon_before':'≤','addon_after':'km/h'}),
                                   label='',required=False)
-    #fahrzeit = IntegerRangeField(help_text='? < x < ? minuten',required=False)
+    speed_min = forms.IntegerField(widget=forms.NumberInput(attrs={'placeholder':'','addon_before':'≥','addon_after':'km/h'}),
+                                  label='Maximalgeschwindigkeit',required=False)
+    speed_max = forms.IntegerField(widget=forms.NumberInput(attrs={'placeholder':'','addon_before':'≤','addon_after':'km/h'}),
+                                  label='',required=False)
+    #fahrzeit_min = forms.IntegerField(widget=forms.NumberInput(attrs={'placeholder':'','addon_before':'≥','addon_after':'minuten'}),
+    #                              label='Farhzeit',required=False)
+    #fahrzeit_max = forms.IntegerField(widget=forms.NumberInput(attrs={'placeholder':'','addon_before':'≤','addon_after':'minuten'}),
+    #                              label='',required=False)
     eintragort = forms.ChoiceField()
     fahrplan = forms.MultipleChoiceField()
     baureihe = forms.ChoiceField()
