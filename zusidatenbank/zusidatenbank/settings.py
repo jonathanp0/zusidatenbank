@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'bootstrap3',
     'django_tables2',
+    'flatblocks'
 ]
 
 MIDDLEWARE = [
