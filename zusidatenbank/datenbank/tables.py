@@ -39,18 +39,18 @@ class FuehrerstandTable(tables.Table):
 
 class FahrplanZugTable(tables.Table):
     name = tables.LinkColumn()
-    deko = tables.BooleanColumn(verbose_name='Dekozug')
+    deko = tables.BooleanColumn()
     fz_max_speed = SpeedColumn(verbose_name='Speed Max*')
-    speed_anfang = SpeedColumn()
-    gesamt_zeit = tables.Column()
+    anfang_zeit = tables.DateTimeColumn(short=True)
+    gesamt_zeit = tables.Column(verbose_name='Fahrzeit')
 
     def render_is_reisezug(self, value):
         return 'Reisezug' if value else 'Güterzug'
 
     class Meta:
         model = FahrplanZug
-        sequence = ('name', 'gattung', 'nummer', 'zug_lauf', 'is_reisezug', 'fz_max_speed', 'speed_anfang', 'deko')
-        exclude = ('fahrzeug_tree','path', 'fahrplan_gruppe', 'speed_zug')
+        sequence = ('name', 'gattung', 'nummer', 'zug_lauf', 'is_reisezug', 'fz_max_speed', 'deko')
+        exclude = ('fahrzeug_tree','path', 'fahrplan_gruppe', 'speed_zug', 'speed_anfang')
         order_by = ('name',)
         attrs = {'class': 'table table-striped table-hover'}
         row_attrs = {'class': lambda record: 'danger' if record.deko else None}
