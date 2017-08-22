@@ -30,10 +30,10 @@ class Annotater(object):
 
 class StreckenModuleList(SingleTableView):
     table_class = StreckenModuleTable
-    queryset = StreckenModule.objects.annotate(nachbaren_count=Count('nachbaren', distinct=True),fahrplan_count=Count('fahrplaene',distinct=True))
+    queryset = StreckenModule.objects.withTableStats()
     template_name = 'streckenmodule/list.html'
 
-class StreckenModuleDetail(MultiTableMixin, generic.DetailView):
+class StreckenModuleDetail(Annotater, MultiTableMixin, generic.DetailView):
 
     model = StreckenModule
     template_name = 'streckenmodule/detail.html'
@@ -43,7 +43,8 @@ class StreckenModuleDetail(MultiTableMixin, generic.DetailView):
 
     def get_tables(self):
         return (StreckenModuleTable(self.get_object().nachbaren.annotate(nachbaren_count=Count('nachbaren', distinct=True),fahrplan_count=Count('fahrplaene',distinct=True))),
-                FahrplanTable(self.get_object().fahrplaene))
+                #FahrplanTable(self.annotateFahrplan(self.get_object().fahrplaene)))
+                FahrplanTable(Fahrplan.objects.withTableStats().filter(strecken_modules__path=self.get_object().path)))
 
 
 class FuehrerstandList(Annotater, SingleTableView):
@@ -51,7 +52,7 @@ class FuehrerstandList(Annotater, SingleTableView):
     template_name = 'fuehrerstand/list.html'
 
     def get_queryset(self):
-        qs = self.annotateFuehrerstand(Fuehrerstand.objects)
+        qs = Fuehrerstand.objects.withTableStats()
         
         form = FuehrerstandSearchForm(self.request.GET)
 
@@ -90,7 +91,7 @@ class FahrplanZugList(Annotater, SingleTableView):
         if not form.is_valid():
             form = None
 
-        qs = self.annotateFahrplanZug(FahrplanZug.objects)
+        qs = FahrplanZug.objects.withTableStats()
 
         if form:
             if(form.cleaned_data['gattung']):
@@ -124,14 +125,14 @@ class FahrplanZugList(Annotater, SingleTableView):
 
 class FahrplanZugDetail(generic.DetailView):
     template_name = 'fahrplanzug/detail.html'
-    queryset = FahrplanZug.objects.annotate(zug_max_speed=Least(F('speed_zug'),Min('fahrzeuge__speed_max')), fz_max_speed=Min('fahrzeuge__speed_max'))
+    queryset = FahrplanZug.objects.withTableStats()
 
 class FahrzeugList(Annotater, SingleTableView):
     table_class = FahrzeugTable
     template_name = 'fahrzeug/list.html'
 
     def get_queryset(self):
-        qs = self.annotateFahrzeug(FahrzeugVariante.objects)
+        qs = FahrzeugVariante.objects.withTableStats()
 
         if 'root_file' in self.kwargs:
             qs = qs.filter(root_file=self.kwargs['root_file'])
@@ -181,21 +182,21 @@ class FahrzeugDetail(Annotater, MultiTableMixin, generic.DetailView):
     def get_tables(self):
         fahrzeug = self.get_plain_object()
         return (FahrplanZugTable(self.annotateFahrplanZug(fahrzeug.fahrplanzuege)),
-                FahrplanTable(Fahrplan.objects.filter(zuege__fahrzeuge__id=fahrzeug.id).distinct()))
+                FahrplanTable(Fahrplan.objects.withTableStats().filter(zuege__fahrzeuge__id=fahrzeug.id)))
 
 class FahrplanList(SingleTableView):
-    queryset = Fahrplan.objects.annotate(zug_count=Count('zuege', distinct=True),module_count=Count('strecken_modules', distinct=True))
+    queryset = Fahrplan.objects.withTableStats()
     table_class = FahrplanTable
     template_name = 'fahrplan/list.html'
 
-class FahrplanDetail(MultiTableMixin, generic.DetailView):
+class FahrplanDetail(Annotater, MultiTableMixin, generic.DetailView):
 
     model = Fahrplan
     template_name = 'fahrplan/detail.html'
 
     def get_tables(self):
-        return (FahrplanZugTable(self.get_object().zuege.annotate(zug_max_speed=Least(F('speed_zug'),Min('fahrzeuge__speed_max')), fz_max_speed=Min('fahrzeuge__speed_max'))),
-                StreckenModuleTable(StreckenModule.objects.annotate(nachbaren_count=Count('nachbaren', distinct=True),fahrplan_count=Count('fahrplaene__path', distinct=True)).filter(fahrplaene__path=self.get_object().path)))
+        return (FahrplanZugTable(self.annotateFahrplanZug(self.get_object().zuege)),
+                StreckenModuleTable(StreckenModule.objects.withTableStats().filter(fahrplaene__path=self.get_object().path)))
 
 class IndexView(generic.TemplateView):
     template_name = 'home.html'
@@ -214,10 +215,7 @@ class IndexView(generic.TemplateView):
             return context
 
 class AutorList(SingleTableView):
-    queryset = Autor.objects.annotate(module_count=Count('streckenmodule',distinct=True),
-                                      ftd_count=Count('fuehrerstand', distinct=True),
-                                      fahrplan_count=Count('fahrplan', distinct=True),
-                                      fz_count=Count('fahrzeugvariante', distinct=True))
+    queryset = Autor.objects.withTableStats()
     table_class = AutorTable
     template_name = 'autor/list.html'
 

@@ -4,16 +4,29 @@ import copy
 from django.db import models
 from django.core.validators import *
 from django.urls import reverse
+from django.db.models import Count, Min, Max, Sum, F, Q, Value, CharField, Subquery, OuterRef, Case, When
+from django.db.models.functions import Least, Greatest, Concat, Coalesce
 
 from django.contrib.postgres.fields import JSONField, ArrayField
 
 from .helpers.utils import display_array
 
 #Complete(partial)
+
+class AutorManager(models.Manager):
+
+  def withTableStats(self):
+    return self.annotate(module_count=Count('streckenmodule',distinct=True),
+                                      ftd_count=Count('fuehrerstand', distinct=True),
+                                      fahrplan_count=Count('fahrplan', distinct=True),
+                                      fz_count=Count('fahrzeugvariante', distinct=True))
+
 class Autor(models.Model):
   autor_id = models.IntegerField(primary_key=True, verbose_name='ID')
   name = models.CharField(max_length=100)
   email = models.CharField(max_length=100, null=True)
+
+  objects = AutorManager()
 
   def __str__(self):
     return str(self.autor_id) + ": " + self.name
@@ -33,13 +46,25 @@ class InventoryItem(models.Model):
   class Meta:
     abstract = True
 
+class StreckenModuleManager(models.Manager):
+
+    def withTableStats(self):
+        return self.annotate(nachbaren_count=Count('nachbaren', distinct=True),fahrplan_count=Count('fahrplaene__path', distinct=True))
+
 #Complete
 class StreckenModule(InventoryItem):
   nachbaren = models.ManyToManyField('self', symmetrical=False, related_name='+')
   standorte = ArrayField(models.CharField(max_length=200),default=list)
 
+  objects = StreckenModuleManager()
+
   def get_absolute_url(self):
     return reverse('db:smdetail', args=[self.path])
+
+class FuehrerstandManager(models.Manager):
+    
+    def withTableStats(self):
+        return self.annotate(fahrzeug_count=Count('fahrzeuge', distinct=True),zug_count=Count('fahrzeuge__fahrplanzuege', distinct=True))
 
 #Complete(partial)
 class Fuehrerstand(InventoryItem):
@@ -91,6 +116,8 @@ class Fuehrerstand(InventoryItem):
   schleuderschutz = ArrayField(models.CharField(max_length=40),default=list)
   notbremse_system = ArrayField(models.CharField(max_length=20),default=list)
 
+  objects = FuehrerstandManager()
+
   def zugsicherung_display(self):
     return display_array(self.zugsicherung, self.ZUGSICHERUNG_CHOICES)
 
@@ -108,6 +135,11 @@ class Fuehrerstand(InventoryItem):
 
   def get_absolute_url(self):
     return reverse('db:fsdetail', args=[self.path])
+
+class FahrzeugVarianteManager(models.Manager):
+    
+    def withTableStats(self):
+        return self.annotate(variant=Concat(F('haupt_id'), Value('/'), F('neben_id'),output_field=CharField()), zug_count=Count('fahrplanzuege'))
 
 #Complete(partial)
 class FahrzeugVariante(models.Model):
@@ -143,6 +175,8 @@ class FahrzeugVariante(models.Model):
 
   fuehrerstand = models.ForeignKey(Fuehrerstand, related_name='fahrzeuge', null=True)
 
+  objects = FahrzeugVarianteManager()
+
   def antrieb_display(self):
     return display_array(self.antrieb, self.ANTRIEB_CHOICES)
 
@@ -157,6 +191,12 @@ class FahrzeugVariante(models.Model):
 
   class Meta:
     ordering = ['root_file','haupt_id','neben_id']
+
+class FahrplanZugManager(models.Manager):
+    
+     def withTableStats(self):
+        return self.annotate(fz_max_speed=Least(F('speed_zug'),Min('fahrzeuge__speed_max')), 
+                         gesamt_zeit=Max(Coalesce('eintraege__an','eintraege__ab')) - Min(Coalesce('eintraege__ab','eintraege__an')))
 
 #Complete
 class FahrplanZug(InventoryItem):
@@ -173,6 +213,8 @@ class FahrplanZug(InventoryItem):
   fahrzeuge = models.ManyToManyField(FahrzeugVariante, related_name='fahrplanzuege')
 
   fahrzeug_tree = JSONField()
+
+  objects = FahrplanZugManager()
 
   def get_absolute_url(self):
     return reverse('db:fzdetail', args=[self.path])
@@ -210,10 +252,17 @@ class FahrplanZugEintrag(models.Model):
   class Meta:
     ordering = ['position']
 
+class FahrplanManager(models.Manager):
+    
+    def withTableStats(self):
+        return self.annotate(zug_count=Count('zuege', distinct=True),module_count=Count('strecken_modules', distinct=True))
+
 class Fahrplan(InventoryItem):
   strecken_modules = models.ManyToManyField(StreckenModule, related_name='fahrplaene')
   zuege = models.ManyToManyField(FahrplanZug, related_name='fahrplaene')
   anfang = models.DateTimeField()
+
+  objects = FahrplanManager()
 
   def get_absolute_url(self):
     return reverse('db:fpdetail', args=[self.path])
