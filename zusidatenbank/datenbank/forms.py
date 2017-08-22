@@ -3,7 +3,6 @@ from django.forms.widgets import NumberInput
 from django import forms
 from django.db.models import Q
 
-from django.contrib.postgres.forms.ranges import IntegerRangeField, DateRangeField, FloatRangeField, RangeWidget
 from .models import *
 
 def qs_to_opt_choice(qs):
