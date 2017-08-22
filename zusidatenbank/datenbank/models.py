@@ -194,9 +194,14 @@ class FahrzeugVariante(models.Model):
 
 class FahrplanZugManager(models.Manager):
     
-     def withTableStats(self):
+    def withTableStats(self):
         return self.annotate(fz_max_speed=Least(F('speed_zug'),Min('fahrzeuge__speed_max')), 
-                         gesamt_zeit=Max(Coalesce('eintraege__an','eintraege__ab')) - Min(Coalesce('eintraege__ab','eintraege__an')))
+                         gesamt_zeit=Max(Coalesce('eintraege__an','eintraege__ab')) - Min(Coalesce('eintraege__ab','eintraege__an')),
+                         anfang_zeit=Min(Coalesce('eintraege__an','eintraege__ab')))
+
+    def withDetailStats(self):
+        return self.annotate(zug_max_speed=Least(F('speed_zug'),Min('fahrzeuge__speed_max')),
+                             fz_max_speed=Min('fahrzeuge__speed_max'))
 
 #Complete
 class FahrplanZug(InventoryItem):

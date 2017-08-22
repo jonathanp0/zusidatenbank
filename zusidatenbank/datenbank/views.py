@@ -125,7 +125,7 @@ class FahrplanZugList(Annotater, SingleTableView):
 
 class FahrplanZugDetail(generic.DetailView):
     template_name = 'fahrplanzug/detail.html'
-    queryset = FahrplanZug.objects.withTableStats()
+    queryset = FahrplanZug.objects.withDetailStats()
 
 class FahrzeugList(Annotater, SingleTableView):
     table_class = FahrzeugTable
