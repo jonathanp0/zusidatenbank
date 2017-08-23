@@ -57,7 +57,7 @@ class FahrplanZugTable(tables.Table):
 
 class FahrplanTable(tables.Table):
     path = tables.LinkColumn()
-    anfang = tables.DateTimeColumn(format='D d/m/Y H:i')
+    anfang = tables.DateTimeColumn(format='D d.m.Y H:i')
     module_count = tables.Column(verbose_name='Modules')
     zug_count = tables.Column(verbose_name='Züge')
 

@@ -21,7 +21,7 @@ class ZugSearchForm(forms.Form):
         self.fields['baureihe'] = forms.ChoiceField(choices=qs_to_opt_choice(FahrzeugVariante.objects.values_list('br', flat=True).distinct().order_by('br')),required=False,help_text='Sucht alle Fahrzeuge in Zugreihung')
 
     def fahrplan_choices(self):
-        return ((obj,obj.replace("Timetables\\Deutschland\\", '')) for obj in Fahrplan.objects.values_list('path', flat=True).order_by('path'))
+        return ((obj,obj.replace("Timetables\\Deutschland\\", '')) for obj in Fahrplan.objects.exclude(path__contains='_Docu').values_list('path', flat=True).order_by('path'))
     
     gattung = forms.ChoiceField()
     nummer = forms.CharField(required=False)
@@ -67,7 +67,7 @@ class FahrzeugSearchForm(forms.Form):
     deko = forms.ChoiceField(choices=[(-1, ''), (0, 'Nein'), (1,'Ja')], initial=0)
     beschreibung = forms.CharField(help_text='(Teilweise vergleichen)',required=False)
     farbgebung = forms.CharField(help_text='(Teilweise vergleichen)',required=False)
-    einsatz = forms.DateField(required=False)
+    einsatz = forms.DateField(required=False,widget=forms.DateInput(attrs={'placeholder':'dd.mm.yy'}))
     masse_min = forms.IntegerField(widget=forms.NumberInput(attrs={'placeholder':'','addon_before':'≥','addon_after':'kg'}),
                                   label='Masse',required=False)
     masse_max = forms.IntegerField(widget=forms.NumberInput(attrs={'placeholder':'','addon_before':'≤','addon_after':'kg'}),

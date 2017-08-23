@@ -26,7 +26,8 @@ class Annotater(object):
 
     def annotateFahrplanZug(self, object):
         return object.annotate(fz_max_speed=Least(F('speed_zug'),Min('fahrzeuge__speed_max')), 
-                         gesamt_zeit=Max(Coalesce('eintraege__an','eintraege__ab')) - Min(Coalesce('eintraege__ab','eintraege__an')))
+                         gesamt_zeit=Max(Coalesce('eintraege__an','eintraege__ab')) - Min(Coalesce('eintraege__ab','eintraege__an')),
+                         anfang_zeit=Min(Coalesce('eintraege__an','eintraege__ab')))
 
 class StreckenModuleList(SingleTableView):
     table_class = StreckenModuleTable
@@ -149,7 +150,7 @@ class FahrzeugList(Annotater, SingleTableView):
             if(form.cleaned_data['farbgebung']):
                 qs = qs.filter(farbgebung__icontains=form.cleaned_data['farbgebung'])
             if(form.cleaned_data['einsatz']):
-                qs = qs.filter(Q(einsatz_ab__gte=form.cleaned_data['einsatz']) & Q(einsatz_bis__lte=form.cleaned_data['einsatz']))
+                qs = qs.filter(Q(einsatz_ab__lte=form.cleaned_data['einsatz']) & Q(einsatz_bis__gte=form.cleaned_data['einsatz']))
             if form.cleaned_data['masse_min']:
                 qs = qs.filter(masse__gte=form.cleaned_data['masse_min'])
             if form.cleaned_data['masse_max']:
