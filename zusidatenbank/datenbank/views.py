@@ -94,6 +94,10 @@ class FahrplanZugList(Annotater, SingleTableView):
 
         qs = FahrplanZug.objects.withTableStats()
 
+        #Fahrplan group list
+        if 'path' in self.kwargs:
+            qs = qs.filter(fahrplaene__path=self.kwargs['path']).filter(fahrplan_gruppe=self.kwargs['gruppe'])
+
         if form:
             if(form.cleaned_data['gattung']):
                 qs = qs.filter(gattung__in=form.cleaned_data['gattung'])
@@ -194,6 +198,12 @@ class FahrplanDetail(Annotater, MultiTableMixin, generic.DetailView):
 
     model = Fahrplan
     template_name = 'fahrplan/detail.html'
+
+    def get_context_data(self, **kwargs):
+            context = super(FahrplanDetail, self).get_context_data(**kwargs)
+
+            context['fahrplan_gruppen'] = FahrplanZug.objects.filter(fahrplaene=self.get_object()).values('fahrplan_gruppe').annotate(Count('fahrplan_gruppe')).order_by('fahrplan_gruppe')
+            return context
 
     def get_tables(self):
         return (FahrplanZugTable(self.annotateFahrplanZug(self.get_object().zuege)),

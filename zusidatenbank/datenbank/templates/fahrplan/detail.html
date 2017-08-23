@@ -15,6 +15,12 @@
           <dl>
           <dt>Anfang</dt><dd>{{object.anfang|date:"D d/m/Y H:i"}}</dd>
         </div>
+        <div class="panel-heading">Zug Gruppen</div>
+        <ul class="list-group">
+            {% for item in fahrplan_gruppen %}
+                <li class="list-group-item"><a href="{% url 'db:fzgruppelist' object.path item.fahrplan_gruppe %}">{{item.fahrplan_gruppe}}</a><span class="badge">{{item.fahrplan_gruppe__count}}</span></li>
+            {% endfor %}
+        </ul>
       </div>
     </div>
     <div class="col-md-6">
