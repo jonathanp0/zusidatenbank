@@ -1,6 +1,7 @@
 
 {% extends "base.html" %}
 {% load render_table from django_tables2 %}
+{% load flatblocks %}
 
 {% block head %}Autor {{object.name}}{% endblock %}
 {% block title %}Autor {{object.name}} <small>ID: {{object.autor_id}}</small>{% endblock %}
@@ -8,7 +9,7 @@
 
 {% block content %}
 
-<h3>Strecken Modules</h3>
+<h3>Strecken Module</h3>
 {% render_table tables.0 'django_tables2/bootstrap.html' %}
 
 <h3>Fahrpläne</h3>
@@ -19,5 +20,6 @@
 
 <h3>Fahrzeuge</h3>
 {% render_table tables.3 'django_tables2/bootstrap.html' %}
+{% plain_flatblock "disclaimer.fahrzeuge" evaluated=True %}
 
 {% endblock %}

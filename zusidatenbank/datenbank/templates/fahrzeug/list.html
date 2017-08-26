@@ -1,6 +1,7 @@
 {% extends "base_table.html" %}
+{% load flatblocks %}
 
 {% block title %}Fahrzeuge{% endblock %}
 {% block head %}Fahrzeuge{% endblock %}
 
-{% block footer %}*einschließlich randomisierte Fahrzeuge{% endblock %}
+{% block footer %}{% plain_flatblock "disclaimer.fahrzeuge" evaluated=True %}{% endblock %}

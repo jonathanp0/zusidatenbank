@@ -44,7 +44,7 @@
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
             <li class="{% if request.resolver_match.url_name == "index" %}active{% endif %}"></span><a href="/">Home</a></li>
-            <li class="{% if request.resolver_match.url_name|slice:":2" == "sm" %}active{% endif %}"><a href="{% url 'db:smlist' %}">Streckenmodules</a></li>
+            <li class="{% if request.resolver_match.url_name|slice:":2" == "sm" %}active{% endif %}"><a href="{% url 'db:smlist' %}">Streckenmodule</a></li>
             <li class="{% if request.resolver_match.url_name|slice:":2" == "fp" %}active{% endif %}"><a href="{% url 'db:fplist' %}">Fahrpläne</a></li>
             <li class="{% if request.resolver_match.url_name|slice:":2" == "fz" %}active{% endif %}"><a href="{% url 'db:fzlist' %}">Fahrplanzüge</a></li>
             <li class="{% if request.resolver_match.url_name|slice:":2" == "fv" %}active{% endif %}"><a href="{% url 'db:fvlist' %}">Fahrzeuge</a></li>

@@ -8,7 +8,7 @@ from .helpers.columns import *
 
 class StreckenModuleTable(tables.Table):
     name = tables.LinkColumn()
-    nachbaren_count = tables.Column(verbose_name='Nachbar Modules')
+    nachbaren_count = tables.Column(verbose_name='Nachbar Module')
     fahrplan_count = tables.Column(verbose_name='Fahrpläne')
 
     class Meta:
@@ -43,6 +43,9 @@ class FahrplanZugTable(tables.Table):
     fz_max_speed = SpeedColumn(verbose_name='Speed Max*')
     anfang_zeit = tables.DateTimeColumn(short=True)
     gesamt_zeit = tables.Column(verbose_name='Fahrzeit')
+
+    def render_gesamt_zeit(self, value):
+        return "{0:02}:{1:02}".format(value.seconds//3600, (value.seconds//60)%60)
 
     def render_is_reisezug(self, value):
         return 'Reisezug' if value else 'Güterzug'
@@ -85,7 +88,7 @@ class FahrzeugTable(tables.Table):
 
 class AutorTable(tables.Table):
     name = tables.LinkColumn()
-    module_count = tables.Column(verbose_name='Streckenmodules')
+    module_count = tables.Column(verbose_name='Streckenmodule')
     fahrplan_count = tables.Column(verbose_name='Fahrpläne')
     ftd_count = tables.Column(verbose_name='Führerstande')
     fz_count = tables.Column(verbose_name='Fahrzeug Variante')

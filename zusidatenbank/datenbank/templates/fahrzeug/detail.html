@@ -1,6 +1,7 @@
 
 {% extends "base.html" %}
 {% load render_table from django_tables2 %}
+{% load flatblocks %}
 
 {% block head %}Fahrzeug {{object.br}}{% endblock %}
 {% block title %}Fahrzeug {{object.br}} - {{object.beschreibung}} <small>{{object.farbgebung}}</small>{% endblock %}
@@ -53,6 +54,7 @@
 
 <h3>Züge mit diesem Fahrzeug</h4>
 {% render_table tables.0 'django_tables2/bootstrap.html' %}
+{% plain_flatblock "disclaimer.fahrplanzuege" evaluated=True %}
 <h3>Fahrpläne mit diesem Fahrzeug</h4>
 {% render_table tables.1 'django_tables2/bootstrap.html' %}
 

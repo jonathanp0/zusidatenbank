@@ -1,6 +1,7 @@
 {% extends "base_table.html" %}
+{% load flatblocks %}
 
 {% block title %}Fahrplanzüge{% endblock %}
 {% block head %}Fahrplanzüge{% endblock %}
 
-{% block footer %}<small>*Möglicherweise höher wegen Randomisierung</small>{% endblock %}
+{% block footer %}{% plain_flatblock "disclaimer.fahrplanzuege" evaluated=True %}{% endblock %}

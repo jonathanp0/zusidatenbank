@@ -2,8 +2,8 @@
 {% extends "base.html" %}
 {% load render_table from django_tables2 %}
 
-{% block head %}Streckemodule {{object.name}}{% endblock %}
-{% block title %}Streckenmodule {{object.name}} <small>{{object.path}}</small>{% endblock %}
+{% block head %}Streckemodul {{object.name}}{% endblock %}
+{% block title %}Streckenmodul {{object.name}} <small>{{object.path}}</small>{% endblock %}
 
 
 {% block content %}
@@ -23,9 +23,9 @@
     </div>
 </div>
 
-<h3>Nachbar Modules</h4>
+<h3>Nachbar Module</h4>
 {% render_table tables.0 'django_tables2/bootstrap.html' %}
-<h3>Fahrpläne für Module</h4>
+<h3>Fahrpläne für Modul</h4>
 {% render_table tables.1 'django_tables2/bootstrap.html' %}
 
 
