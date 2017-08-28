@@ -169,6 +169,8 @@ class FahrzeugList(Annotater, SingleTableView):
                 qs = qs.filter(speed_max__lte=form.cleaned_data['speed_max'])
             if(form.cleaned_data['antrieb']):
                 qs = qs.filter(antrieb__overlap=form.cleaned_data['antrieb'])
+            if(form.cleaned_data['bremse']):
+                qs = qs.filter(bremse__overlap=form.cleaned_data['bremse'])
             if(form.cleaned_data['neigetechnik']):
                 qs = qs.filter(neigetechnik=form.cleaned_data['neigetechnik'])
 

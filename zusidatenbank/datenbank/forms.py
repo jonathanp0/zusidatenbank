@@ -81,4 +81,5 @@ class FahrzeugSearchForm(forms.Form):
     speed_max = forms.IntegerField(widget=forms.NumberInput(attrs={'placeholder':'','addon_before':'≤','addon_after':'km/h'}),
                                   label='',required=False)
     antrieb = forms.MultipleChoiceField(required=False, choices=FahrzeugVariante.ANTRIEB_CHOICES,help_text='Mehrfachauswahl möglich')
+    bremse = forms.MultipleChoiceField(required=False, choices=FahrzeugVariante.BREMSE_CHOICES,help_text='Mehrfachauswahl möglich')
     neigetechnik = forms.ChoiceField(choices=[(0, 'Nein'), (1,'Ja')],widget=forms.RadioSelect, required=False)

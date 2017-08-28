@@ -110,7 +110,7 @@ class Fuehrerstand(InventoryItem):
   )
 
   mit_afb = models.BooleanField(default=False)
-  zugsicherung = ArrayField(models.CharField(max_length=20),default=list)
+  zugsicherung = ArrayField(models.CharField(max_length=30),default=list)
   sifa = ArrayField(models.CharField(max_length=30),default=list)
   tuer_system = ArrayField(models.CharField(max_length=10),default=list)
   schleuderschutz = ArrayField(models.CharField(max_length=40),default=list)
@@ -150,6 +150,22 @@ class FahrzeugVariante(models.Model):
     ('ElektrischReihenschluss','Elektrisch Reihenschluss')
   )
 
+  BREMSE_CHOICES = (
+    ('LuftEinlK1','Knorr K1-GP (einlösig)',),
+    ('KE_GP','KE-GP-Druckluft (mehrlösig)',),
+    ('KE_GPR_Klotz','KE-GPR-Klotz (mehrlösig)',),
+    ('KE_GPR_Scheibe','KE-GPR-Scheiben (mehrlösig)',),
+    ('Mg','Magnetisch',),
+    ('LuftDirekt','Direkte Druckluft (Zusatzbremse)',),
+    ('Federspeicher','Federspeicher',),
+    ('KE_Tm','KE-GPR-Tm-Klotz (mehrlösig)',),
+    ('KE_L2a','KE-GPR-L2a-Scheiben (mehrlösig)',),
+    ('KE_L2d','KE-GPR-L2d-Scheiben (mehrlösig)',),
+    ('DynHydrodynamisch','Hydrodynamisch',),
+    ('DynElektrDrehstrom','Elektrische Drehstrom',),
+    ('DynElektrReihenschluss','Elektrische Reihenschluss',)
+  )
+
   root_file = models.CharField(max_length=200)
   haupt_id = models.IntegerField()
   neben_id = models.IntegerField()
@@ -182,6 +198,9 @@ class FahrzeugVariante(models.Model):
 
   def tuersystem_display(self):
     return display_array(self.tuersystem, Fuehrerstand.TUER_CHOICES)
+
+  def bremse_display(self):
+    return display_array(self.bremse, self.BREMSE_CHOICES)
 
   def get_absolute_url(self):
     return reverse('db:fvdetail', args=[self.root_file, self.haupt_id, self.neben_id])
