@@ -1,9 +1,11 @@
 {% load bootstrap3 %}
 {% load static %}
+{% load analytical %}
 {% load render_table from django_tables2 %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    {% analytical_head_top %}
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -21,13 +23,10 @@
 
     <link href="{% static 'template.css' %}" rel="stylesheet">
 
-    <script>
-      $(function () {
-        $('[data-toggle="tooltip"]').tooltip()
-      })
-    </script>
+    {% analytical_head_bottom %}
   </head>
   <body>
+    {% analytical_body_top %}
     {% bootstrap_messages %}
 
     <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -66,6 +65,6 @@
       </div>
 
     </div><!-- /.container -->
-
+    {% analytical_body_bottom %}
   </body>
 </html>

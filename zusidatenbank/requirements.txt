@@ -1,4 +1,5 @@
 Django==1.11.4
+django-analytical==2.2.2
 django-bootstrap3==9.0.0
 django-flatblocks==0.9.4
 django-queryinspect==1.0.0
