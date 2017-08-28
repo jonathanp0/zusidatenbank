@@ -14,6 +14,7 @@
         <p>
             Es gibt <b>{{zug_count}}</b> Züge, <b>{{fahrzeug_count}}</b> Fahrzeugvarianten, <b>{{module_count}}</b> Streckenmodule und <b>{{fstand_count}}</b> Führerstande in unser Datenbank!
         </p>
+        {% plain_flatblock "home.wilkommen" evaluated=True %}
         <h3>Aktuell</h3>
         {% plain_flatblock "home.aktuell" evaluated=True %}
         <h3>Datenstand</h3>
