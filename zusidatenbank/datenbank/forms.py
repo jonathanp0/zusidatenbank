@@ -14,10 +14,10 @@ class ZugSearchForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(ZugSearchForm, self).__init__(*args, **kwargs)
             
-        self.fields['gattung'] = forms.MultipleChoiceField(required=False,choices=((obj,obj) for obj in FahrplanZug.objects.values_list('gattung', flat=True).distinct().order_by('gattung')))
+        self.fields['gattung'] = forms.MultipleChoiceField(help_text='Mehrfachauswahl möglich',required=False,choices=((obj,obj) for obj in FahrplanZug.objects.values_list('gattung', flat=True).distinct().order_by('gattung')))
         self.fields['eintragort'] = forms.ChoiceField(help_text='Sucht alle Orte im Zugfahrplan',choices=qs_to_opt_choice(FahrplanZugEintrag.objects.exclude(Q(ort__startswith='Sbk'))
                                                                 .values_list('ort', flat=True).distinct().order_by('ort')), required=False)
-        self.fields['fahrplan'] = forms.MultipleChoiceField(choices=self.fahrplan_choices(), required=False)
+        self.fields['fahrplan'] = forms.MultipleChoiceField(choices=self.fahrplan_choices(), required=False,help_text='Mehrfachauswahl möglich')
         self.fields['baureihe'] = forms.ChoiceField(choices=qs_to_opt_choice(FahrzeugVariante.objects.values_list('br', flat=True).distinct().order_by('br')),required=False,help_text='Sucht alle Fahrzeuge in Zugreihung')
 
     def fahrplan_choices(self):
@@ -44,17 +44,17 @@ class ZugSearchForm(forms.Form):
     #fahrzeit_max = forms.IntegerField(widget=forms.NumberInput(attrs={'placeholder':'','addon_before':'≤','addon_after':'minuten'}),
     #                              label='',required=False)
     baureihe = forms.ChoiceField()
-    antrieb = forms.MultipleChoiceField(required=False, choices=FahrzeugVariante.ANTRIEB_CHOICES)
+    antrieb = forms.MultipleChoiceField(required=False, choices=FahrzeugVariante.ANTRIEB_CHOICES,help_text='Mehrfachauswahl möglich')
     neigezug = forms.ChoiceField(choices=[(0, 'Nein'), (1,'Ja')],widget=forms.RadioSelect,required=False)
 
 class FuehrerstandSearchForm(forms.Form):
 
     afb = forms.ChoiceField(label='AFB', choices=[(-1, ''), (0, 'Nein'), (1,'Ja')])
-    zugsicherung = forms.MultipleChoiceField(required=False,choices=Fuehrerstand.ZUGSICHERUNG_CHOICES)
-    sifa = forms.MultipleChoiceField(required=False,choices=Fuehrerstand.SIFA_CHOICES)
-    tuersystem = forms.MultipleChoiceField(required=False,choices=Fuehrerstand.TUER_CHOICES) #TB5,TB0,SAT.SST,TAV,UICWTB
-    schleuderschutz = forms.MultipleChoiceField(required=False,choices=Fuehrerstand.SCHLEUDERSCHUTZ_CHOICES)
-    notbremse_system = forms.MultipleChoiceField(required=False,choices=Fuehrerstand.NOTBREMS_CHOICES)
+    zugsicherung = forms.MultipleChoiceField(required=False,choices=Fuehrerstand.ZUGSICHERUNG_CHOICES,help_text='Mehrfachauswahl möglich')
+    sifa = forms.MultipleChoiceField(required=False,choices=Fuehrerstand.SIFA_CHOICES,help_text='Mehrfachauswahl möglich')
+    tuersystem = forms.MultipleChoiceField(required=False,choices=Fuehrerstand.TUER_CHOICES,help_text='Mehrfachauswahl möglich') #TB5,TB0,SAT.SST,TAV,UICWTB
+    schleuderschutz = forms.MultipleChoiceField(required=False,choices=Fuehrerstand.SCHLEUDERSCHUTZ_CHOICES,help_text='Mehrfachauswahl möglich')
+    notbremse_system = forms.MultipleChoiceField(required=False,choices=Fuehrerstand.NOTBREMS_CHOICES,help_text='Mehrfachauswahl möglich')
 
 class FahrzeugSearchForm(forms.Form):
 
@@ -80,5 +80,5 @@ class FahrzeugSearchForm(forms.Form):
                                   label='Maximalgeschwindigkeit',required=False)
     speed_max = forms.IntegerField(widget=forms.NumberInput(attrs={'placeholder':'','addon_before':'≤','addon_after':'km/h'}),
                                   label='',required=False)
-    antrieb = forms.MultipleChoiceField(required=False, choices=FahrzeugVariante.ANTRIEB_CHOICES)
+    antrieb = forms.MultipleChoiceField(required=False, choices=FahrzeugVariante.ANTRIEB_CHOICES,help_text='Mehrfachauswahl möglich')
     neigetechnik = forms.ChoiceField(choices=[(0, 'Nein'), (1,'Ja')],widget=forms.RadioSelect, required=False)

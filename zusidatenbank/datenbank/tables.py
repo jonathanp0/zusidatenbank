@@ -59,7 +59,7 @@ class FahrplanZugTable(tables.Table):
         row_attrs = {'class': lambda record: 'danger' if record.deko else None}
 
 class FahrplanTable(tables.Table):
-    path = tables.LinkColumn()
+    path = tables.LinkColumn(text=lambda r: r.path.replace('Timetables\\','').replace('Deutschland\\',''))
     anfang = tables.DateTimeColumn(format='D d.m.Y H:i')
     module_count = tables.Column(verbose_name='Modules')
     zug_count = tables.Column(verbose_name='Züge')
