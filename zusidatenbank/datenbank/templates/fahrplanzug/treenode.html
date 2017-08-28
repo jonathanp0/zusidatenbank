@@ -20,6 +20,6 @@
         {% if item.multi_traktion %}<span style="color:blue">▲</span>{% endif %}
         {% if item.kein_traktion %}<span style="color:red">✖</span>{% endif %}
         <a href="{{ item.data.get_absolute_url }}">{{ item.data.br }}</a>
-        ({{ item.data.beschreibung|truncatechars:30 }}/{{ item.data.farbgebung|truncatechars:25 }}) {{ item.data.masse_tonne }} t/{{ item.data.laenge }} m
+        ({{ item.data.beschreibung|truncatechars:30 }}/{{ item.data.farbgebung|truncatechars:25 }}) {{ item.data.masse_tonne|floatformat }} t/{{ item.data.laenge|floatformat }} m
     </li>
 {% endif %}
