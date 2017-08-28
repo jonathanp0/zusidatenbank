@@ -281,6 +281,9 @@ class FahrplanManager(models.Manager):
     def withTableStats(self):
         return self.annotate(zug_count=Count('zuege', distinct=True),module_count=Count('strecken_modules', distinct=True))
 
+    def withTableStatsLight(self):
+        return self.annotate(module_count=Count('strecken_modules', distinct=True))
+
 class Fahrplan(InventoryItem):
   strecken_modules = models.ManyToManyField(StreckenModule, related_name='fahrplaene')
   zuege = models.ManyToManyField(FahrplanZug, related_name='fahrplaene')

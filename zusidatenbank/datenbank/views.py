@@ -189,7 +189,7 @@ class FahrzeugDetail(Annotater, MultiTableMixin, generic.DetailView):
     def get_tables(self):
         fahrzeug = self.get_plain_object()
         return (FahrplanZugTable(self.annotateFahrplanZug(fahrzeug.fahrplanzuege)),
-                FahrplanTable(Fahrplan.objects.withTableStats().filter(zuege__fahrzeuge__id=fahrzeug.id)))
+                FahrplanTable(Fahrplan.objects.withTableStatsLight().filter(zuege__fahrzeuge__id=fahrzeug.id)))
 
 class FahrplanList(SingleTableView):
     queryset = Fahrplan.objects.withTableStats()
