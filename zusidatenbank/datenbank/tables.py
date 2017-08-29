@@ -26,7 +26,7 @@ class FuehrerstandTable(tables.Table):
   sifa = ArrayListColumn(choices=Fuehrerstand.SIFA_CHOICES)
   tuer_system = ArrayListColumn(verbose_name='Türsteuerung',orderable=False,choices=Fuehrerstand.TUER_CHOICES)
   schleuderschutz = ArrayBooleanColumn()
-  notbremse_system = ArrayBooleanColumn(verbose_name='Notbremse')
+  #notbremse_system = ArrayBooleanColumn(verbose_name='Notbremse')
   fahrzeug_count = tables.Column(verbose_name='Fahrzeugnutzen')
   zug_count = tables.Column(verbose_name='Fahrplanzüge')
 
