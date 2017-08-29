@@ -32,7 +32,7 @@ class FuehrerstandTable(tables.Table):
 
   class Meta:
         model = Fuehrerstand
-        exclude = ('path',)
+        exclude = ('path','notbremse_system')
         order_by = ('name',)
         attrs = {'class': 'table table-striped table-hover'}
         row_attrs = {'class': lambda record: 'danger' if not record.fahrzeug_count else 'warning' if not record.zug_count else None}
