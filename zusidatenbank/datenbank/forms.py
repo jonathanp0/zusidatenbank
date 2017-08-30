@@ -61,7 +61,7 @@ class FahrzeugSearchForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(FahrzeugSearchForm, self).__init__(*args, **kwargs)
             
-        self.fields['baureihe'] = forms.ChoiceField(choices=qs_to_opt_choice(FahrzeugVariante.objects.values_list('br', flat=True).distinct().order_by('br')),required=False,help_text='Sucht alle Fahrzeuge in Zugreihung')
+        self.fields['baureihe'] = forms.ChoiceField(choices=qs_to_opt_choice(FahrzeugVariante.objects.values_list('br', flat=True).distinct().order_by('br')),required=False)
 
     baureihe = forms.ChoiceField()
     deko = forms.ChoiceField(choices=[(-1, ''), (0, 'Nein'), (1,'Ja')], initial=0)
