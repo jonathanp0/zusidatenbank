@@ -9,6 +9,14 @@ from datetime import datetime
 
 class ZusiParser(object):
 
+    #Interface methods
+    def parse(self, file, path, module_id, info):
+        raise NotImplementedError
+
+    def finalise(self):
+        pass
+
+    #Entry method
     def parseFile(self, full_path, rel_path):
         self.logger = logging.getLogger('parse.'+rel_path)
 
@@ -32,6 +40,7 @@ class ZusiParser(object):
 
         self.parse(xml, full_path, rel_path, info) 
 
+    #XML Utils
     def getAutor(self, doc):
         autor_tags = doc.findall("Info/AutorEintrag[@AutorID][@AutorName]")
         return [self.findAutor(el) for el in autor_tags]
@@ -47,11 +56,6 @@ class ZusiParser(object):
         else:
             return float(value)
 
-    def toSpeed(self, msSpeed, base=5):
-        if msSpeed == None:
-            return None
-        return int(base * round((msSpeed * 3.6)/base))
-
     def getAttributeValues(self, doc, xpath, attribname):
         return [el.get(attribname) for el in doc.findall(xpath)]
 
@@ -66,11 +70,11 @@ class ZusiParser(object):
     def hasChild(self, tag, childName):
         return tag.find(childName) != None
 
-    def parse(self, file, path, module_id, info):
-        raise NotImplementedError
-
-    def finalise(self):
-        pass
+    #Other utils
+    def toSpeed(self, msSpeed, base=5):
+        if msSpeed == None:
+            return None
+        return int(base * round((msSpeed * 3.6)/base))
 
 class FtdParser(ZusiParser):
 
