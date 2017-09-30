@@ -49,5 +49,6 @@ class Command(BaseCommand):
         Autor.objects.all().delete()
         StreckenModule.objects.all().delete()
         Fahrplan.objects.all().delete()
+        FahrplanZugEintrag.objects.all().delete()
         FahrzeugVariante.objects.all().delete()
         

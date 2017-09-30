@@ -178,6 +178,7 @@ class FahrzeugVariante(models.Model):
   farbgebung = models.CharField(max_length=200, null=True)
   einsatz_ab = models.DateTimeField(null=True)
   einsatz_bis = models.DateTimeField(null=True)
+  ls3_datei = models.CharField(max_length=200)
 
   #Grunddaten
   masse = models.IntegerField(null=True)
@@ -241,6 +242,8 @@ class FahrplanZug(InventoryItem):
   fahrzeuge = models.ManyToManyField(FahrzeugVariante, related_name='fahrplanzuege')
 
   fahrzeug_tree = JSONField()
+
+  bild = models.ImageField(null=True,max_length=200,upload_to='trn/')
 
   objects = FahrplanZugManager()
 

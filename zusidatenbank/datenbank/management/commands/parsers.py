@@ -173,6 +173,7 @@ class FpnParser(ZusiParser):
 class TrnParser(ZusiParser):
 
     def parse(self, fpn, path, zug_id, info):
+        root_path = path.replace(zug_id, '')
         zug_tag = fpn.find('Zug')
         
         zug = FahrplanZug(path=zug_id, name=info['name'])
@@ -216,6 +217,9 @@ class TrnParser(ZusiParser):
             except FahrzeugVariante.DoesNotExist:
                 self.logger.error("Could not find FV" + path + "/" + fahrzeug.get('IDHaupt') + ":" + fahrzeug.get('IDNeben'))
 
+        zug.bild = self.renderImage(zug, root_path)
+        zug.save()
+
     def processVariantenWithPosition(self, varianten):
         if varianten.get('FzgPosition') == None:
             position = 0
@@ -253,6 +257,36 @@ class TrnParser(ZusiParser):
             details['zugart'] = zug.get('Zugart')
 
         return details
+
+    def renderImage(self, zug, root_path):
+        fahrzeuge = zug.fahrzeug_tree_with_data()
+        renderer = self.getRenderer(20)
+        self.renderLength = 0
+
+        self.procItem(fahrzeuge, renderer, root_path)
+        
+        imgpath = os.path.join('trn', zug.path.replace('\\','') + ".png")
+        try:
+            if not os.path.exists(zug.bild.storage.path(imgpath)):
+                renderer.renderImage().save(zug.bild.storage.path(imgpath))
+            return imgpath
+        except Exception as e:
+            logging.warn("Error rendering ls3")
+        
+        return None
+
+    def procItem(self, item, renderer, root_path):
+        if item['type'] == 'fahrzeug':
+            sa = not item['kein_traktion']
+            ls3datei = os.path.join(root_path, item['data'].ls3_datei)
+            renderer.addFahrzeug(ls3datei, self.renderLength, item['data'].laenge, item['gedreht'], float(item['data'].stromabnehmer_hoehe or 0), (sa, sa, sa, sa)) 
+            self.renderLength += item['data'].laenge
+        elif item['type'] == 'gruppe':
+            if item['zufall']:
+                self.procItem(item['items'][0], renderer, root_path)
+            else:
+                for iitem in item['items']:
+                    self.procItem(iitem, renderer, root_path)
 
 class FzgParser(ZusiParser):
 
@@ -316,11 +350,13 @@ class FzgParser(ZusiParser):
                                     einsatz_ab=self.getDateTime(var_el, 'EinsatzAb'), einsatz_bis=self.getDateTime(var_el, 'EinsatzBis'),
                                     **fzg_data)
         variante.dekozug = var_el.get('Dekozug') == '1'
-
-        #Generate the image
         ls3tag = var_el.find('DateiAussenansicht[@Dateiname]')
         if ls3tag != None:
-            ls3datei = os.path.join(root_path, ls3tag.get('Dateiname'))
+            variante.ls3_datei = ls3tag.get('Dateiname')
+
+        #Generate the image
+        if variante.ls3_datei != None:
+            ls3datei = os.path.join(root_path, variante.ls3_datei)
             renderer = self.getRenderer(20)
             renderer.addFahrzeug(ls3datei, 0, float(fzg_data['laenge']), False, float(fzg_data.get('stromabnehmer_hoehe',0)), (True, True, True, True))
             imgname = rel_path.replace('\\','') + var_el.get('IDHaupt') + var_el.get('IDNeben') + ".png"

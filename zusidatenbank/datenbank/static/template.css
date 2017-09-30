@@ -50,3 +50,8 @@ ul.tree li:before {
 ul.tree li:last-child:before {
   border-left:1px solid rgb(100,100,100);   
 }
+
+div.trn {
+  overflow: auto;
+  margin-bottom: 10px
+}

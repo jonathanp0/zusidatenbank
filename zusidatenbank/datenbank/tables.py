@@ -53,7 +53,7 @@ class FahrplanZugTable(tables.Table):
     class Meta:
         model = FahrplanZug
         sequence = ('name', 'gattung', 'nummer', 'zug_lauf', 'is_reisezug', 'fz_max_speed', 'deko')
-        exclude = ('fahrzeug_tree','path', 'fahrplan_gruppe', 'speed_zug', 'speed_anfang')
+        exclude = ('fahrzeug_tree','path', 'fahrplan_gruppe', 'speed_zug', 'speed_anfang', 'bild')
         order_by = ('name',)
         attrs = {'class': 'table table-striped table-hover'}
         row_attrs = {'class': lambda record: 'danger' if record.deko else None}
