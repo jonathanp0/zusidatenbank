@@ -81,7 +81,7 @@ class FahrzeugTable(tables.Table):
 
     class Meta:
         model = FahrzeugVariante
-        exclude = ('id', 'einsatz_ab', 'einsatz_bis', 'bremse', 'tuersystem', 'fuehrerstand', 'neben_id', 'haupt_id', 'masse','laenge', 'stromabnehmer_hoehe')
+        exclude = ('id', 'einsatz_ab', 'einsatz_bis', 'bremse', 'tuersystem', 'fuehrerstand', 'neben_id', 'haupt_id', 'masse','laenge', 'stromabnehmer_hoehe', 'ls3_datei', 'bild_klein')
         sequence = ('root_file', 'variant', 'br', 'beschreibung','farbgebung','speed_max','antrieb','neigetechnik','dekozug', 'zug_count')
         attrs = {'class': 'table table-striped table-hover'}
         row_attrs = {'class': lambda record: 'danger' if not record.zug_count else 'warning' if record.dekozug else 'active' if len(record.antrieb) else None}
