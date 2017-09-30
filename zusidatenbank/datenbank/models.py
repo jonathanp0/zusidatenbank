@@ -188,6 +188,10 @@ class FahrzeugVariante(models.Model):
   tuersystem = ArrayField(models.CharField(max_length=6),null=True) #TB5,TB0,SAT.SST,TAV,UICWTB
   antrieb = ArrayField(models.CharField(max_length=50),null=True)
   neigetechnik = models.BooleanField(default=False,verbose_name='Neige')
+  stromabnehmer_hoehe = models.FloatField(null=True)
+
+  #Bilder
+  bild_klein = models.ImageField(null=True,max_length=200,upload_to='fzg/')
 
   fuehrerstand = models.ForeignKey(Fuehrerstand, related_name='fahrzeuge', null=True)
 

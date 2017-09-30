@@ -6,6 +6,10 @@ import sys
 import logging
 import copy
 from datetime import datetime
+from django.conf import settings
+from django.core.files.storage import default_storage
+
+from .render import LS3RenderLib
 
 class ZusiParser(object):
 
@@ -75,6 +79,18 @@ class ZusiParser(object):
         if msSpeed == None:
             return None
         return int(base * round((msSpeed * 3.6)/base))
+
+    lib = None
+
+    def getRenderer(self, ppm):
+        if ZusiParser.lib == None:
+            ZusiParser.lib = LS3RenderLib(settings.LS3_DLL_PATH)
+            ZusiParser.lib.setMultisampling(settings.LS3_MULTISAMPLING)
+    
+        ZusiParser.lib.setPixelProMeter(ppm)
+        ZusiParser.lib.reset()
+
+        return ZusiParser.lib
 
 class FtdParser(ZusiParser):
 
@@ -260,6 +276,9 @@ class FzgParser(ZusiParser):
             fzg_data['speed_max'] = self.toSpeed(self.getAsFloat(grund_el, 'spMax'))
             neigeWinkel = grund_el.get('Neigewinkel')
             fzg_data['neigetechnik'] = (neigeWinkel != None and float(neigeWinkel) != 0.0)
+            stromHoehe = grund_el.get('StromabnHoehe')
+            if stromHoehe != None:
+                fzg_data['stromabnehmer_hoehe'] = stromHoehe
 
         #Process additional features
         for el in fzg.findall('Fahrzeug/*'):
@@ -297,6 +316,20 @@ class FzgParser(ZusiParser):
                                     einsatz_ab=self.getDateTime(var_el, 'EinsatzAb'), einsatz_bis=self.getDateTime(var_el, 'EinsatzBis'),
                                     **fzg_data)
         variante.dekozug = var_el.get('Dekozug') == '1'
+
+        #Generate the image
+        ls3tag = var_el.find('DateiAussenansicht[@Dateiname]')
+        if ls3tag != None:
+            ls3datei = os.path.join(root_path, ls3tag.get('Dateiname'))
+            renderer = self.getRenderer(20)
+            renderer.addFahrzeug(ls3datei, 0, float(fzg_data['laenge']), False, float(fzg_data.get('stromabnehmer_hoehe',0)), (True, True, True, True))
+            imgname = rel_path.replace('\\','') + var_el.get('IDHaupt') + var_el.get('IDNeben') + ".png"
+            imgpath = os.path.join('fzg', imgname)
+            try:
+                renderer.renderImage().save(variante.bild_klein.storage.path(imgpath))
+                variante.bild_klein = imgpath
+            except Exception:
+                logging.warn("Error rendering ls3")
 
         #Link the FTD
         fuehrerstand_el = var_el.find('DateiFuehrerstand[@Dateiname]')

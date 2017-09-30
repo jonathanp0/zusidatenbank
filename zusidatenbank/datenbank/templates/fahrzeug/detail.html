@@ -13,6 +13,7 @@
       <div class="panel panel-primary">
           <div class="panel-heading"><h3 class="panel-title">Grunddaten</h3></div>
           <div class="panel-body">
+            <img class="thumbnail" src="{{object.bild_klein.url}}" />
             <dl class="">
               <dt>Root File</dt>
               <dd><a href="{% url 'db:fvvariantlist' object.root_file %}">{{object.root_file}}</a></dd>
