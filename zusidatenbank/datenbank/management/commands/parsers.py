@@ -9,7 +9,7 @@ from datetime import datetime
 from django.conf import settings
 from django.core.files.storage import default_storage
 
-from .render import LS3RenderLib
+from .ls3renderlib import LS3RenderLib
 
 class ZusiParser(object):
 
