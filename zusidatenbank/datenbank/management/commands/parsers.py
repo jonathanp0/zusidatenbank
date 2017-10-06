@@ -217,7 +217,10 @@ class TrnParser(ZusiParser):
             except FahrzeugVariante.DoesNotExist:
                 self.logger.error("Could not find FV" + path + "/" + fahrzeug.get('IDHaupt') + ":" + fahrzeug.get('IDNeben'))
 
-        zug.bild = self.renderImage(zug, root_path)
+        imgpath = os.path.join('trn', zug.path.replace('\\','') + ".png")
+        zugrenderer = self.ZugRenderer(root_path, self.getRenderer(20))
+        zug.bild = zugrenderer.renderImage(zug, imgpath)
+
         zug.save()
 
     def processVariantenWithPosition(self, varianten):
@@ -253,40 +256,54 @@ class TrnParser(ZusiParser):
         details['gedreht'] = zug.get('Gedreht') != None
         details['multi_traktion'] =  zug.get('DotraModus') == '1'
         details['kein_traktion'] = zug.get('DotraModus') == '2'
+        if zug.get('SASchaltung') != None:
+            details['stromabnehmer'] = int(zug.get('SASchaltung'))
         if zug.get('Zugart') != None:
             details['zugart'] = zug.get('Zugart')
 
         return details
 
-    def renderImage(self, zug, root_path):
-        fahrzeuge = zug.fahrzeug_tree_with_data()
-        renderer = self.getRenderer(20)
-        self.renderLength = 0
+    class ZugRenderer:
 
-        self.procItem(fahrzeuge, renderer, root_path)
-        
-        imgpath = os.path.join('trn', zug.path.replace('\\','') + ".png")
-        try:
-            if not os.path.exists(zug.bild.storage.path(imgpath)):
-                renderer.renderImage().save(zug.bild.storage.path(imgpath))
-            return imgpath
-        except Exception as e:
-            logging.warn("Error rendering ls3")
-        
-        return None
+        def __init__(self, root_path, renderer):
+            self.root_path = root_path
+            self.renderer = renderer
+            self.renderLength = 0
 
-    def procItem(self, item, renderer, root_path):
-        if item['type'] == 'fahrzeug':
-            sa = not item['kein_traktion']
-            ls3datei = os.path.join(root_path, item['data'].ls3_datei)
-            renderer.addFahrzeug(ls3datei, self.renderLength, item['data'].laenge, item['gedreht'], float(item['data'].stromabnehmer_hoehe or 0), (sa, sa, sa, sa)) 
-            self.renderLength += item['data'].laenge
-        elif item['type'] == 'gruppe':
-            if item['zufall']:
-                self.procItem(item['items'][0], renderer, root_path)
+        def renderImage(self, zug, imgpath):
+            self.renderLength = 0
+            self.processItem(zug.fahrzeug_tree_with_data())
+
+            try:
+                if not os.path.exists(zug.bild.storage.path(imgpath)):
+                    self.renderer.renderImage().save(zug.bild.storage.path(imgpath))
+                return imgpath
+            except Exception as e:
+                logging.warn("Error rendering ls3")
+            
+            return None
+
+        def processItem(self, item):
+            if item['type'] == 'fahrzeug':
+                ls3datei = os.path.join(self.root_path, item['data'].ls3_datei)
+                saCode = item.get('stromabnehmer', 0)
+                sa = self.decodeStromabnehmer(saCode, item['gedreht'])
+                self.renderer.addFahrzeug(ls3datei, self.renderLength, item['data'].laenge, item['gedreht'], float(item['data'].stromabnehmer_hoehe or 0), sa) 
+                self.renderLength += item['data'].laenge
+            elif item['type'] == 'gruppe':
+                if item['zufall']:
+                    #Random choice, process only first choice
+                    self.processItem(item['items'][0])
+                else:
+                    #Process everything
+                    for iitem in item['items']:
+                        self.processItem(iitem)
+
+        def decodeStromabnehmer(self, sa, gedreht):
+            if gedreht:
+                return (sa >> 1 & 1, sa & 1, sa >> 3 & 1, sa >> 2 & 1 )
             else:
-                for iitem in item['items']:
-                    self.procItem(iitem, renderer, root_path)
+                return (sa & 1, sa >> 1 & 1, sa >> 2 & 1, sa >> 3 & 1 )
 
 class FzgParser(ZusiParser):
 
