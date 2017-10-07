@@ -46,6 +46,7 @@ class ZugSearchForm(forms.Form):
     baureihe = forms.ChoiceField()
     antrieb = forms.MultipleChoiceField(required=False, choices=FahrzeugVariante.ANTRIEB_CHOICES,help_text='Mehrfachauswahl möglich')
     neigezug = forms.ChoiceField(choices=[(0, 'Nein'), (1,'Ja')],widget=forms.RadioSelect,required=False)
+    search = forms.CharField(widget=forms.HiddenInput(),required=False)
 
 class FuehrerstandSearchForm(forms.Form):
 

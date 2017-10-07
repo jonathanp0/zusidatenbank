@@ -8,6 +8,7 @@ import copy
 from datetime import datetime
 from django.conf import settings
 from django.core.files.storage import default_storage
+from pytz import timezone
 
 from .ls3renderlib import LS3RenderLib
 
@@ -69,7 +70,7 @@ class ZusiParser(object):
             return None
         if len(dtstr) <= 10:
             dtstr += ' 00:00:00'
-        return datetime.strptime(dtstr,'%Y-%m-%d %H:%M:%S')
+        return datetime.strptime(dtstr,'%Y-%m-%d %H:%M:%S').replace(tzinfo=timezone('UTC'))
 
     def hasChild(self, tag, childName):
         return tag.find(childName) != None

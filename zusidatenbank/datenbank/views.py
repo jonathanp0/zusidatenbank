@@ -1,12 +1,15 @@
 from django.views import generic
 from django.db.models import Count, Min, Max, Sum, F, Q, Value, CharField, Subquery, OuterRef, Case, When
 from django.db.models.functions import Least, Greatest, Concat, Coalesce
+from django.conf import settings
 
 from .models import *
 from .tables import *
 from .forms import *
 
 from django_tables2 import SingleTableView, MultiTableMixin
+from pytz import timezone
+import datetime
 
 # Create your views here.
 
@@ -126,6 +129,12 @@ class FahrplanZugList(Annotater, SingleTableView):
             if(form.cleaned_data['neigezug']):
                 qs = qs.filter(fahrzeuge__neigetechnik=form.cleaned_data['neigezug'])
 
+            if(form.cleaned_data['search']=='time'):
+                print(form.cleaned_data['search'])
+                now = datetime.datetime.now(timezone(settings.TIME_ZONE))
+                now_plus_one = now + datetime.timedelta(hours=1)
+                qs = qs.filter(Q(anfang_zeit__time__gte=now) & Q(anfang_zeit__time__lt=now_plus_one))
+
         return qs
 
 class FahrplanZugDetail(generic.DetailView):
@@ -217,7 +226,10 @@ class IndexView(generic.TemplateView):
     def get_context_data(self, **kwargs):
             context = super(IndexView, self).get_context_data(**kwargs)
 
-            context['zug_form'] = ZugSearchForm()
+            zugsearchform = ZugSearchForm()
+            #Hack so we can use extra buttons for this field
+            del zugsearchform.fields['search']
+            context['zug_form'] = zugsearchform
             context['fstand_form'] = FuehrerstandSearchForm()
             context['fahrzeug_form'] = FahrzeugSearchForm()
 
