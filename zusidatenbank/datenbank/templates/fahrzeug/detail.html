@@ -37,6 +37,8 @@
               <dd>{{object.speed_max}} km/h</dd>
               <dt>Neigetechnik</dt>
               <dd>{% if object.neigetechnik %}Ja{% else %}Nein{% endif %}</dd>
+              <dt>Dekozug</dt>
+              <dd>{% if object.dekozug %}Ja{% else %}Nein{% endif %}</dd>
               {% if object.fuehrerstand %}
                 <dt>Führerstand</dt>
                 <dd><a href="{% url 'db:fsdetail' object.fuehrerstand.path %}">{{object.fuehrerstand.name}}</a></dd>
