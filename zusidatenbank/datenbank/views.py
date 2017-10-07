@@ -130,7 +130,6 @@ class FahrplanZugList(Annotater, SingleTableView):
                 qs = qs.filter(fahrzeuge__neigetechnik=form.cleaned_data['neigezug'])
 
             if(form.cleaned_data['search']=='time'):
-                print(form.cleaned_data['search'])
                 now = datetime.datetime.now(timezone(settings.TIME_ZONE))
                 now_plus_one = now + datetime.timedelta(hours=1)
                 qs = qs.filter(Q(anfang_zeit__time__gte=now) & Q(anfang_zeit__time__lt=now_plus_one))
