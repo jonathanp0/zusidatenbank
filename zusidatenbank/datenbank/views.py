@@ -118,7 +118,7 @@ class FahrplanZugList(Annotater, SingleTableView):
             if(form.cleaned_data['zuglauf']):
                 qs = qs.filter(zug_lauf__icontains=form.cleaned_data['zuglauf'])
             if(form.cleaned_data['dekozug'] and form.cleaned_data['dekozug'] != '-1'):
-                qs = qs.filter(deko=form.cleaned_data['dekozug'])
+                qs = qs.filter(deko_zug=form.cleaned_data['dekozug'])
             if(form.cleaned_data['anfang']):
                 qs = qs.filter(speed_anfang__gt=form.cleaned_data['anfang'])
             if form.cleaned_data['speed_min']:
