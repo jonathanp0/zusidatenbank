@@ -39,7 +39,7 @@ class FuehrerstandTable(tables.Table):
 
 class FahrplanZugTable(tables.Table):
     name = tables.LinkColumn()
-    deko = tables.BooleanColumn()
+    deko_zug = tables.BooleanColumn(verbose_name='Deko')
     fz_max_speed = SpeedColumn(verbose_name='Speed Max*')
     anfang_zeit = tables.DateTimeColumn(short=True)
     gesamt_zeit = tables.Column(verbose_name='Fahrzeit')
@@ -52,11 +52,11 @@ class FahrplanZugTable(tables.Table):
 
     class Meta:
         model = FahrplanZug
-        sequence = ('name', 'gattung', 'nummer', 'zug_lauf', 'is_reisezug', 'fz_max_speed', 'deko')
-        exclude = ('fahrzeug_tree','path', 'fahrplan_gruppe', 'speed_zug', 'speed_anfang', 'bild')
+        sequence = ('name', 'gattung', 'nummer', 'zug_lauf', 'is_reisezug', 'fz_max_speed', 'deko_zug')
+        exclude = ('fahrzeug_tree','path', 'fahrplan_gruppe', 'speed_zug', 'speed_anfang', 'bild', 'deko')
         order_by = ('name',)
         attrs = {'class': 'table table-striped table-hover'}
-        row_attrs = {'class': lambda record: 'danger' if record.deko else None}
+        row_attrs = {'class': lambda record: 'danger' if record.deko_zug else None}
 
 class FahrplanTable(tables.Table):
     path = tables.LinkColumn(text=lambda r: r.path.replace('Timetables\\','').replace('Deutschland\\',''))

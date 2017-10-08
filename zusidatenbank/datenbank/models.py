@@ -1,11 +1,13 @@
 #coding=utf8
 import copy
+import datetime
 
 from django.db import models
 from django.core.validators import *
 from django.urls import reverse
 from django.db.models import Count, Min, Max, Sum, F, Q, Value, CharField, Subquery, OuterRef, Case, When
 from django.db.models.functions import Least, Greatest, Concat, Coalesce
+from django.contrib.postgres.aggregates.general import BoolOr
 
 from django.contrib.postgres.fields import JSONField, ArrayField
 
@@ -219,9 +221,15 @@ class FahrzeugVariante(models.Model):
 class FahrplanZugManager(models.Manager):
     
     def withTableStats(self):
-        return self.annotate(fz_max_speed=Least(F('speed_zug'),Min('fahrzeuge__speed_max')), 
-                         gesamt_zeit=Max(Coalesce('eintraege__an','eintraege__ab')) - Min(Coalesce('eintraege__ab','eintraege__an')),
-                         anfang_zeit=Min(Coalesce('eintraege__an','eintraege__ab')))
+        return self.annotate(position_count=Max('eintraege__position'),
+                             deko_fahrzeuge=BoolOr('fahrzeuge__dekozug')
+                    ).annotate(fz_max_speed=Least(F('speed_zug'),Min('fahrzeuge__speed_max')), 
+                               gesamt_zeit=Case(
+                                    When(position_count=0, then=Value(datetime.timedelta(0))),
+                                    default=Max(Coalesce('eintraege__an','eintraege__ab')) - Min(Coalesce('eintraege__ab','eintraege__an'))
+                                  ),
+                               anfang_zeit=Min(Coalesce('eintraege__an','eintraege__ab')),
+                               deko_zug=Case(When(deko_fahrzeuge=True, then=True), default='deko'))
 
     def withDetailStats(self):
         return self.annotate(zug_max_speed=Least(F('speed_zug'),Min('fahrzeuge__speed_max')),

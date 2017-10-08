@@ -28,9 +28,16 @@ class Annotater(object):
         return object.annotate(fahrzeug_count=Count('fahrzeuge', distinct=True),zug_count=Count('fahrzeuge__fahrplanzuege', distinct=True))
 
     def annotateFahrplanZug(self, object):
-        return object.annotate(fz_max_speed=Least(F('speed_zug'),Min('fahrzeuge__speed_max')), 
-                         gesamt_zeit=Max(Coalesce('eintraege__an','eintraege__ab')) - Min(Coalesce('eintraege__ab','eintraege__an')),
-                         anfang_zeit=Min(Coalesce('eintraege__an','eintraege__ab')))
+        return object.annotate(position_count=Max('eintraege__position'),
+                             deko_fahrzeuge=BoolOr('fahrzeuge__dekozug')
+                    ).annotate(fz_max_speed=Least(F('speed_zug'),Min('fahrzeuge__speed_max')), 
+                               gesamt_zeit=Case(
+                                    When(position_count=0, then=Value(datetime.timedelta(0))),
+                                    default=Max(Coalesce('eintraege__an','eintraege__ab')) - Min(Coalesce('eintraege__ab','eintraege__an'))
+                                  ),
+                               anfang_zeit=Min(Coalesce('eintraege__an','eintraege__ab')),
+                               deko_zug=Case(When(deko_fahrzeuge=True, then=True), default='deko'))
+
 
 class StreckenModuleList(SingleTableView):
     table_class = StreckenModuleTable
