@@ -33,8 +33,12 @@
               <dd>{{object.zug_lauf}}</dd>
               <dt>Zugart</dt>
               <dd>{% if object.is_reisezug %}Reisezug{% else %}Güterzug{% endif %}</dd>
-              <dt>Dekozug</dt>
+              <dt>Dekozug(tatsächlich)</dt>
+              <dd>{% if object.deko_zug %}Ja{% else %}Nein{% endif %}</dd>
+              <dt>Dekozug(besonderen Eintrag im Fahrplan)</dt>
               <dd>{% if object.deko %}Ja{% else %}Nein{% endif %}</dd>
+              <dt>Schließt Dekofahrzeuge ein</dt>
+              <dd>{% if object.deko_fahrzeuge %}Ja{% else %}Nein{% endif %}</dd>
               <dt>Speed(tatsächlich)</dt>
               <dd>{{object.zug_max_speed}} km/h</dd>
               <dt>Speed(Fahrzeuge)</dt>

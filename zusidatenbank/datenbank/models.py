@@ -233,7 +233,9 @@ class FahrplanZugManager(models.Manager):
 
     def withDetailStats(self):
         return self.annotate(zug_max_speed=Least(F('speed_zug'),Min('fahrzeuge__speed_max')),
-                             fz_max_speed=Min('fahrzeuge__speed_max'))
+                             fz_max_speed=Min('fahrzeuge__speed_max'),
+                             deko_fahrzeuge=BoolOr('fahrzeuge__dekozug'),
+                             deko_zug=Case(When(deko_fahrzeuge=True, then=True), default='deko'))
 
 #Complete
 class FahrplanZug(InventoryItem):
