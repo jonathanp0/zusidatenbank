@@ -126,7 +126,7 @@ class FahrplanZugList(Annotater, SingleTableView):
             if form.cleaned_data['speed_max']:
                 qs = qs.filter(fz_max_speed__lte=form.cleaned_data['speed_max'])
             if(form.cleaned_data['eintragort']):
-                qs = qs.filter(eintraege__ort=form.cleaned_data['eintragort'])
+                qs = qs.filter(eintraege__ort__in=form.cleaned_data['eintragort'])
             if(form.cleaned_data['fahrplan']):
                 qs = qs.filter(fahrplaene__path__in=form.cleaned_data['fahrplan'])
             if(form.cleaned_data['baureihe']):
