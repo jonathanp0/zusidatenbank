@@ -3,6 +3,7 @@ from datenbank.models import *
 import xml.etree.ElementTree as ET
 import os
 import sys
+import re
 import logging
 import copy
 from datetime import datetime
@@ -184,6 +185,7 @@ class TrnParser(ZusiParser):
         zug.fahrplan_gruppe = zug_tag.get('FahrplanGruppe')
         zug.deko = (zug_tag.get('Dekozug') == '1')
         zug.is_reisezug = (zug_tag.get('Zugtyp') == '1')
+        self.stripRouteNumber(zug)
 
         zug.speed_anfang = self.toSpeed(self.getAsFloat(zug_tag, 'spAnfang'))
         zug.speed_zug = self.toSpeed(self.getAsFloat(zug_tag, 'spZugNiedriger'))
@@ -223,6 +225,12 @@ class TrnParser(ZusiParser):
         zug.bild = zugrenderer.renderImage(zug, imgpath)
 
         zug.save()
+    
+    def stripRouteNumber(self, zug):
+        match = re.search(r"([A-Z]+)(\d{1,2})", zug.gattung)
+        if match:
+            zug.gattung = match.group(1)
+            zug.zug_lauf = ' '.join((match.group(0),zug.zug_lauf))
 
     def processVariantenWithPosition(self, varianten):
         if varianten.get('FzgPosition') == None:
