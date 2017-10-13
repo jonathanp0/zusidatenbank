@@ -12,11 +12,14 @@ from pytz import timezone
 import datetime
 from random import randint
 
-def filterBooleanCheckbox(self, data):
-        if data[0] != data[1]:
-            if data[0]:
+def filterBooleanCheckbox(data):
+        options = [False, False]
+        for opt in data:
+            options[int(opt)] = True
+        if options[0] != options[1]:
+            if options[0]:
                 return 0
-            elif data[1]:
+            elif options[1]:
                 return 1
         return -1
 
@@ -106,6 +109,7 @@ class FahrplanZugList(Annotater, SingleTableView):
 
     def get_queryset(self):
         form = ZugSearchForm(self.request.GET)
+        
         if not form.is_valid():
             form = None
 
@@ -126,8 +130,10 @@ class FahrplanZugList(Annotater, SingleTableView):
                 qs = qs.filter(zug_lauf__icontains=form.cleaned_data['zuglauf'])
             if filterBooleanCheckbox(form.cleaned_data['dekozug']) != -1:
                 qs = qs.filter(deko_zug=filterBooleanCheckbox(form.cleaned_data['dekozug']))
-            if filterBooleanCheckbox(form.cleaned_data['anfang']) != -1:
-                qs = qs.filter(speed_anfang__gt=filterBooleanCheckbox(form.cleaned_data['anfang']))
+            if filterBooleanCheckbox(form.cleaned_data['anfang']) == 1:
+                qs = qs.filter(speed_anfang__gt=0)
+            if filterBooleanCheckbox(form.cleaned_data['anfang']) == 0:
+                qs = qs.filter(speed_anfang=None)
             if form.cleaned_data['speed_min']:
                 qs = qs.filter(fz_max_speed__gte=form.cleaned_data['speed_min'])
             if form.cleaned_data['speed_max']:
@@ -144,7 +150,7 @@ class FahrplanZugList(Annotater, SingleTableView):
                 qs = qs.filter(fahrzeuge__neigetechnik=filterBooleanCheckbox(form.cleaned_data['neigezug']))
 
             if(form.cleaned_data['search']=='time'):
-                now = datetime.datetime.now(timezone(settings.TIME_ZONE))
+                now = datetime.datetime.now(timezone(settings.TIME_ZONE_DE))
                 now_plus_window = now + datetime.timedelta(minutes=form.cleaned_data['time_window'])
                 qs = qs.filter(Q(anfang_zeit__time__gte=now) & Q(anfang_zeit__time__lt=now_plus_window))
 

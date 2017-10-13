@@ -42,7 +42,7 @@
                     {% buttons submit='Suche' reset="Frei" %}{% endbuttons %}
                     <div class="form-group">
                         <button class="btn btn-default" type="submit" name="search" value="time">Suche nur nächste </button>
-                        <input type="number" name="time_window" value="60" /> minuten
+                        <input type="number" name="time_window" value="60" max="1440" style="width:60px" /> minuten
                     </div>
                 </p>
                 <p class="help-block">Alle leeren Felder sind ignoriert.</p>

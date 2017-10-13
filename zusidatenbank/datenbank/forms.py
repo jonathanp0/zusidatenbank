@@ -30,7 +30,7 @@ class ZugSearchForm(forms.Form):
     zuglauf = forms.CharField(help_text='(Teilweise vergleichen)',required=False,widget=forms.TextInput(attrs={'placeholder':'z.b. Berlin'}))
     zugart = forms.MultipleChoiceField(choices=[(0, 'Güterzug'), (1,'Reisezug')],widget=forms.CheckboxSelectMultiple,required=False, initial=(0,1))
     dekozug = forms.MultipleChoiceField(choices=[(0, 'Nein'), (1,'Ja')],widget=forms.CheckboxSelectMultiple,required=False, initial=(0,))
-    anfang = forms.ChoiceField(choices=[(0, 'Unbeweglich'), (1,'in Bewegung')],widget=forms.CheckboxSelectMultiple,required=False, initial=(0,1))
+    anfang = forms.MultipleChoiceField(choices=[(0, 'Unbeweglich'), (1,'in Bewegung')],widget=forms.CheckboxSelectMultiple,required=False, initial=(0,1))
     speed_min = forms.IntegerField(widget=forms.NumberInput(attrs={'placeholder':'','addon_before':'≥','addon_after':'km/h'}),
                                   label='Maximalgeschwindigkeit',required=False)
     speed_max = forms.IntegerField(widget=forms.NumberInput(attrs={'placeholder':'','addon_before':'≤','addon_after':'km/h'}),
