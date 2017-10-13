@@ -55,3 +55,12 @@ div.trn {
   overflow: auto;
   margin-bottom: 10px
 }
+
+div.trn span { 
+   position: absolute; 
+   top: 0; 
+   left: 0; 
+   width: 100%;
+   z-index: -1;
+   font-weight: bold;
+}

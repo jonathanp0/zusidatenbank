@@ -10,6 +10,7 @@ from .forms import *
 from django_tables2 import SingleTableView, MultiTableMixin
 from pytz import timezone
 import datetime
+from random import randint
 
 def filterBooleanCheckbox(self, data):
         if data[0] != data[1]:
@@ -250,6 +251,10 @@ class IndexView(generic.TemplateView):
             context['fahrzeug_count'] = FahrzeugVariante.objects.all().count()
             context['module_count'] = StreckenModule.objects.all().count()
             context['fstand_count'] = Fuehrerstand.objects.all().count()
+
+            random_index = randint(0, context['zug_count'] - 1)
+            context['random_zug'] = FahrplanZug.objects.all()[random_index]
+
             return context
 
 class AutorList(SingleTableView):
