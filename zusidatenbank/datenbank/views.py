@@ -11,7 +11,13 @@ from django_tables2 import SingleTableView, MultiTableMixin
 from pytz import timezone
 import datetime
 
-# Create your views here.
+def filterBooleanCheckbox(self, data):
+        if data[0] != data[1]:
+            if data[0]:
+                return 0
+            elif data[1]:
+                return 1
+        return -1
 
 class Annotater(object):
 
@@ -68,8 +74,8 @@ class FuehrerstandList(Annotater, SingleTableView):
         form = FuehrerstandSearchForm(self.request.GET)
 
         if form.is_valid():
-            if(form.cleaned_data['afb'] and form.cleaned_data['afb'] != '-1'):
-                qs = qs.filter(mit_afb=form.cleaned_data['afb'])
+            if filterBooleanCheckbox(form.cleaned_data['afb']) != -1:
+                qs = qs.filter(mit_afb=filterBooleanCheckbox(form.cleaned_data['afb']))
             if(form.cleaned_data['zugsicherung']):
                 qs = qs.filter(zugsicherung__overlap=form.cleaned_data['zugsicherung'])
             if(form.cleaned_data['sifa']):
@@ -113,14 +119,14 @@ class FahrplanZugList(Annotater, SingleTableView):
                 qs = qs.filter(gattung__in=form.cleaned_data['gattung'])
             if(form.cleaned_data['nummer']):
                 qs = qs.filter(nummer=form.cleaned_data['nummer'])
-            if(form.cleaned_data['zugart']):
-                qs = qs.filter(is_reisezug=form.cleaned_data['zugart'])
+            if filterBooleanCheckbox(form.cleaned_data['zugart']) != -1:
+                qs = qs.filter(is_reisezug=filterBooleanCheckbox(form.cleaned_data['zugart']))
             if(form.cleaned_data['zuglauf']):
                 qs = qs.filter(zug_lauf__icontains=form.cleaned_data['zuglauf'])
-            if(form.cleaned_data['dekozug'] and form.cleaned_data['dekozug'] != '-1'):
-                qs = qs.filter(deko_zug=form.cleaned_data['dekozug'])
-            if(form.cleaned_data['anfang']):
-                qs = qs.filter(speed_anfang__gt=form.cleaned_data['anfang'])
+            if filterBooleanCheckbox(form.cleaned_data['dekozug']) != -1:
+                qs = qs.filter(deko_zug=filterBooleanCheckbox(form.cleaned_data['dekozug']))
+            if filterBooleanCheckbox(form.cleaned_data['anfang']) != -1:
+                qs = qs.filter(speed_anfang__gt=filterBooleanCheckbox(form.cleaned_data['anfang']))
             if form.cleaned_data['speed_min']:
                 qs = qs.filter(fz_max_speed__gte=form.cleaned_data['speed_min'])
             if form.cleaned_data['speed_max']:
@@ -133,13 +139,13 @@ class FahrplanZugList(Annotater, SingleTableView):
                 qs = qs.filter(fahrzeuge__br=form.cleaned_data['baureihe'])
             if(form.cleaned_data['antrieb']):
                 qs = qs.filter(fahrzeuge__antrieb__overlap=form.cleaned_data['antrieb'])
-            if(form.cleaned_data['neigezug']):
-                qs = qs.filter(fahrzeuge__neigetechnik=form.cleaned_data['neigezug'])
+            if filterBooleanCheckbox(form.cleaned_data['neigezug']) != -1:
+                qs = qs.filter(fahrzeuge__neigetechnik=filterBooleanCheckbox(form.cleaned_data['neigezug']))
 
             if(form.cleaned_data['search']=='time'):
                 now = datetime.datetime.now(timezone(settings.TIME_ZONE))
-                now_plus_one = now + datetime.timedelta(hours=1)
-                qs = qs.filter(Q(anfang_zeit__time__gte=now) & Q(anfang_zeit__time__lt=now_plus_one))
+                now_plus_window = now + datetime.timedelta(minutes=form.cleaned_data['time_window'])
+                qs = qs.filter(Q(anfang_zeit__time__gte=now) & Q(anfang_zeit__time__lt=now_plus_window))
 
         return qs
 
@@ -162,8 +168,8 @@ class FahrzeugList(Annotater, SingleTableView):
         if form.is_valid():
             if(form.cleaned_data['baureihe']):
                 qs = qs.filter(br=form.cleaned_data['baureihe'])
-            if(form.cleaned_data['deko'] and form.cleaned_data['deko'] != '-1'):
-                qs = qs.filter(dekozug=form.cleaned_data['deko'])
+            if filterBooleanCheckbox(form.cleaned_data['deko']) != -1:
+                qs = qs.filter(dekozug=filterBooleanCheckbox(form.cleaned_data['deko']))
             if(form.cleaned_data['beschreibung']):
                 qs = qs.filter(beschreibung__icontains=form.cleaned_data['beschreibung'])
             if(form.cleaned_data['farbgebung']):
@@ -186,8 +192,8 @@ class FahrzeugList(Annotater, SingleTableView):
                 qs = qs.filter(antrieb__overlap=form.cleaned_data['antrieb'])
             if(form.cleaned_data['bremse']):
                 qs = qs.filter(bremse__overlap=form.cleaned_data['bremse'])
-            if(form.cleaned_data['neigetechnik']):
-                qs = qs.filter(neigetechnik=form.cleaned_data['neigetechnik'])
+            if filterBooleanCheckbox(form.cleaned_data['neigetechnik']) != -1:
+                qs = qs.filter(neigetechnik=filterBooleanCheckbox(form.cleaned_data['neigetechnik']))
 
         return qs
 
@@ -235,6 +241,7 @@ class IndexView(generic.TemplateView):
             zugsearchform = ZugSearchForm()
             #Hack so we can use extra buttons for this field
             del zugsearchform.fields['search']
+            del zugsearchform.fields['time_window']
             context['zug_form'] = zugsearchform
             context['fstand_form'] = FuehrerstandSearchForm()
             context['fahrzeug_form'] = FahrzeugSearchForm()

@@ -34,10 +34,10 @@
             <div role="tabpanel" class="tab-pane active" id="zug">
                 <form method="GET" action="/fahrplanzug">
                 <p>
+                    {% buttons submit='Suche' reset="Frei" %}{% endbuttons %}
                     <div class="form-group">
-                        <button class="btn btn-default" type="submit">Suche</button>
-                        <button class="btn btn-default" type="submit" name="search" value="time">Suche nur nächste stunde</button>
-                        <button class="btn btn-default" type="reset">Frei</button>
+                        <button class="btn btn-default" type="submit" name="search" value="time">Suche nur nächste </button>
+                        <input type="number" name="time_window" value="60" /> minuten
                     </div>
                 </p>
                 <p class="help-block">Alle leeren Felder sind ignoriert.</p>
