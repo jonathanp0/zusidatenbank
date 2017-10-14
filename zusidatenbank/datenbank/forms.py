@@ -28,6 +28,7 @@ class ZugSearchForm(forms.Form):
     fahrplan = forms.MultipleChoiceField()
     eintragort = forms.MultipleChoiceField()
     zuglauf = forms.CharField(help_text='(Teilweise vergleichen)',required=False,widget=forms.TextInput(attrs={'placeholder':'z.b. Berlin'}))
+    baureihe = forms.ChoiceField()
     zugart = forms.MultipleChoiceField(choices=[(0, 'Güterzug'), (1,'Reisezug')],widget=forms.CheckboxSelectMultiple,required=False, initial=(0,1))
     dekozug = forms.MultipleChoiceField(choices=[(0, 'Nein'), (1,'Ja')],widget=forms.CheckboxSelectMultiple,required=False, initial=(0,))
     anfang = forms.MultipleChoiceField(choices=[(0, 'Unbeweglich'), (1,'in Bewegung')],widget=forms.CheckboxSelectMultiple,required=False, initial=(0,1))
@@ -43,7 +44,6 @@ class ZugSearchForm(forms.Form):
     #                              label='Farhzeit',required=False)
     #fahrzeit_max = forms.IntegerField(widget=forms.NumberInput(attrs={'placeholder':'','addon_before':'≤','addon_after':'minuten'}),
     #                              label='',required=False)
-    baureihe = forms.ChoiceField()
     antrieb = forms.MultipleChoiceField(required=False, choices=FahrzeugVariante.ANTRIEB_CHOICES, help_text='Mehrfachauswahl möglich')
     neigezug = forms.MultipleChoiceField(choices=[(0, 'Nein'), (1,'Ja')],widget=forms.CheckboxSelectMultiple,initial=(0,1),required=False)
     search = forms.CharField(widget=forms.HiddenInput(),required=False)
