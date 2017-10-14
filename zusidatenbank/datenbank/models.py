@@ -232,9 +232,9 @@ class FahrplanZugManager(models.Manager):
                                deko_zug=Case(When(deko_fahrzeuge=True, then=True), default='deko'))
 
     def withDetailStats(self):
-        return self.annotate(zug_max_speed=Least(F('speed_zug'),Min('fahrzeuge__speed_max')),
-                             fz_max_speed=Min('fahrzeuge__speed_max'),
-                             deko_fahrzeuge=BoolOr('fahrzeuge__dekozug'),
+        return self.annotate(deko_fahrzeuge=BoolOr('fahrzeuge__dekozug')
+                   ).annotate(zug_max_speed=Least(F('speed_zug'),Min('fahrzeuge__speed_max')),
+                             fz_max_speed=Min('fahrzeuge__speed_max'),           
                              deko_zug=Case(When(deko_fahrzeuge=True, then=True), default='deko'))
 
 #Complete
