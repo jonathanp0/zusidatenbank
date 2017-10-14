@@ -18,9 +18,6 @@
         {% include "include/panel_list.html" with heading="Notbremse System" items=object.notbremse_system_display %}
       </div>
     </div>
-    <div class="col-md-6">
-        <div class="panel panel-info">{% include "include/autor.html" %}</div>
-    </div>
 </div>
 <h3>Fahrzeugevarianten mit diesem Führerstand</h4>
 {% render_table tables.0 'django_tables2/bootstrap.html' %}

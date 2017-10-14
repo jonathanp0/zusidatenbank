@@ -50,7 +50,6 @@
             <li class="{% if request.resolver_match.url_name|slice:":2" == "fz" %}active{% endif %}"><a href="{% url 'db:fzlist' %}">Fahrplanzüge</a></li>
             <li class="{% if request.resolver_match.url_name|slice:":2" == "fv" %}active{% endif %}"><a href="{% url 'db:fvlist' %}">Fahrzeuge</a></li>
             <li class="{% if request.resolver_match.url_name|slice:":2" == "fs" %}active{% endif %}"><a href="{% url 'db:fslist' %}">Führerstande</a></li>
-            <li class="{% if request.resolver_match.url_name|slice:":5" == "autor" %}active{% endif %}"><a href="{% url 'db:autorlist' %}">Autoren</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
