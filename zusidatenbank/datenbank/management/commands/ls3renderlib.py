@@ -9,6 +9,7 @@ class LS3RenderLib:
 
         self.dll.ls3render_Render.restype = c_int
         self.dll.ls3render_AddFahrzeug.restype = c_int
+        self.dll.ls3render_Cleanup.restype = c_int
         self.setPixelProMeter = self.dll.ls3render_SetPixelProMeter
         self.setPixelProMeter.restype = None
         self.setMultisampling = self.dll.ls3render_SetMultisampling
@@ -19,7 +20,8 @@ class LS3RenderLib:
         self.dll.ls3render_Init()
 
     def __del__(self):
-        self.dll.ls3render_Cleanup()
+        if self.dll.ls3render_Cleanup() == 0:
+            raise RuntimeError('Fehler in ls3render_Cleanup')
 
     def addFahrzeug(self, datei, offsetX, laenge, gedreht, stromabnehmerHoehe, stromabnehmerOben):
         """
@@ -34,7 +36,7 @@ class LS3RenderLib:
         c_stromstate = [c_int(stromabnehmerOben[i]) for i in range(0, 4)]
         result = self.dll.ls3render_AddFahrzeug(c_char_p(datei.encode()), c_float(offsetX), c_float(laenge), gedreht, c_float(stromabnehmerHoehe), *c_stromstate)
         if result == 0:
-            raise RuntimeException('Fehler in ls3render_AddFahrzeug')
+            raise RuntimeError('Fehler in ls3render_AddFahrzeug')
 
     def renderImage(self):
         """Rendert die Szene und gab ein Pillow Image zueruck. Fall einen Fehler, loest es eine RuntimeException aus. """
@@ -46,7 +48,7 @@ class LS3RenderLib:
         puffer = (c_ubyte * pufSize)()
         result = self.dll.ls3render_Render(byref(puffer))
         if result == 0:
-            raise RuntimeException('Fehler in ls3render_Render')
+            raise RuntimeError('Fehler in ls3render_Render')
 
         #4 x 1 Byte RGBA-Daten mit Reihenfolge BGRA, beginnt mit der unteren Zeile
         img = Image.frombuffer('RGBA', imgDimensions, puffer, 'raw', 'BGRA', 0, -1)
