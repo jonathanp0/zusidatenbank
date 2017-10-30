@@ -284,11 +284,10 @@ class TrnParser(ZusiParser):
             self.processItem(zug.fahrzeug_tree_with_data())
 
             try:
-                if not os.path.exists(zug.bild.storage.path(imgpath)):
-                    self.renderer.renderImage().save(zug.bild.storage.path(imgpath))
+                self.renderer.renderImage().save(zug.bild.storage.path(imgpath))
                 return imgpath
             except Exception as e:
-                logging.warn("Error rendering ls3")
+                logging.warn("Error rendering ls3 for Fahrplanzug")
             
             return None
 
