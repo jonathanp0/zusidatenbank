@@ -72,8 +72,9 @@ class FuehrerstandManager(models.Manager):
 class Fuehrerstand(InventoryItem):
   ZUGSICHERUNG_CHOICES = (
     ('IndusiI54','Indusi I54',), 
-    ('IndusiI60','Indusi I60'), 
-    ('IndusiI60M', 'Indusi I60M'), 
+    ('IndusiI60','Indusi I60'),
+    ('IndusiI60M', 'Indusi I60M'),
+    ('IndusiI60R','Indusi I60R'),
     ('IndusiI60R_ZUB122','Indusi I60R + ZUB122'),
     ('IndusiI60R_ZUB262', 'Indusi I60R + ZUB262'),
     ('IndusiI60DR', 'Indusi I60DR'),
