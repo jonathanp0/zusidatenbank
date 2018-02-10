@@ -205,7 +205,7 @@ class TrnParser(ZusiParser):
             ereignis = eintrag.find('Ereignis') != None
             if ort == None:
                 self.logger.warn("Ignoring eintrag with empty place")
-                return
+                continue
             eintrag_obj = FahrplanZugEintrag(position=pos, ort=eintrag.get('Betrst'), ab=ab, an=an, zug=zug,
                                              bedarfshalt=bedarf, kopf_machen=kopf, ereignis=ereignis)
             eintrag_obj.save()
