@@ -8,8 +8,8 @@ from .helpers.columns import *
 
 class StreckenModuleTable(tables.Table):
     name = tables.LinkColumn()
-    nachbaren_count = tables.Column(verbose_name='Nachbar Module')
-    fahrplan_count = tables.Column(verbose_name='Fahrpläne')
+    nachbaren_count = tables.Column(verbose_name='Nachbar Module', order_by=('nachbaren_count','name'))
+    fahrplan_count = tables.Column(verbose_name='Fahrpläne', order_by=('fahrplan_count','name'))
 
     class Meta:
         model = StreckenModule
@@ -27,8 +27,8 @@ class FuehrerstandTable(tables.Table):
   tuer_system = ArrayListColumn(verbose_name='Türsteuerung',orderable=False,choices=Fuehrerstand.TUER_CHOICES)
   schleuderschutz = ArrayBooleanColumn()
   #notbremse_system = ArrayBooleanColumn(verbose_name='Notbremse')
-  fahrzeug_count = tables.Column(verbose_name='Fahrzeugnutzen')
-  zug_count = tables.Column(verbose_name='Fahrplanzüge')
+  fahrzeug_count = tables.Column(verbose_name='Fahrzeugnutzen', order_by=('fahrzeug_count','name'))
+  zug_count = tables.Column(verbose_name='Fahrplanzüge', order_by=('zug_count','name'))
 
   class Meta:
         model = Fuehrerstand
@@ -62,7 +62,7 @@ class FahrplanTable(tables.Table):
     path = tables.LinkColumn(text=lambda r: r.path.replace('Timetables\\','').replace('Deutschland\\',''))
     anfang = tables.DateTimeColumn(format='D d.m.Y H:i')
     module_count = tables.Column(verbose_name='Modules')
-    zug_count = tables.Column(verbose_name='Züge')
+    zug_count = tables.Column(verbose_name='Züge', order_by=('zug_count','name'))
 
     class Meta:
         model = Fahrplan
