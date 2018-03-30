@@ -139,6 +139,17 @@ class Fuehrerstand(InventoryItem):
   def get_absolute_url(self):
     return reverse('db:fsdetail', args=[self.path])
 
+class FuehrerstandBlick(models.Model):
+
+  bild_klein = models.ImageField(max_length=200,upload_to='ftd/',unique=True)
+  nummer = models.IntegerField()
+  name = models.CharField(null=True,max_length=100)
+  fuehrerstand = models.ForeignKey(Fuehrerstand, related_name='blicke')
+
+  class Meta:
+    unique_together = (('nummer', 'fuehrerstand'),)
+    ordering = ['nummer']
+
 class FahrzeugVarianteManager(models.Manager):
     
     def withTableStats(self):

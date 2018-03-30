@@ -7,6 +7,7 @@ import re
 import logging
 import copy
 from datetime import datetime
+import shutil
 from django.conf import settings
 from django.core.files.storage import default_storage
 from pytz import timezone
@@ -96,6 +97,8 @@ class ZusiParser(object):
 
 class FtdParser(ZusiParser):
 
+    LEER_IMAGE_SIZE = 901
+
     def parse(self, ftd, path, module_id, info):
         stand = Fuehrerstand(path=module_id, name=info['name'] )
         
@@ -118,6 +121,22 @@ class FtdParser(ZusiParser):
 
         stand.save()
         stand.autor.add(*info['autor'])
+
+        grafik_id = 0
+        for grafik in ftd.findall("Fuehrerstand/Grafik/Grunddaten"):
+
+            name = grafik.get('GrafikName')
+            bild_file = module_id.replace(os.sep,'') + str(grafik_id) + '.png'
+            bild_src_path = os.path.join(path.replace(module_id, ''), 'RollingStock', 'List', bild_file)
+            bild_dst_media_path = os.path.join('ftd', bild_file)
+
+            #Don't include 'empty' images, These are always 901 bytes in size
+            if(os.path.getsize(bild_src_path) != self.LEER_IMAGE_SIZE):
+                blick = FuehrerstandBlick(bild_klein=bild_dst_media_path, name=name, nummer=grafik_id, fuehrerstand=stand)
+                blick.save()
+                shutil.copy(bild_src_path, blick.bild_klein.storage.path(bild_dst_media_path))
+
+            grafik_id += 1
 
 class St3Parser(ZusiParser):
 

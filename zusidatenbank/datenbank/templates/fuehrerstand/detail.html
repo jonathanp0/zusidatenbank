@@ -18,6 +18,51 @@
         {% include "include/panel_list.html" with heading="Notbremse System" items=object.notbremse_system_display %}
       </div>
     </div>
+    <div class="col-md-5">
+      {% if object.blicke.count == 1 %}
+        {% for blick in object.blicke.all %}
+          <div class="panel panel-primary">
+            <div class="panel-heading"><h3 class="panel-title">{{blick.name}}</h3></div>
+            <div class="panel-body">
+              <img src="{{blick.bild_klein.url}}" />
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="panel panel-primary">
+          <div class="panel-heading"><h3 class="panel-title">Ansichten</h3></div>
+          <div class="panel-body">
+            <div id="carousel-blick" class="carousel slide" data-ride="carousel">
+              <ol class="carousel-indicators">
+                {% for blick in object.blicke.all %}
+                  <li data-target="#carousel-blick" data-slide-to="{{forloop.counter0}}" {% if forloop.first %}class="active"{% endif %}></li>
+                {% endfor %}
+              </ol>
+            
+              <div class="carousel-inner" role="listbox">
+                {% for blick in object.blicke.all %}
+                  <div class="item center-block {% if forloop.first %}active{% endif %}">
+                    <img src="{{blick.bild_klein.url}}" alt="{{blick.name}}" class="center-block">
+                    <div class="carousel-caption">
+                        <h4>{{blick.name}}</h4>
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            
+              <a class="left carousel-control" href="#carousel-blick" role="button" data-slide="prev">
+                <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+              </a>
+              <a class="right carousel-control" href="#carousel-blick" role="button" data-slide="next">
+                <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    </div>
 </div>
 <h3>Fahrzeugevarianten mit diesem Führerstand</h4>
 {% render_table tables.0 'django_tables2/bootstrap.html' %}
