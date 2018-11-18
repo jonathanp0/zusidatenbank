@@ -43,6 +43,9 @@ class FahrplanZugTable(tables.Table):
     fz_max_speed = SpeedColumn(verbose_name='Speed Max*')
     anfang_zeit = tables.DateTimeColumn(short=True)
     gesamt_zeit = tables.Column(verbose_name='Fahrzeit')
+    masse = tables.Column(verbose_name='Masse*')
+    laenge = tables.Column(verbose_name='Laenge*')
+    bremse_percentage = tables.Column(verbose_name='Brems%*')
 
     def render_gesamt_zeit(self, value):
         return "{0:02}:{1:02}".format(value.seconds//3600, (value.seconds//60)%60)
@@ -50,10 +53,19 @@ class FahrplanZugTable(tables.Table):
     def render_is_reisezug(self, value):
         return 'Reisezug' if value else 'Güterzug'
 
+    def render_masse(self, value):
+        return "{0} t".format(int(value/1000))
+
+    def render_laenge(self, value):
+        return "{0} m".format(int(value))
+
+    def render_bremse_percentage(self, value):
+        return "{0} %".format(int(value*100))
+
     class Meta:
         model = FahrplanZug
         sequence = ('name', 'gattung', 'nummer', 'zug_lauf', 'is_reisezug', 'fz_max_speed', 'deko_zug')
-        exclude = ('fahrzeug_tree','path', 'fahrplan_gruppe', 'speed_zug', 'speed_anfang', 'bild', 'deko')
+        exclude = ('fahrzeug_tree','path', 'fahrplan_gruppe', 'speed_zug', 'speed_anfang', 'bild', 'deko', 'bremsstellung')
         order_by = ('name',)
         attrs = {'class': 'table table-striped table-hover'}
         row_attrs = {'class': lambda record: 'danger' if record.deko_zug else None}

@@ -265,6 +265,12 @@ class FahrplanZug(InventoryItem):
 
   speed_anfang = models.IntegerField(null=True)
   speed_zug = models.IntegerField(null=True)
+  bremsstellung = models.IntegerField(null=True)
+
+  #Estimates from Buchfahrplan
+  masse = models.IntegerField(null=True)
+  laenge = models.FloatField(null=True)
+  bremse_percentage = models.FloatField(null=True)
 
   fahrzeuge = models.ManyToManyField(FahrzeugVariante, related_name='fahrplanzuege')
 
@@ -294,6 +300,19 @@ class FahrplanZug(InventoryItem):
     walk(tree)
 
     return tree
+
+  def bremsstellung_code(self):
+    pass
+
+  def masse_tonne(self):
+    return int(self.masse/1000)
+
+  def laenge_rounded(self):
+    return int(self.laenge)
+
+  def bremse_percentage_rounded(self):
+    return int(self.bremse_percentage * 100)
+    
 
 #Complete
 class FahrplanZugEintrag(models.Model):

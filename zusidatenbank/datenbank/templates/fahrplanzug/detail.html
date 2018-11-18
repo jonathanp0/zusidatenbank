@@ -1,6 +1,7 @@
 
 {% extends "base.html" %}
 {% load render_table from django_tables2 %}
+{% load flatblocks %}
 
 {% block head %}Fahrplanzug {{object.name}}{% endblock %}
 {% block title %}Fahrplanzug {{object.gattung}}{{object.nummer}} <small>{{object.path}}</small>{% endblock %}
@@ -49,7 +50,14 @@
               {% endif %}
               <dt>Anfang Speed</dt>
               <dd>{% if object.speed_anfang %}{{object.speed_anfang}}{% else %}0{% endif %} km/h</dd>
+              <dt>Masse*</dt>
+              <dd>{{object.masse_tonne}} t</dd>
+              <dt>Länge*</dt>
+              <dd>{{object.laenge_rounded}} m</dd>
+              <dt>Bremshunderstel*</dt>
+              <dd>{{object.bremse_percentage_rounded}} %</dd>
             </dl>
+            {% plain_flatblock "disclaimer.fahrplanzuege" evaluated=True %}
           </div>
           <div class="panel-heading"><h3 class="panel-title">Fahrzeuge</h3></div>
           <div class="panel-body">

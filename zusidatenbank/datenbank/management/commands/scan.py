@@ -21,6 +21,7 @@ class Command(BaseCommand):
         self.scanFiles(options['root'], os.path.join("Routes", "Deutschland"), ".st3", St3Parser)
         self.scanFiles(options['root'], "Timetables", ".trn", TrnParser)
         self.scanFiles(options['root'], "Timetables", ".fpn", FpnParser)
+        self.scanFiles(options['root'], "Timetables", ".timetable.xml", TimetableParser)
                 
     def scanFiles(self, root, subpath, filter, handlerClass):
         handler = handlerClass()

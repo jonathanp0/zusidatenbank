@@ -131,7 +131,7 @@ class FtdParser(ZusiParser):
             bild_dst_media_path = os.path.join('ftd', bild_file)
 
             #Don't include 'empty' images, These are always 901 bytes in size
-            if(os.path.getsize(bild_src_path) != self.LEER_IMAGE_SIZE):
+            if(os.path.exists(bild_src_path) and os.path.getsize(bild_src_path) != self.LEER_IMAGE_SIZE):
                 blick = FuehrerstandBlick(bild_klein=bild_dst_media_path, name=name, nummer=grafik_id, fuehrerstand=stand)
                 blick.save()
                 shutil.copy(bild_src_path, blick.bild_klein.storage.path(bild_dst_media_path))
@@ -423,3 +423,26 @@ class FzgParser(ZusiParser):
         #Add the authors
         autor_dict = {int(a.autor_id): a for a in info['autor']}
         variante.autor.add(*autor_dict.values())
+
+class TimetableParser(ZusiParser):
+
+    def parse(self, timetable, path, module_id, info):
+
+        trn_tag = timetable.find("Buchfahrplan/Datei_trn[@Dateiname]")
+        if trn_tag == None:
+            return
+
+        try:
+            zug = FahrplanZug.objects.get(path=trn_tag.get("Dateiname"))
+        except FahrplanZug.DoesNotExist:
+            self.logger.error("Timetable XML for invalid Zug " + trn_tag.get("Dateiname"))
+            return
+
+        bfp_tag = timetable.find("Buchfahrplan")
+
+        if bfp_tag != None:
+            zug.masse = self.getAsFloat(bfp_tag, "Masse")
+            zug.laenge = self.getAsFloat(bfp_tag, "Laenge")
+            zug.bremse_percentage = self.getAsFloat(bfp_tag, "Bremsh")
+
+            zug.save()
