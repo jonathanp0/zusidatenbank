@@ -37,15 +37,18 @@ class ZusiParser(object):
         self.logger.addHandler(fh)
         self.logger.addHandler(sh)
 
-        xml = ET.parse(full_path).getroot()
-        info = {'name': os.path.basename(rel_path),
-                'autor': self.getAutor(xml)}
+        with open(full_path, 'rb') as xml_file:
+            xml = ET.parse(xml_file).getroot()
+            info = {'name': os.path.basename(rel_path),
+                    'autor': self.getAutor(xml)}
 
-        if(info['autor'] == None):
-            self.logger.error("No author information")
-            return
+            if(info['autor'] == None):
+                self.logger.error("No author information")
+                return
 
-        self.parse(xml, full_path, rel_path, info) 
+            self.parse(xml, full_path, rel_path, info) 
+
+        fh.close()
 
     #XML Utils
     def getAutor(self, doc):
