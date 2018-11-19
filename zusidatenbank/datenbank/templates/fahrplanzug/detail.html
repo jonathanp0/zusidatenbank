@@ -51,11 +51,11 @@
               <dt>Anfang Speed</dt>
               <dd>{% if object.speed_anfang %}{{object.speed_anfang}}{% else %}0{% endif %} km/h</dd>
               <dt>Masse*</dt>
-              <dd>{{object.masse_tonne}} t</dd>
+              <dd>{{object.masse_tonne|default_if_none:"??"}} t</dd>
               <dt>Länge*</dt>
-              <dd>{{object.laenge_rounded}} m</dd>
+              <dd>{{object.laenge_rounded|default_if_none:"??"}} m</dd>
               <dt>Bremshunderstel*</dt>
-              <dd>{{object.bremse_percentage_rounded}} %</dd>
+              <dd>{{object.bremse_percentage_rounded|default_if_none:"??"}} %</dd>
             </dl>
             {% plain_flatblock "disclaimer.fahrplanzuege" evaluated=True %}
           </div>

@@ -305,13 +305,13 @@ class FahrplanZug(InventoryItem):
     pass
 
   def masse_tonne(self):
-    return int(self.masse/1000)
+    return int(self.masse/1000) if self.masse is not None else None
 
   def laenge_rounded(self):
-    return int(self.laenge)
+    return int(self.laenge) if self.laenge is not None else None
 
   def bremse_percentage_rounded(self):
-    return int(self.bremse_percentage * 100)
+    return int(self.bremse_percentage * 100) if self.bremse_percentage is not None else None
     
 
 #Complete
