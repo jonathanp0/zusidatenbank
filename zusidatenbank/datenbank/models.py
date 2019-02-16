@@ -104,7 +104,7 @@ class Fuehrerstand(InventoryItem):
     ('86','Sifa 86',)
   )
 
-  TUER_CHOICES = [('TB5','TB5'),('TB0','TB0'),('SAT','SAT'),('SST','SST'),('TAV','TAV'),('UICWTB','UIC WTB')]
+  TUER_CHOICES = [('TB5','TB5'),('TB0','TB0'),('SAT','SAT'),('SST','SST'),('TAV','TAV'),('UICWTB','UIC WTB'),('SBahn423','S-Bahn')]
 
   SCHLEUDERSCHUTZ_CHOICES = (
     ('Schleuderschutzbremse','Schleuderschutzbremse',),
