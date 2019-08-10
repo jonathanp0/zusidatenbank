@@ -130,7 +130,7 @@ class FtdParser(ZusiParser):
 
             name = grafik.get('GrafikName')
             bild_file = module_id.replace(os.sep,'') + str(grafik_id) + '.png'
-            bild_src_path = os.path.join(path.replace(module_id, ''), 'RollingStock', 'List', bild_file)
+            bild_src_path = os.path.join(settings.ROLLING_STOCK_LIST_PATH, 'RollingStock', 'List', bild_file)
             bild_dst_media_path = os.path.join('ftd', bild_file)
 
             #Don't include 'empty' images, These are always 901 bytes in size
@@ -404,14 +404,14 @@ class FzgParser(ZusiParser):
         #Generate the image
         if variante.ls3_datei != None:
             ls3datei = os.path.join(root_path, variante.ls3_datei)
-            renderer = self.getRenderer(20)
-            renderer.addFahrzeug(ls3datei, 0, float(fzg_data['laenge']), False, float(fzg_data.get('stromabnehmer_hoehe',0)), (True, True, True, True))
-            imgname = rel_path.replace('\\','') + var_el.get('IDHaupt') + var_el.get('IDNeben') + ".png"
-            imgpath = os.path.join('fzg', imgname)
             try:
+                renderer = self.getRenderer(20)
+                renderer.addFahrzeug(ls3datei, 0, float(fzg_data['laenge']), False, float(fzg_data.get('stromabnehmer_hoehe',0)), (True, True, True, True))
+                imgname = rel_path.replace('\\','') + var_el.get('IDHaupt') + var_el.get('IDNeben') + ".png"
+                imgpath = os.path.join('fzg', imgname)
                 renderer.renderImage().save(variante.bild_klein.storage.path(imgpath))
                 variante.bild_klein = imgpath
-            except Exception:
+            except RuntimeError:
                 logging.warn("Error rendering ls3")
 
         #Link the FTD
