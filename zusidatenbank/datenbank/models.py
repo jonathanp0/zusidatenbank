@@ -96,6 +96,7 @@ class Fuehrerstand(InventoryItem):
     ('PZB90ER24_V20', 'PZB90 I60/ER24 V2.0'),
     ('PZB60', 'PZB60'),
     ('PZ80', 'PZ80'),
+    ('ETCS', 'ETCS'),
   )
 
   SIFA_CHOICES = (
