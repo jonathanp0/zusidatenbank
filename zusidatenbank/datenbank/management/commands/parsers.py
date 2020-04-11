@@ -270,6 +270,8 @@ class TrnParser(ZusiParser):
                 items.insert(*self.processVariantenWithPosition(item))
             elif(item.tag == "FahrzeugInfo"):
                 items.append(self.processFahrzeug(item))
+            elif(item.tag == "Datei"):
+                logging.error("Zugverband Datei in TRN file not supported")
 
         zufall = varianten.get('PerZufallUebernehmen') != None
 
