@@ -4,7 +4,11 @@
 {% load flatblocks %}
 
 {% block head %}Fahrplanzug {{object.name}}{% endblock %}
-{% block title %}Fahrplanzug {{object.gattung}}{{object.nummer}} <small>{{object.path}}</small>{% endblock %}
+
+{% block title %}Fahrplanzug 
+{% for nummer in object.nummer %}{{object.gattung}}{{nummer}}{% if not forloop.last %}/{% endif %}{% endfor %}
+<small>{{object.path}}</small>
+{% endblock %}
 
 
 {% block content %}

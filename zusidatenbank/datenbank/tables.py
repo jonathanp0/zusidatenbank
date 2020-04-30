@@ -39,6 +39,7 @@ class FuehrerstandTable(tables.Table):
 
 class FahrplanZugTable(tables.Table):
     name = tables.LinkColumn()
+    nummer = ArrayListColumn(seperator=' ')
     deko_zug = tables.BooleanColumn(verbose_name='Deko')
     fz_max_speed = SpeedColumn(verbose_name='Speed Max*')
     anfang_zeit = tables.DateTimeColumn(short=True)

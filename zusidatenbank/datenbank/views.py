@@ -123,7 +123,7 @@ class FahrplanZugList(Annotater, SingleTableView):
             if(form.cleaned_data['gattung']):
                 qs = qs.filter(gattung__in=form.cleaned_data['gattung'])
             if(form.cleaned_data['nummer']):
-                qs = qs.filter(nummer=form.cleaned_data['nummer'])
+                qs = qs.filter(nummer__overlap=[form.cleaned_data['nummer']])
             if filterBooleanCheckbox(form.cleaned_data['zugart']) != -1:
                 qs = qs.filter(is_reisezug=filterBooleanCheckbox(form.cleaned_data['zugart']))
             if(form.cleaned_data['zuglauf']):

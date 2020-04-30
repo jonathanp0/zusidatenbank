@@ -202,7 +202,7 @@ class TrnParser(ZusiParser):
         
         zug = FahrplanZug(path=zug_id, name=info['name'])
         zug.gattung = zug_tag.get('Gattung')
-        zug.nummer = zug_tag.get('Nummer')
+        zug.nummer = zug_tag.get('Nummer').split('_')
         zug.zug_lauf = zug_tag.get('Zuglauf')
         zug.fahrplan_gruppe = zug_tag.get('FahrplanGruppe')
         zug.deko = (zug_tag.get('Dekozug') == '1')
@@ -413,7 +413,7 @@ class FzgParser(ZusiParser):
                 imgpath = os.path.join('fzg', imgname)
                 renderer.renderImage().save(variante.bild_klein.storage.path(imgpath))
                 variante.bild_klein = imgpath
-            except RuntimeError:
+            except Exception:
                 logging.warn("Error rendering ls3")
 
         #Link the FTD

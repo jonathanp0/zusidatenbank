@@ -11,12 +11,13 @@ class ArrayListColumn(tables.Column):
 
     def __init__(self, *args, **kwargs):
         self.display_choices = kwargs.pop('choices', None)
+        self.seperator = kwargs.pop('seperator', ',')
         super(ArrayListColumn, self).__init__(*args, **kwargs)
      
     def render(self, value):
         if self.display_choices:
              value = list(display_array(value, self.display_choices))
-        return ', '.join(value)
+        return self.seperator.join(value)
 
 class SpeedColumn(tables.Column):
      
