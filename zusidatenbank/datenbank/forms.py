@@ -47,7 +47,7 @@ class ZugSearchForm(forms.Form):
     antrieb = forms.MultipleChoiceField(required=False, choices=FahrzeugVariante.ANTRIEB_CHOICES, help_text='Mehrfachauswahl möglich')
     neigezug = forms.MultipleChoiceField(choices=[(0, 'Nein'), (1,'Ja')],widget=forms.CheckboxSelectMultiple,initial=(0,1),required=False)
     search = forms.CharField(widget=forms.HiddenInput(),required=False)
-    time_window = forms.IntegerField(widget=forms.HiddenInput(), min_value=0, max_value=1440)
+    time_window = forms.IntegerField(widget=forms.HiddenInput(), min_value=0, max_value=1440, required=False)
 
 class FuehrerstandSearchForm(forms.Form):
 
