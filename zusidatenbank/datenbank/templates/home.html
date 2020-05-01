@@ -9,7 +9,7 @@
 {% block content %}
 <div class="row">
     <div class="trn col-md-12">
-      <span>{{random_zug.gattung}}{{random_zug.nummer}} {{random_zug.zug_lauf}} ({{random_zug.eintraege.all.0.an | date:"d.m.Y" }})</span>
+      <span>{% for nummer in random_zug.nummer %}{{random_zug.gattung}}{{nummer}}{% if not forloop.last %}/{% endif %}{% endfor %} {{random_zug.zug_lauf}} ({{random_zug.eintraege.all.0.an | date:"d.m.Y" }})</span>
       <a href = "{% url 'db:fzdetail' random_zug.path %}"><img src="{{random_zug.bild.url}}" /></a>
     </div>
 </div>
