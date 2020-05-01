@@ -152,7 +152,7 @@ class FuehrerstandBlick(models.Model):
   bild_klein = models.ImageField(max_length=200,upload_to='ftd/',unique=True)
   nummer = models.IntegerField()
   name = models.CharField(null=True,max_length=100)
-  fuehrerstand = models.ForeignKey(Fuehrerstand, related_name='blicke')
+  fuehrerstand = models.ForeignKey(Fuehrerstand, related_name='blicke', on_delete=models.CASCADE)
 
   class Meta:
     unique_together = (('nummer', 'fuehrerstand'),)
@@ -216,7 +216,7 @@ class FahrzeugVariante(models.Model):
   #Bilder
   bild_klein = models.ImageField(null=True,max_length=200,upload_to='fzg/')
 
-  fuehrerstand = models.ForeignKey(Fuehrerstand, related_name='fahrzeuge', null=True)
+  fuehrerstand = models.ForeignKey(Fuehrerstand, related_name='fahrzeuge', null=True, on_delete=models.CASCADE)
 
   objects = FahrzeugVarianteManager()
 
@@ -327,7 +327,7 @@ class FahrplanZugEintrag(models.Model):
   kopf_machen = models.BooleanField(default=False)
   ereignis = models.BooleanField(default=False)
 
-  zug = models.ForeignKey(FahrplanZug, related_name='eintraege')
+  zug = models.ForeignKey(FahrplanZug, related_name='eintraege', on_delete=models.CASCADE)
 
   class Meta:
     ordering = ['position']
