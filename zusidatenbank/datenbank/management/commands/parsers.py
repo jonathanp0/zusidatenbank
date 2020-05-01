@@ -239,6 +239,12 @@ class TrnParser(ZusiParser):
             try:
                 fahrzeug_obj = FahrzeugVariante.objects.get(root_file__iexact=path,haupt_id=fahrzeug.get('IDHaupt'), neben_id=fahrzeug.get('IDNeben'))
                 zug.fahrzeuge.add(fahrzeug_obj)
+
+                if not zug.steuerfahrzeug and fahrzeug_obj.fuehrerstand:
+                    zug.steuerfahrzeug = fahrzeug_obj
+
+                if not zug.triebfahrzeug and len(fahrzeug_obj.antrieb) > 0:
+                    zug.triebfahrzeug = fahrzeug_obj
             except FahrzeugVariante.DoesNotExist:
                 self.logger.error("Could not find FV" + path + "/" + fahrzeug.get('IDHaupt') + ":" + fahrzeug.get('IDNeben'))
 

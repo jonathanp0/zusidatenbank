@@ -220,6 +220,9 @@ class FahrzeugVariante(models.Model):
 
   objects = FahrzeugVarianteManager()
 
+  def __str__(self):
+    return self.br
+
   def antrieb_display(self):
     return display_array(self.antrieb, self.ANTRIEB_CHOICES)
 
@@ -280,6 +283,9 @@ class FahrplanZug(InventoryItem):
   fahrzeug_tree = JSONField()
 
   bild = models.ImageField(null=True,max_length=200,upload_to='trn/')
+
+  steuerfahrzeug = models.ForeignKey(FahrzeugVariante, related_name='steuerfahrplanzuege', null=True, on_delete=models.CASCADE)
+  triebfahrzeug = models.ForeignKey(FahrzeugVariante, related_name='triebfahrplanzuege', null=True, on_delete=models.CASCADE)
 
   objects = FahrplanZugManager()
 
