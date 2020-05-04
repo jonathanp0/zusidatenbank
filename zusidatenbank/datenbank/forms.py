@@ -18,7 +18,8 @@ class ZugSearchForm(forms.Form):
         self.fields['eintragort'] = forms.MultipleChoiceField(help_text='Sucht alle Orte im Zugfahrplan',choices=((obj,obj) for obj in FahrplanZugEintrag.objects.exclude(Q(ort__startswith='Sbk'))
                                                                 .values_list('ort', flat=True).distinct().order_by('ort')), required=False)
         self.fields['fahrplan'] = forms.MultipleChoiceField(choices=self.fahrplan_choices(), required=False,help_text='Mehrfachauswahl möglich')
-        self.fields['baureihe'] = forms.ChoiceField(choices=qs_to_opt_choice(FahrzeugVariante.objects.values_list('br', flat=True).distinct().order_by('br')),required=False,help_text='Sucht alle Fahrzeuge in Zugreihung')
+        self.fields['baureihe'] = forms.MultipleChoiceField(choices=((obj,obj) for obj in FahrzeugVariante.objects.values_list('br', flat=True).distinct().order_by('br')),required=False,help_text='Sucht alle Fahrzeuge in Zugreihung')
+        self.fields['steuerfahrzeug'] = forms.ChoiceField(choices=qs_to_opt_choice(FahrzeugVariante.objects.values_list('br', flat=True).exclude(fuehrerstand=None).filter().distinct().order_by('br')),required=False,help_text='Sucht erstes Fahrzeug bei Zugeinfahrt')
 
     def fahrplan_choices(self):
         return ((obj,obj.replace("Timetables\\Deutschland\\", '')) for obj in Fahrplan.objects.exclude(path__contains='_Docu').values_list('path', flat=True).order_by('path'))
@@ -28,7 +29,8 @@ class ZugSearchForm(forms.Form):
     fahrplan = forms.MultipleChoiceField()
     eintragort = forms.MultipleChoiceField()
     zuglauf = forms.CharField(help_text='(Teilweise vergleichen)',required=False,widget=forms.TextInput(attrs={'placeholder':'z.b. Berlin'}))
-    baureihe = forms.ChoiceField()
+    baureihe = forms.MultipleChoiceField()
+    steuerfahrzeug = forms.ChoiceField()
     zugart = forms.MultipleChoiceField(choices=[(0, 'Güterzug'), (1,'Reisezug')],widget=forms.CheckboxSelectMultiple,required=False, initial=(0,1))
     dekozug = forms.MultipleChoiceField(choices=[(0, 'Nein'), (1,'Ja')],widget=forms.CheckboxSelectMultiple,required=False, initial=(0,))
     anfang = forms.MultipleChoiceField(choices=[(0, 'Unbeweglich'), (1,'in Bewegung')],widget=forms.CheckboxSelectMultiple,required=False, initial=(0,1))

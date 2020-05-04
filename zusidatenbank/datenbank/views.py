@@ -101,7 +101,7 @@ class FuehrerstandDetail(Annotater, MultiTableMixin, generic.DetailView):
     def get_tables(self):
         fstand = self.get_object()
         return (FahrzeugTable(fstand.fahrzeuge.annotate(variant=Concat(F('haupt_id'), Value('/'), F('neben_id'),output_field=CharField()), zug_count=Count('fahrplanzuege')).distinct()),
-                FahrplanZugTable(self.annotateFahrplanZug(FahrplanZug.objects).filter(fahrzeuge__fuehrerstand=fstand)))
+                FahrplanZugTable(self.annotateFahrplanZug(FahrplanZug.objects).filter(steuerfahrzeug__fuehrerstand=fstand)))
 
 class FahrplanZugList(Annotater, SingleTableView):
     table_class = FahrplanZugTable
@@ -143,7 +143,9 @@ class FahrplanZugList(Annotater, SingleTableView):
             if(form.cleaned_data['fahrplan']):
                 qs = qs.filter(fahrplaene__path__in=form.cleaned_data['fahrplan'])
             if(form.cleaned_data['baureihe']):
-                qs = qs.filter(fahrzeuge__br=form.cleaned_data['baureihe'])
+                qs = qs.filter(fahrzeuge__br__in=form.cleaned_data['baureihe'])
+            if(form.cleaned_data['steuerfahrzeug']):
+                qs = qs.filter(steuerfahrzeug__br=form.cleaned_data['steuerfahrzeug'])
             if(form.cleaned_data['antrieb']):
                 qs = qs.filter(fahrzeuge__antrieb__overlap=form.cleaned_data['antrieb'])
             if filterBooleanCheckbox(form.cleaned_data['neigezug']) != -1:
