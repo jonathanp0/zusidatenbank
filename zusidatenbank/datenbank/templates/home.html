@@ -39,8 +39,9 @@
             <div role="tabpanel" class="tab-pane active" id="zug">
                 <form method="GET" action="/fahrplanzug">
                 <p>
-                    {% buttons submit='Suche' reset="Frei" %}{% endbuttons %}
+                    {% buttons submit='Suche' reset="Frei" %}{% endbuttons %}     
                     <div class="form-group">
+                        <button class="btn btn-default" type="submit" formaction="/fahrplanzug/random">Random</button>
                         <button class="btn btn-default" type="submit" name="search" value="time">Suche nur nächste </button>
                         <input type="number" name="time_window" value="60" max="1440" style="width:60px" /> minuten
                     </div>

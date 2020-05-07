@@ -10,6 +10,7 @@ urlpatterns = [
     url(r'^fahrplan$', views.FahrplanList.as_view(), name='fplist'),
     url(r'^fahrplanzug/(?P<pk>[^/]+)/$', views.FahrplanZugDetail.as_view(), name='fzdetail'),
     url(r'^fahrplan/(?P<path>[^/]+)/(?P<gruppe>.+)$', views.FahrplanZugList.as_view(), name='fzgruppelist'),
+    url(r'^fahrplanzug/random$', views.FahrplanZugRandom.as_view(), name='fzrandom'),
     url(r'^fahrplanzug$', views.FahrplanZugList.as_view(), name='fzlist'),
     url(r'^fuehrerstand/(?P<pk>[-_\.\\\w\d]+)/$', views.FuehrerstandDetail.as_view(), name='fsdetail'),
     url(r'^fuehrerstand$', views.FuehrerstandList.as_view(), name='fslist'),

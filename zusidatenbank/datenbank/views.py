@@ -2,6 +2,7 @@ from django.views import generic
 from django.db.models import Count, Min, Max, Sum, F, Q, Value, CharField, Subquery, OuterRef, Case, When
 from django.db.models.functions import Least, Greatest, Concat, Coalesce
 from django.conf import settings
+from django.http import HttpResponseRedirect
 
 from .models import *
 from .tables import *
@@ -103,10 +104,7 @@ class FuehrerstandDetail(Annotater, MultiTableMixin, generic.DetailView):
         return (FahrzeugTable(fstand.fahrzeuge.annotate(variant=Concat(F('haupt_id'), Value('/'), F('neben_id'),output_field=CharField()), zug_count=Count('fahrplanzuege')).distinct()),
                 FahrplanZugTable(self.annotateFahrplanZug(FahrplanZug.objects).filter(steuerfahrzeug__fuehrerstand=fstand)))
 
-class FahrplanZugList(Annotater, SingleTableView):
-    table_class = FahrplanZugTable
-    template_name = 'fahrplanzug/list.html'
-
+class FahrplanZugFormMixin(object):
     def get_queryset(self):
         form = ZugSearchForm(self.request.GET)
         
@@ -157,6 +155,27 @@ class FahrplanZugList(Annotater, SingleTableView):
                 qs = qs.filter(Q(anfang_zeit__time__gte=now) & Q(anfang_zeit__time__lt=now_plus_window))
 
         return qs
+
+
+class FahrplanZugList(FahrplanZugFormMixin, Annotater, SingleTableView):
+    table_class = FahrplanZugTable
+    template_name = 'fahrplanzug/list.html'
+
+class FahrplanZugRandom(FahrplanZugFormMixin, generic.RedirectView):
+
+    def get_redirect_url(self, *args, **kwargs):
+
+        matching_zuege = self.get_queryset()
+        matching_zuege_count = matching_zuege.count()
+
+        if matching_zuege_count > 0:
+            random_index = randint(0, matching_zuege_count - 1)
+            random_zug = matching_zuege[random_index]
+
+            return random_zug.get_absolute_url()
+
+        else: 
+            return reverse('db:fzlist', kwargs=self.kwargs)
 
 class FahrplanZugDetail(generic.DetailView):
     template_name = 'fahrplanzug/detail.html'
