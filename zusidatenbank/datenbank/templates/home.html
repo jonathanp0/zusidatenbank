@@ -22,6 +22,7 @@
         {% plain_flatblock "home.wilkommen" evaluated=True %}
         <h3>Aktuell</h3>
         {% plain_flatblock "home.aktuell" evaluated=True %}
+        <a href="{% url 'db:altaktuell' %}">Mehr...</a>
         <h3>Datenstand</h3>
         {% plain_flatblock "home.datenstand" evaluated=True %}
     </div>

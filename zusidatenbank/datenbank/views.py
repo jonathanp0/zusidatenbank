@@ -175,7 +175,7 @@ class FahrplanZugRandom(FahrplanZugFormMixin, generic.RedirectView):
             return random_zug.get_absolute_url()
 
         else: 
-            return reverse('db:fzlist', kwargs=self.kwargs)
+            return reverse('db:keinzug')
 
 class FahrplanZugDetail(generic.DetailView):
     template_name = 'fahrplanzug/detail.html'
@@ -300,3 +300,7 @@ class AutorDetail(Annotater, MultiTableMixin, generic.DetailView):
                 FuehrerstandTable(self.annotateFuehrerstand(self.get_object().fuehrerstand_set)),
                 FahrzeugTable(self.annotateFahrzeug(self.get_object().fahrzeugvariante_set))
                 )
+
+class FlatblockView(generic.TemplateView):
+    
+    template_name = 'flatblock.html'

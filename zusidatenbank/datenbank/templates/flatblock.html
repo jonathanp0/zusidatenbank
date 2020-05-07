@@ -1,0 +1,13 @@
+
+{% extends "base.html" %}
+
+{% load flatblocks %}
+
+{% block head %}{% flatblock flatblock using="flatblocks/header.html" %}{% endblock %}
+{% block title %}{% flatblock flatblock using="flatblocks/header.html" %}{% endblock %}
+
+{% block content %}
+
+{% plain_flatblock flatblock evaluated=True %}
+
+{% endblock %}
