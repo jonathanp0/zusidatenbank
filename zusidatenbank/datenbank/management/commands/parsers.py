@@ -164,10 +164,12 @@ class St3Parser(ZusiParser):
         for modkey in self.nachbaren.keys():
             mod_from = StreckenModule.objects.get(path=modkey)
             for mod_to in self.nachbaren[modkey]:
-                try:
-                    mod_from.nachbaren.add(StreckenModule.objects.get(path=mod_to))
-                except StreckenModule.DoesNotExist:
-                    self.logger.error("Link to invalid neighbour " + str(mod_to) + " from " + modkey)
+                nachbarn = StreckenModule.objects.filter(path=mod_to)
+                if len(nachbarn) > 0:
+                    mod_from.nachbaren.add(nachbarn[0])
+                else:
+                    mod_from.fehlende_nachbaren.append(os.path.split(mod_to)[1])
+                    mod_from.save()
                 
 
 class FpnParser(ZusiParser):

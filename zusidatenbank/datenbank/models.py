@@ -57,8 +57,12 @@ class StreckenModuleManager(models.Manager):
 class StreckenModule(InventoryItem):
   nachbaren = models.ManyToManyField('self', symmetrical=False, related_name='+')
   standorte = ArrayField(models.CharField(max_length=200),default=list)
+  fehlende_nachbaren = ArrayField(models.CharField(max_length=200), default=list)
 
   objects = StreckenModuleManager()
+
+  def fehlende_nachbaren_sorted(self):
+    return sorted(self.fehlende_nachbaren)
 
   def get_absolute_url(self):
     return reverse('db:smdetail', args=[self.path])

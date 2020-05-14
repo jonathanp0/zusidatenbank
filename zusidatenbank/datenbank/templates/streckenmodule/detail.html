@@ -18,6 +18,11 @@
         </ul>
       </div>
     </div>
+    <div class="col-md-6">
+      <div class="panel panel-primary">
+        {% include "include/panel_list.html" with heading="Nicht verfügbare Nachbarmodule" items=object.fehlende_nachbaren_sorted %}
+      </div>
+    </div>
 </div>
 
 <h3>Nachbar Module</h4>

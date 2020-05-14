@@ -13,7 +13,7 @@ class StreckenModuleTable(tables.Table):
 
     class Meta:
         model = StreckenModule
-        exclude = ('standorte',)
+        exclude = ('standorte', 'fehlende_nachbaren')
         sequence = ('name', 'path', 'nachbaren_count', 'fahrplan_count')
         order_by = ('name',)
         attrs = {'class': 'table table-striped table-hover'}
