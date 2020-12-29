@@ -19,5 +19,6 @@ urlpatterns = [
     url(r'^fahrzeug$', views.FahrzeugList.as_view(), name='fvlist'),
     url(r'^aktuell$', views.FlatblockView.as_view(extra_context={'flatblock': 'home.altaktuell'}), name='altaktuell'),
     url(r'^fahrplanzug/none$', views.FlatblockView.as_view(extra_context={'flatblock': 'error.keinzug'}), name='keinzug'),
+    url(r'^impressum$', views.FlatblockView.as_view(extra_context={'flatblock': 'home.impressum'}), name='impressum'),
     url(r'^$', views.IndexView.as_view(), name='index'),
 ]
