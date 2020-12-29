@@ -65,7 +65,6 @@ class StreckenModuleDetail(Annotater, MultiTableMixin, generic.DetailView):
 
     def get_tables(self):
         return (StreckenModuleTable(self.get_object().nachbaren.annotate(nachbaren_count=Count('nachbaren', distinct=True),fahrplan_count=Count('fahrplaene',distinct=True))),
-                #FahrplanTable(self.annotateFahrplan(self.get_object().fahrplaene)))
                 FahrplanTable(Fahrplan.objects.withTableStats().filter(strecken_modules__path=self.get_object().path)))
 
 
@@ -102,7 +101,7 @@ class FuehrerstandDetail(Annotater, MultiTableMixin, generic.DetailView):
     def get_tables(self):
         fstand = self.get_object()
         return (FahrzeugTable(fstand.fahrzeuge.annotate(variant=Concat(F('haupt_id'), Value('/'), F('neben_id'),output_field=CharField()), zug_count=Count('fahrplanzuege')).distinct()),
-                FahrplanZugTable(self.annotateFahrplanZug(FahrplanZug.objects).filter(steuerfahrzeug__fuehrerstand=fstand)))
+                FahrplanZugTable(FahrplanZug.objects.withTableStats().filter(steuerfahrzeug__fuehrerstand=fstand)))
 
 class FahrplanZugFormMixin(object):
     def get_queryset(self):
@@ -237,7 +236,7 @@ class FahrzeugDetail(Annotater, MultiTableMixin, generic.DetailView):
 
     def get_tables(self):
         fahrzeug = self.get_plain_object()
-        return (FahrplanZugTable(self.annotateFahrplanZug(fahrzeug.fahrplanzuege)),
+        return (FahrplanZugTable(fahrzeug.fahrplanzuege.withTableStats()),
                 FahrplanTable(Fahrplan.objects.withTableStatsLight().filter(zuege__fahrzeuge__id=fahrzeug.id)))
 
 class FahrplanList(SingleTableView):
