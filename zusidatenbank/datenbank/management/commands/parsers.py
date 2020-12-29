@@ -6,13 +6,34 @@ import sys
 import re
 import logging
 import copy
-from datetime import datetime
+from datetime import datetime, timedelta
 import shutil
 from django.conf import settings
 from django.core.files.storage import default_storage
+from django.db.models import Q, F, Window
+from django.db.models.functions import Lag
 from pytz import timezone
 
 from .ls3renderlib import LS3RenderLib
+
+def removeDoppel(input):
+
+  prog = re.compile(r'(PerZufallUebernehmen="[0-9\.]+") (PerZufallUebernehmen="[0-9\.]+")')
+
+  output = list()
+
+  for l in input:
+      s = l.decode("utf-8")
+      r = prog.search(s)
+      if r:
+        o = s[0:r.start(1)] + s[r.end(1):]
+      else:
+        o = s
+      output.append(o)
+
+  ofile = "".join(output)
+
+  return ofile
 
 class ZusiParser(object):
 
@@ -38,7 +59,9 @@ class ZusiParser(object):
         self.logger.addHandler(sh)
 
         with open(full_path, 'rb') as xml_file:
-            xml = ET.parse(xml_file).getroot()
+
+            fixed = removeDoppel(xml_file)
+            xml = ET.fromstring(fixed)
             info = {'name': os.path.basename(rel_path),
                     'autor': self.getAutor(xml)}
 
@@ -253,6 +276,13 @@ class TrnParser(ZusiParser):
         imgpath = os.path.join('trn', zug.path.replace('\\','') + ".png")
         zugrenderer = self.ZugRenderer(root_path, self.getRenderer(20))
         zug.bild = zugrenderer.renderImage(zug, imgpath)
+
+        zeit_diff = FahrplanZugEintrag.objects.filter(zug_id=zug_id).exclude(Q(ab=None) & Q(an=None)).annotate(
+                                      zeit_previous=Window(expression=Lag('ab'),order_by=F('position').asc()),
+                                      zeit_diff=Coalesce('an','ab')-F('zeit_previous')
+                                    ).order_by().values_list('zeit_diff', flat=True)
+
+        zug.zeit_bewegung = sum(zeit_diff[1:], timedelta())
 
         zug.save()
     

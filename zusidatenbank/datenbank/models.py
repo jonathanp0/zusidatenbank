@@ -282,6 +282,9 @@ class FahrplanZug(InventoryItem):
   laenge = models.FloatField(null=True)
   bremse_percentage = models.FloatField(null=True)
 
+  #Gerechnet
+  zeit_bewegung = models.DurationField(null=True)
+
   fahrzeuge = models.ManyToManyField(FahrzeugVariante, related_name='fahrplanzuege')
 
   fahrzeug_tree = JSONField()

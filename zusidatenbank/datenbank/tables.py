@@ -43,13 +43,17 @@ class FahrplanZugTable(tables.Table):
     deko_zug = tables.BooleanColumn(verbose_name='Deko')
     fz_max_speed = SpeedColumn(verbose_name='Speed Max*')
     anfang_zeit = tables.DateTimeColumn(short=True)
-    gesamt_zeit = tables.Column(verbose_name='Fahrzeit')
+    gesamt_zeit = tables.Column(verbose_name='Gesamt Fahrzeit')
     masse = tables.Column(verbose_name='Masse*')
     laenge = tables.Column(verbose_name='Laenge*')
     bremse_percentage = tables.Column(verbose_name='Brems%*')
     steuerfahrzeug = tables.Column(verbose_name='Fahrzeug')
+    zeit_bewegung = tables.Column(verbose_name='Zeit in Bewegung')
 
     def render_gesamt_zeit(self, value):
+        return "{0:02}:{1:02}".format(value.seconds//3600, (value.seconds//60)%60)
+
+    def render_zeit_bewegung(self, value):
         return "{0:02}:{1:02}".format(value.seconds//3600, (value.seconds//60)%60)
 
     def render_is_reisezug(self, value):
@@ -72,7 +76,7 @@ class FahrplanZugTable(tables.Table):
 
     class Meta:
         model = FahrplanZug
-        sequence = ('name', 'gattung', 'nummer', 'zug_lauf', 'is_reisezug', 'fz_max_speed', 'deko_zug')
+        sequence = ('name', 'gattung', 'nummer', 'zug_lauf', 'is_reisezug', 'fz_max_speed', 'deko_zug', 'masse', 'laenge', 'bremse_percentage', 'steuerfahrzeug', 'anfang_zeit', 'gesamt_zeit', 'zeit_bewegung')
         exclude = ('fahrzeug_tree','path', 'fahrplan_gruppe', 'speed_zug', 'speed_anfang', 'bild', 'deko', 'bremsstellung', 'triebfahrzeug', 'is_reisezug')
         order_by = ('name',)
         attrs = {'class': 'table table-striped table-hover'}

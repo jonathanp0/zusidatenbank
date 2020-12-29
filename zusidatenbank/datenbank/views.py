@@ -257,7 +257,7 @@ class FahrplanDetail(Annotater, MultiTableMixin, generic.DetailView):
             return context
 
     def get_tables(self):
-        return (FahrplanZugTable(self.annotateFahrplanZug(self.get_object().zuege)),
+        return (FahrplanZugTable(self.get_object().zuege.withTableStats()),
                 StreckenModuleTable(StreckenModule.objects.withTableStats().filter(fahrplaene__path=self.get_object().path)))
 
 class IndexView(generic.TemplateView):
