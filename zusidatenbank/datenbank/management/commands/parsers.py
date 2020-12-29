@@ -345,13 +345,13 @@ class TrnParser(ZusiParser):
             self.renderLength = 0
             self.processItem(zug.fahrzeug_tree_with_data())
 
-            try:
-                self.renderer.renderImage(1).save(zug.bild.storage.path(imgpath))
-                return imgpath
-            except Exception as e:
-                logging.warn("Error rendering ls3 for Fahrplanzug")
+            #try:
+            self.renderer.renderImage(1).save(zug.bild.storage.path(imgpath))
+            return imgpath
+            #except Exception as e:
+            #    logging.warn("Error rendering ls3 for Fahrplanzug")
             
-            return None
+            #return None
 
         def processItem(self, item):
             if item['type'] == 'fahrzeug':
