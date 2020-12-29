@@ -38,7 +38,7 @@ class LS3RenderLib:
         if result == 0:
             raise RuntimeError('Fehler in ls3render_AddFahrzeug')
 
-    def renderImage(self):
+    def renderImage(self, resample=1):
         """Rendert die Szene und gab ein Pillow Image zueruck. Fall einen Fehler, loest es eine RuntimeException aus. """
         hoehe = self.dll.ls3render_GetBildhoehe()
         breite = self.dll.ls3render_GetBildbreite()
@@ -51,5 +51,5 @@ class LS3RenderLib:
             raise RuntimeError('Fehler in ls3render_Render')
 
         #4 x 1 Byte RGBA-Daten mit Reihenfolge BGRA, beginnt mit der unteren Zeile
-        img = Image.frombuffer('RGBA', imgDimensions, puffer, 'raw', 'BGRA', 0, -1)
+        img = Image.frombuffer('RGBA', imgDimensions, puffer, 'raw', 'BGRA', 0, -1).resize((int(breite / resample), int(hoehe / resample)))
         return img

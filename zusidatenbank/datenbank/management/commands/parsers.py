@@ -346,7 +346,7 @@ class TrnParser(ZusiParser):
             self.processItem(zug.fahrzeug_tree_with_data())
 
             try:
-                self.renderer.renderImage().save(zug.bild.storage.path(imgpath))
+                self.renderer.renderImage(1).save(zug.bild.storage.path(imgpath))
                 return imgpath
             except Exception as e:
                 logging.warn("Error rendering ls3 for Fahrplanzug")
@@ -445,11 +445,11 @@ class FzgParser(ZusiParser):
         if variante.ls3_datei != None:
             ls3datei = os.path.join(root_path, variante.ls3_datei)
             try:
-                renderer = self.getRenderer(20)
+                renderer = self.getRenderer(80)
                 renderer.addFahrzeug(ls3datei, 0, float(fzg_data['laenge']), False, float(fzg_data.get('stromabnehmer_hoehe',0)), (True, True, True, True))
                 imgname = rel_path.replace('\\','') + var_el.get('IDHaupt') + var_el.get('IDNeben') + ".png"
                 imgpath = os.path.join('fzg', imgname)
-                renderer.renderImage().save(variante.bild_klein.storage.path(imgpath))
+                renderer.renderImage(4).save(variante.bild_klein.storage.path(imgpath))
                 variante.bild_klein = imgpath
             except Exception:
                 logging.warn("Error rendering ls3")
