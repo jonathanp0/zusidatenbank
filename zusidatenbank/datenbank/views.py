@@ -3,6 +3,8 @@ from django.db.models import Count, Min, Max, Sum, F, Q, Value, CharField, Subqu
 from django.db.models.functions import Least, Greatest, Concat, Coalesce
 from django.conf import settings
 from django.http import HttpResponseRedirect
+from django.views.decorators.cache import never_cache
+from django.utils.decorators import method_decorator
 
 from .models import *
 from .tables import *
@@ -147,6 +149,8 @@ class FahrplanZugFormMixin(object):
                 qs = qs.filter(fahrzeuge__antrieb__overlap=form.cleaned_data['antrieb'])
             if filterBooleanCheckbox(form.cleaned_data['neigezug']) != -1:
                 qs = qs.filter(fahrzeuge__neigetechnik=filterBooleanCheckbox(form.cleaned_data['neigezug']))
+            if filterBooleanCheckbox(form.cleaned_data['fis']) != -1:
+                qs = qs.filter(fis_ansagen=filterBooleanCheckbox(form.cleaned_data['fis']))
 
             if(form.cleaned_data['search']=='time'):
                 now = datetime.datetime.now(timezone(settings.TIME_ZONE_DE))
@@ -154,7 +158,6 @@ class FahrplanZugFormMixin(object):
                 qs = qs.filter(Q(anfang_zeit__time__gte=now) & Q(anfang_zeit__time__lt=now_plus_window))
 
         return qs
-
 
 class FahrplanZugList(FahrplanZugFormMixin, Annotater, SingleTableView):
     table_class = FahrplanZugTable
@@ -259,6 +262,7 @@ class FahrplanDetail(Annotater, MultiTableMixin, generic.DetailView):
         return (FahrplanZugTable(self.get_object().zuege.withTableStats()),
                 StreckenModuleTable(StreckenModule.objects.withTableStats().filter(fahrplaene__path=self.get_object().path)))
 
+@method_decorator(never_cache, name='dispatch')
 class IndexView(generic.TemplateView):
     template_name = 'home.html'
 

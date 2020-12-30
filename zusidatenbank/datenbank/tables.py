@@ -49,6 +49,7 @@ class FahrplanZugTable(tables.Table):
     bremse_percentage = tables.Column(verbose_name='Brems%*')
     steuerfahrzeug = tables.Column(verbose_name='Fahrzeug')
     zeit_bewegung = tables.Column(verbose_name='Zeit in Bewegung')
+    fis_ansagen = tables.BooleanColumn(verbose_name='FIS')
 
     def render_gesamt_zeit(self, value):
         return "{0:02}:{1:02}".format(value.seconds//3600, (value.seconds//60)%60)

@@ -50,6 +50,7 @@ class ZugSearchForm(forms.Form):
     neigezug = forms.MultipleChoiceField(choices=[(0, 'Nein'), (1,'Ja')],widget=forms.CheckboxSelectMultiple,initial=(0,1),required=False)
     search = forms.CharField(widget=forms.HiddenInput(),required=False)
     time_window = forms.IntegerField(widget=forms.HiddenInput(), min_value=0, max_value=1440, required=False)
+    fis = forms.MultipleChoiceField(label='FIS Ansagen',choices=[(0, 'Nein'), (1,'Ja')],widget=forms.CheckboxSelectMultiple,initial=(0,1),required=False)
 
 class FuehrerstandSearchForm(forms.Form):
 
