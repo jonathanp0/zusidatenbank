@@ -22,6 +22,7 @@ class Command(BaseCommand):
         self.scanFiles(options['root'], "Timetables", ".trn", TrnParser)
         self.scanFiles(options['root'], "Timetables", ".fpn", FpnParser)
         self.scanFiles(options['root'], "Timetables", ".timetable.xml", TimetableParser)
+        self.scanFiles(options['root'], "Timetables", ".zda", ZusiDisplayAnsageParser)
                 
     def scanFiles(self, root, subpath, filter, handlerClass):
         handler = handlerClass()
@@ -35,6 +36,7 @@ class Command(BaseCommand):
         logger.addHandler(sh)
 
         for scanpath, dirs, files in os.walk(os.path.join(root, subpath), topdown=False):
+
             logger.info("Scanning " + scanpath)
             for name in files:
                 full_path = os.path.join(scanpath, name)

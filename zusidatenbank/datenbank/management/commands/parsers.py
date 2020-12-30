@@ -60,8 +60,9 @@ class ZusiParser(object):
 
         with open(full_path, 'rb') as xml_file:
 
-            fixed = removeDoppel(xml_file)
-            xml = ET.fromstring(fixed)
+            #fixed = removeDoppel(xml_file)
+            #xml = ET.fromstring(fixed)
+            xml = ET.parse(xml_file)
             info = {'name': os.path.basename(rel_path),
                     'autor': self.getAutor(xml)}
 
@@ -120,6 +121,12 @@ class ZusiParser(object):
         ZusiParser.lib.reset()
 
         return ZusiParser.lib
+
+    def stripRouteNumber(self, zug):
+        match = re.search(r"([A-Z]+)(\d{1,2})", zug.gattung)
+        if match:
+            zug.gattung = match.group(1)
+            zug.zug_lauf = ' '.join((match.group(0),zug.zug_lauf))
 
 class FtdParser(ZusiParser):
 
@@ -285,12 +292,6 @@ class TrnParser(ZusiParser):
         zug.zeit_bewegung = sum(zeit_diff[1:], timedelta())
 
         zug.save()
-    
-    def stripRouteNumber(self, zug):
-        match = re.search(r"([A-Z]+)(\d{1,2})", zug.gattung)
-        if match:
-            zug.gattung = match.group(1)
-            zug.zug_lauf = ' '.join((match.group(0),zug.zug_lauf))
 
     def processVariantenWithPosition(self, varianten):
         if varianten.get('FzgPosition') == None:
@@ -489,3 +490,28 @@ class TimetableParser(ZusiParser):
             zug.bremse_percentage = self.getAsFloat(bfp_tag, "Bremsh")
 
             zug.save()
+
+class ZusiDisplayAnsageParser(ZusiParser):
+
+    def parse(self, zda, path, module_id, info):
+
+        for trains_tag in zda.findall("Line/Track/Trains"):
+            timetable = trains_tag.get("Timetable")
+            if timetable[0] == '\\':
+                timetable = timetable[1:]
+
+            for train_tag in trains_tag.findall("Train"):
+                try:
+                    gattung = train_tag.get('Type')
+                    match = re.search(r"([A-Z]+)(\d{1,2})", gattung)
+                    if match:
+                        gattung = match.group(1)
+
+                    zug = FahrplanZug.objects.get(fahrplaene__path=timetable,
+                                                  gattung=gattung, 
+                                                  nummer__contains=[train_tag.get('Number'),])
+                    zug.fis_ansagen = True
+                    zug.save()
+                except FahrplanZug.DoesNotExist:
+                    self.logger.error("ZusiDisplayAnsage for invalid Zug " + timetable + "::" + gattung + "::" + train_tag.get('Number'))
+                    continue

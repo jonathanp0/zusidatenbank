@@ -277,6 +277,8 @@ class FahrplanZug(InventoryItem):
   speed_zug = models.IntegerField(null=True)
   bremsstellung = models.IntegerField(null=True)
 
+  fis_ansagen = models.BooleanField(default=False)
+
   #Estimates from Buchfahrplan
   masse = models.IntegerField(null=True)
   laenge = models.FloatField(null=True)
