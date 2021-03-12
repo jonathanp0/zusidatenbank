@@ -15,6 +15,7 @@ from django.db.models.functions import Lag
 from pytz import timezone
 
 from .ls3renderlib import LS3RenderLib
+from .z3strbielib import *
 
 def removeDoppel(input):
 
@@ -122,6 +123,14 @@ class ZusiParser(object):
 
         return ZusiParser.lib
 
+    strbie = None
+
+    def getStrbie(self):
+        if ZusiParser.strbie == None:
+            ZusiParser.strbie = Z3StrbieLib("C:\\Program Files (x86)\\Zusi3\\z3strbie.dll")
+
+        return ZusiParser.strbie
+
     def stripRouteNumber(self, zug):
         match = re.search(r"([A-Z]+)(\d{1,2})", zug.gattung)
         if match:
@@ -163,6 +172,14 @@ class FtdParser(ZusiParser):
             bild_src_path = os.path.join(settings.ROLLING_STOCK_LIST_PATH, 'RollingStock', 'List', bild_file)
             bild_dst_media_path = os.path.join('ftd', bild_file)
 
+            # Generation with DLL
+            #base_path = path.replace(module_id, '')
+            #blick = FuehrerstandBlick(bild_klein=bild_dst_media_path, name=name, nummer=grafik_id, fuehrerstand=stand)
+            #dst_path = os.path.normpath(blick.bild_klein.storage.path(bild_dst_media_path))
+            #self.getStrbie().ftdVorschau(base_path, module_id, dst_path, grafik_id, D3DXIMAGE_FILEFORMAT.D3DXIFF_PNG, 300, 200)
+            # TODO: Check returned image size to detect 'empty' images
+            #blick.save()
+            
             #Don't include 'empty' images, These are always 901 bytes in size
             if(os.path.exists(bild_src_path) and os.path.getsize(bild_src_path) != self.LEER_IMAGE_SIZE):
                 blick = FuehrerstandBlick(bild_klein=bild_dst_media_path, name=name, nummer=grafik_id, fuehrerstand=stand)
@@ -278,11 +295,11 @@ class TrnParser(ZusiParser):
                 if not zug.triebfahrzeug and len(fahrzeug_obj.antrieb) > 0:
                     zug.triebfahrzeug = fahrzeug_obj
             except FahrzeugVariante.DoesNotExist:
-                self.logger.error("Could not find FV" + path + "/" + fahrzeug.get('IDHaupt') + ":" + fahrzeug.get('IDNeben'))
+                self.logger.error("Could not find Fahrzeug Variant " + path + "/" + fahrzeug.get('IDHaupt') + ":" + fahrzeug.get('IDNeben'))
 
         imgpath = os.path.join('trn', zug.path.replace('\\','') + ".png")
         zugrenderer = self.ZugRenderer(root_path, self.getRenderer(20))
-        zug.bild = zugrenderer.renderImage(zug, imgpath)
+        zug.bild = zugrenderer.renderImage(zug, imgpath, 1)
 
         zeit_diff = FahrplanZugEintrag.objects.filter(zug_id=zug_id).exclude(Q(ab=None) & Q(an=None)).annotate(
                                       zeit_previous=Window(expression=Lag('ab'),order_by=F('position').asc()),
@@ -318,10 +335,10 @@ class TrnParser(ZusiParser):
         
     def processFahrzeug(self, zug):
  
-        try:
-            fahrzeug_obj = FahrzeugVariante.objects.get(root_file__iexact=zug.find('Datei').get('Dateiname'),haupt_id=zug.get('IDHaupt'), neben_id=zug.get('IDNeben'))
-        except FahrzeugVariante.DoesNotExist:
-            return None
+        #try:
+        fahrzeug_obj = FahrzeugVariante.objects.get(root_file__iexact=zug.find('Datei').get('Dateiname'),haupt_id=zug.get('IDHaupt'), neben_id=zug.get('IDNeben'))
+        #except FahrzeugVariante.DoesNotExist:
+        #    return None
 
         details = {'type': 'fahrzeug', 'id': fahrzeug_obj.id}
 
@@ -342,12 +359,12 @@ class TrnParser(ZusiParser):
             self.renderer = renderer
             self.renderLength = 0
 
-        def renderImage(self, zug, imgpath):
+        def renderImage(self, zug, imgpath, resample):
             self.renderLength = 0
             self.processItem(zug.fahrzeug_tree_with_data())
 
             #try:
-            self.renderer.renderImage(1).save(zug.bild.storage.path(imgpath))
+            self.renderer.renderImage(resample).save(zug.bild.storage.path(imgpath))
             return imgpath
             #except Exception as e:
             #    logging.warn("Error rendering ls3 for Fahrplanzug")
