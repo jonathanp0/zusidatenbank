@@ -296,6 +296,7 @@ class TrnParser(ZusiParser):
                     zug.triebfahrzeug = fahrzeug_obj
             except FahrzeugVariante.DoesNotExist:
                 self.logger.error("Could not find Fahrzeug Variant " + path + "/" + fahrzeug.get('IDHaupt') + ":" + fahrzeug.get('IDNeben'))
+                raise
 
         imgpath = os.path.join('trn', zug.path.replace('\\','') + ".png")
         zugrenderer = self.ZugRenderer(root_path, self.getRenderer(20))
@@ -335,10 +336,11 @@ class TrnParser(ZusiParser):
         
     def processFahrzeug(self, zug):
  
-        #try:
-        fahrzeug_obj = FahrzeugVariante.objects.get(root_file__iexact=zug.find('Datei').get('Dateiname'),haupt_id=zug.get('IDHaupt'), neben_id=zug.get('IDNeben'))
-        #except FahrzeugVariante.DoesNotExist:
-        #    return None
+        try:
+            fahrzeug_obj = FahrzeugVariante.objects.get(root_file__iexact=zug.find('Datei').get('Dateiname'),haupt_id=zug.get('IDHaupt'), neben_id=zug.get('IDNeben'))
+        except FahrzeugVariante.DoesNotExist:
+            self.logger.error("Could not find Fahrzeug Variant " + path + "/" + fahrzeug.get('IDHaupt') + ":" + fahrzeug.get('IDNeben'))
+            raise
 
         details = {'type': 'fahrzeug', 'id': fahrzeug_obj.id}
 
