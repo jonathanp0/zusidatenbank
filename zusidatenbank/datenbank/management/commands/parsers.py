@@ -339,7 +339,7 @@ class TrnParser(ZusiParser):
         try:
             fahrzeug_obj = FahrzeugVariante.objects.get(root_file__iexact=zug.find('Datei').get('Dateiname'),haupt_id=zug.get('IDHaupt'), neben_id=zug.get('IDNeben'))
         except FahrzeugVariante.DoesNotExist:
-            self.logger.error("Could not find Fahrzeug Variant " + path + "/" + fahrzeug.get('IDHaupt') + ":" + fahrzeug.get('IDNeben'))
+            self.logger.error("Could not find Fahrzeug Variant " + zug.find('Datei').get('Dateiname') + "/" + zug.get('IDHaupt') + ":" + zug.get('IDNeben'))
             raise
 
         details = {'type': 'fahrzeug', 'id': fahrzeug_obj.id}
