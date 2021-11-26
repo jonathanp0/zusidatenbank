@@ -208,7 +208,7 @@ class FahrzeugVariante(models.Model):
   ls3_datei = models.CharField(max_length=200)
 
   #Grunddaten
-  masse = models.IntegerField(null=True)
+  masse = models.FloatField(null=True)
   laenge = models.FloatField()
   speed_max = models.IntegerField()
 
