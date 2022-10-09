@@ -532,5 +532,8 @@ class ZusiDisplayAnsageParser(ZusiParser):
                     zug.fis_ansagen = True
                     zug.save()
                 except FahrplanZug.DoesNotExist:
-                    self.logger.error("ZusiDisplayAnsage for invalid Zug " + timetable + "::" + gattung + "::" + train_tag.get('Number'))
+                    self.logger.warn("ZusiDisplayAnsage for invalid Zug " + timetable + "::" + gattung + "::" + train_tag.get('Number'))
+                    continue
+                except FahrplanZug.MultipleObjectsReturned:
+                    self.logger.error("ZusiDisplayAnsage for unclear Zug " + timetable + "::" + gattung + "::" + train_tag.get('Number'))
                     continue
