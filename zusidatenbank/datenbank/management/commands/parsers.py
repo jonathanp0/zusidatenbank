@@ -537,3 +537,19 @@ class ZusiDisplayAnsageParser(ZusiParser):
                 except FahrplanZug.MultipleObjectsReturned:
                     self.logger.error("ZusiDisplayAnsage for unclear Zug " + timetable + "::" + gattung + "::" + train_tag.get('Number'))
                     continue
+
+class FahrzeugVerbandParser(ZusiParser):
+
+    # Global List of found files for later scanning
+    verbandList = set()
+
+    def parse(self, trn, path, zug_id, info):
+
+        for fahrzeug in trn.iter('FahrzeugInfo'):
+            path = fahrzeug.find('Datei').get('Dateiname')
+
+            if not (path in FahrzeugVerbandParser.verbandList):
+                self.logger.info("Add Fahrzeug path to verband list: " + path)
+
+            FahrzeugVerbandParser.verbandList.add(path)
+

@@ -16,18 +16,20 @@ class Command(BaseCommand):
         logging.basicConfig(level=logging.DEBUG, format='%(levelname)s|%(name)s|%(message)s')
         self.clear_all()
 
-        self.scanFiles(options['root'], "RollingStock", ".ftd", FtdParser)
-        self.scanFiles(options['root'], "RollingStock", ".rv.fzg", FzgParser)
-        self.scanFiles(options['root'], os.path.join("Routes", "Deutschland"), ".st3", St3Parser)
-        self.scanFiles(options['root'], "Timetables", ".trn", TrnParser)
-        self.scanFiles(options['root'], "Timetables", ".fpn", FpnParser)
-        self.scanFiles(options['root'], "Timetables", ".timetable.xml", TimetableParser)
-        self.scanFiles(options['root'], "Timetables", ".zda", ZusiDisplayAnsageParser)
+        self.scanFiles(options['root'], "RollingStock", self.filter_ext(".trn.xml"), FahrzeugVerbandParser)
+        self.scanFiles(options['root'], "RollingStock", self.filter_ext(".ftd"), FtdParser)
+        self.scanFiles(options['root'], "RollingStock", self.filter_ext(".rv.fzg"), FzgParser)
+        self.scanFiles(options['root'], "RollingStock", self.filter_verband(), FzgParser)
+        self.scanFiles(options['root'], os.path.join("Routes", "Deutschland"), self.filter_ext(".st3"), St3Parser)
+        self.scanFiles(options['root'], "Timetables", self.filter_ext(".trn"), TrnParser)
+        self.scanFiles(options['root'], "Timetables", self.filter_ext(".fpn"), FpnParser)
+        self.scanFiles(options['root'], "Timetables", self.filter_ext(".timetable.xml"), TimetableParser)
+        self.scanFiles(options['root'], "Timetables", self.filter_ext(".zda"), ZusiDisplayAnsageParser)
                 
     def scanFiles(self, root, subpath, filter, handlerClass):
         handler = handlerClass()
 
-        logger = logging.getLogger("scan" + filter)
+        logger = logging.getLogger("scan" + handlerClass.__class__.__name__)
         logger.setLevel(logging.DEBUG)
         sh = logging.StreamHandler(sys.stdout)
         sh.setLevel(logging.DEBUG)
@@ -41,7 +43,7 @@ class Command(BaseCommand):
             for name in files:
                 full_path = os.path.join(scanpath, name)
                 rel_path = os.path.relpath(full_path, root)
-                if(name.endswith(filter)):
+                if(filter(rel_path):
                     logger.info("Processing " + rel_path)
                     handler.parseFile(full_path, rel_path)
 
@@ -55,4 +57,10 @@ class Command(BaseCommand):
         FahrplanZug.objects.all().delete()
         FahrplanZugEintrag.objects.all().delete()
         FahrzeugVariante.objects.all().delete()
+
+    def filter_ext(ext):
+        return lambda relpath : relpath.endswith(ext)
+
+    def filter_verband():
+        return lambda relpath : relpath in FahrzeugVerbandParser.verbandList
         
