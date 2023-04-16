@@ -65,7 +65,7 @@ class ZusiParser(object):
             #xml = ET.fromstring(fixed)
             xml = ET.parse(xml_file)
             info = {'name': os.path.basename(rel_path),
-                    'autor': self.getAutor(xml)}
+                    'autor': list()}
 
             if(info['autor'] == None):
                 self.logger.error("No author information")
@@ -307,7 +307,10 @@ class TrnParser(ZusiParser):
                                       zeit_diff=Coalesce('an','ab')-F('zeit_previous')
                                     ).order_by().values_list('zeit_diff', flat=True)
 
-        zug.zeit_bewegung = sum(zeit_diff[1:], timedelta())
+        try:
+            zug.zeit_bewegung = sum(zeit_diff[1:], timedelta())
+        except TypeError:
+            self.logger.error("Zeit in Bewegung calculation failed with:" + str(zeit_diff))
 
         zug.save()
 
@@ -549,7 +552,8 @@ class FahrzeugVerbandParser(ZusiParser):
             path = fahrzeug.find('Datei').get('Dateiname')
 
             if not (path in FahrzeugVerbandParser.verbandList):
+                self.logger.info("Found Fahrzeug path for verband list: " + path)
+                
+            if not FahrzeugVariante.objects.filter(root_file__iexact=path).exists():
+                FahrzeugVerbandParser.verbandList.add(path)
                 self.logger.info("Add Fahrzeug path to verband list: " + path)
-
-            FahrzeugVerbandParser.verbandList.add(path)
-
