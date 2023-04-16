@@ -175,7 +175,8 @@ class FahrzeugVariante(models.Model):
     ('DieselHydraulisch','Diesel Hydraulisch',), 
     ('Einfach','Einfach'), 
     ('ElektrischDrehstrom', 'Elektrisch Drehstrom'), 
-    ('ElektrischReihenschluss','Elektrisch Reihenschluss')
+    ('ElektrischReihenschluss','Elektrisch Reihenschluss'),
+    ('DieselElektrischDrehstrom','Diesel Elektrisch',)
   )
 
   BREMSE_CHOICES = (
