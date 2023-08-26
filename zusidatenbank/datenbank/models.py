@@ -103,6 +103,18 @@ class Fuehrerstand(InventoryItem):
     ('ETCS', 'ETCS'),
     ('PZB90_PZ80R_V20', 'PZ80R V2.0'),
     ('PZB90I60RBus', 'PZB90/I60R CAN-Bus'),
+    ('EBICAB500', 'EBICAB 500'),
+    ('EBICAB2000', 'EBICAB 2000'),
+    ('TrainguardBasicIndusi', 'Trainguard Basic Indusi'),
+    ('ETCSAtlas', 'ETCS Alstom Atlas'),
+    ('ETCSTrainguard100', 'ETCS Siemens Trainguard 100'),
+    ('ETCSTrainguard200', 'ETCS Siemens Trainguard 200'),
+    ('ETCSEBICAB2000', 'ETCS Bombardier EBICAB 2000'),
+    ('ETCSAltrac', 'ETCS Thales Altrac'),
+    ('ETCSGuardia', 'ETCS Stadler Guardia'),
+    ('ZBS', 'ZBS'),
+    ('PZB90I60R_V20_AVG', 'PZB90/I60R - V2.0 AVG'),
+    
   )
 
   SIFA_CHOICES = (

@@ -158,7 +158,7 @@ class FtdParser(ZusiParser):
                 stand.tuer_system.append(tag.replace('Tueren', ''))
             elif tag.startswith('Notbremssystem'):
                 stand.notbremse_system.append(tag.replace('Notbremssystem',''))
-            elif tag.startswith('Indusi') or tag.startswith('PZ') or tag.startswith('LZB') or 'ETCS' == tag:
+            elif tag.startswith('Indusi') or tag.startswith('PZ') or tag.startswith('LZB') or tag.startswith('ETCS') or tag.startswith('EBICAB') or tag.startswith('LZB80') or 'TrainguardBasicIndusi' == tag or 'ZBS' == tag:
                 stand.zugsicherung.append(tag)
 
         stand.save()
@@ -300,7 +300,9 @@ class TrnParser(ZusiParser):
 
         imgpath = os.path.join('trn', zug.path.replace('\\','') + ".png")
         zugrenderer = self.ZugRenderer(root_path, self.getRenderer(20))
-        zug.bild = zugrenderer.renderImage(zug, imgpath, 1)
+        if not os.path.exists(zug.bild.storage.path(imgpath)):
+            zugrenderer.renderImage(zug, imgpath, 1)
+        zug.bild = imgpath
 
         zeit_diff = FahrplanZugEintrag.objects.filter(zug_id=zug_id).exclude(Q(ab=None) & Q(an=None)).annotate(
                                       zeit_previous=Window(expression=Lag('ab'),order_by=F('position').asc()),
@@ -472,7 +474,8 @@ class FzgParser(ZusiParser):
                 renderer.addFahrzeug(ls3datei, 0, float(fzg_data['laenge']), False, float(fzg_data.get('stromabnehmer_hoehe',0)), (True, True, True, True))
                 imgname = rel_path.replace('\\','') + var_el.get('IDHaupt') + var_el.get('IDNeben') + ".png"
                 imgpath = os.path.join('fzg', imgname)
-                renderer.renderImage(4).save(variante.bild_klein.storage.path(imgpath))
+                if not os.path.exists(variante.bild_klein.storage.path(imgpath)):
+                    renderer.renderImage(4).save(variante.bild_klein.storage.path(imgpath))
                 variante.bild_klein = imgpath
             except Exception:
                 logging.warn("Error rendering ls3")
