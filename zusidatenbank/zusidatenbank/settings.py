@@ -42,6 +42,7 @@ MIDDLEWARE = [
     'qinspect.middleware.QueryInspectMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'zusidatenbank.middleware.ZusiStartMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -149,3 +150,5 @@ LOGGING = {
 #        'LOCATION': 'zusidatenbank_cache',
 #    }
 #}
+
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
