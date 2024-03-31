@@ -298,6 +298,8 @@ class FahrplanZug(InventoryItem):
   masse = models.IntegerField(null=True)
   laenge = models.FloatField(null=True)
   bremse_percentage = models.FloatField(null=True)
+  
+  gnt_aktiv = models.BooleanField(default=False,verbose_name='GNT Aktiv')
 
   #Gerechnet
   zeit_bewegung = models.DurationField(null=True)
