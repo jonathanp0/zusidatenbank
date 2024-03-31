@@ -42,7 +42,7 @@ MIDDLEWARE = [
     'qinspect.middleware.QueryInspectMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'zusidatenbank.middleware.ZusiStartMiddleware',
+    'datenbank.middleware.ZusiStartMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',

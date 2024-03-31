@@ -1,9 +1,9 @@
 <a href="fpndatei={{fpn}}{% if nummer %}?zugstart={{nummer}}{% endif %}">
-<button type="button" class="btn btn-success{% if not mini %} btn-lg{% endif %}" aria-label="Start">
-  <span class="glyphicon glyphicon-start" aria-hidden="true">
+<button type="button" class="btn btn-success{% if not mini %} btn-lg standalone{% endif %}" aria-label="Start">
+  <span class="glyphicon glyphicon-play" aria-hidden="true">
+  </span>
   {% if not mini %}
     Start
   {% endif %}
-  </span>
 </button>
 </a>
