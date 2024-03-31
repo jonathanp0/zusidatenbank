@@ -47,7 +47,7 @@ class ZugSearchForm(forms.Form):
     #fahrzeit_max = forms.IntegerField(widget=forms.NumberInput(attrs={'placeholder':'','addon_before':'≤','addon_after':'minuten'}),
     #                              label='',required=False)
     antrieb = forms.MultipleChoiceField(required=False, choices=FahrzeugVariante.ANTRIEB_CHOICES, help_text='Mehrfachauswahl möglich')
-    neigezug = forms.MultipleChoiceField(choices=[(0, 'Nein'), (1,'Ja')],widget=forms.CheckboxSelectMultiple,initial=(0,1),required=False)
+    neigezug = forms.MultipleChoiceField(label='GNT Aktiv', choices=[(0, 'Nein'), (1,'Ja')],widget=forms.CheckboxSelectMultiple,initial=(0,1),required=False)
     search = forms.CharField(widget=forms.HiddenInput(),required=False)
     time_window = forms.IntegerField(widget=forms.HiddenInput(), min_value=0, max_value=1440, required=False)
     fis = forms.MultipleChoiceField(label='FIS Ansagen',choices=[(0, 'Nein'), (1,'Ja')],widget=forms.CheckboxSelectMultiple,initial=(0,1),required=False)

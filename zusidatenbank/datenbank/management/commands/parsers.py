@@ -513,6 +513,7 @@ class TimetableParser(ZusiParser):
             zug.masse = self.getAsFloat(bfp_tag, "Masse")
             zug.laenge = self.getAsFloat(bfp_tag, "Laenge")
             zug.bremse_percentage = self.getAsFloat(bfp_tag, "Bremsh")
+            zug.gnt_aktiv = (bfp_tag.get("GNTSpalte") == "1")
 
             zug.save()
 

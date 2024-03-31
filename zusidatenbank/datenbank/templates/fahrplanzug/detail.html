@@ -60,6 +60,8 @@
               <dd>{{object.laenge_rounded|default_if_none:"??"}} m</dd>
               <dt>Bremshunderstel*</dt>
               <dd>{{object.bremse_percentage_rounded|default_if_none:"??"}} %</dd>
+              <dt>GNT Aktiv</dt>
+              <dd>{% if object.gnt_aktiv %}Ja{% else %}Nein{% endif %}</dd>
               <dt>FIS Ansagen</dt>
               <dd>{% if object.fis_ansagen %}Ja{% else %}Nein{% endif %}</dd>
             </dl>

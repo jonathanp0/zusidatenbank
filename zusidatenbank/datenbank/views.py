@@ -148,7 +148,7 @@ class FahrplanZugFormMixin(object):
             if(form.cleaned_data['antrieb']):
                 qs = qs.filter(fahrzeuge__antrieb__overlap=form.cleaned_data['antrieb'])
             if filterBooleanCheckbox(form.cleaned_data['neigezug']) != -1:
-                qs = qs.filter(fahrzeuge__neigetechnik=filterBooleanCheckbox(form.cleaned_data['neigezug']))
+                qs = qs.filter(gnt_aktiv=filterBooleanCheckbox(form.cleaned_data['neigezug']))
             if filterBooleanCheckbox(form.cleaned_data['fis']) != -1:
                 qs = qs.filter(fis_ansagen=filterBooleanCheckbox(form.cleaned_data['fis']))
 
