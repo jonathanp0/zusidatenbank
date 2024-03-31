@@ -20,7 +20,7 @@ class Command(BaseCommand):
         self.scanFiles(options['root'], "RollingStock", self.filter_ext(".rv.fzg"), FzgParser)
         self.scanFiles(options['root'], "RollingStock", self.filter_ext(".trn.xml"), FahrzeugVerbandParser)
         self.scanFiles(options['root'], "RollingStock", self.filter_verband(), FzgParser)
-        self.scanFiles(options['root'], os.path.join("Routes", "Deutschland"), self.filter_ext(".st3"), St3Parser)
+        self.scanFiles(options['root'], "Routes", self.filter_exclude("_Docu", ".st3"), St3Parser)
         self.scanFiles(options['root'], "Timetables", self.filter_ext(".trn"), TrnParser)
         self.scanFiles(options['root'], "Timetables", self.filter_ext(".fpn"), FpnParser)
         self.scanFiles(options['root'], "Timetables", self.filter_ext(".timetable.xml"), TimetableParser)
@@ -63,4 +63,7 @@ class Command(BaseCommand):
 
     def filter_verband(self):
         return lambda relpath : relpath in FahrzeugVerbandParser.verbandList
+        
+    def filter_exclude(self, excluded, ext):
+        return lambda relpath : (excluded not in relpath) and (relpath.endswith(ext))
         
