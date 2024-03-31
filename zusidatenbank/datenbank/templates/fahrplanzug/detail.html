@@ -85,7 +85,7 @@
     </div>
     <div class="col-md-5">
 	    <div>
-        {% zusistart_button object.fahrplaene.first.path object.nummer.0 "" %}
+        {% zusistart_button request.session.zusistart object.fahrplaene.first.path object.nummer.0 "" %}
 		</div>
         <div class="panel panel-primary">
           <div class="panel-heading"><h3 class="panel-title">Einträge</h3></div>
