@@ -2,6 +2,7 @@
 {% extends "base.html" %}
 {% load render_table from django_tables2 %}
 {% load flatblocks %}
+{% load zusistart_button %}
 
 {% block head %}Fahrplan {{object.name}}{% endblock %}
 {% block title %}Fahrplan {{object.name}} <small>{{object.path}}</small>{% endblock %}
@@ -23,6 +24,9 @@
             {% endfor %}
         </ul>
       </div>
+    </div>
+    <div class="col-md-6">
+	    {% zusistart_button request.session.zusistart object.path "" "" %}
     </div>
 </div>
 <h3>Fahrzüge</h4>
