@@ -333,7 +333,7 @@ class TrnParser(ZusiParser):
             elif(item.tag == "FahrzeugInfo"):
                 items.append(self.processFahrzeug(item))
             elif(item.tag == "Datei"):
-                logging.error("Zugverband Datei in TRN file not supported")
+                self.logger.error("Zugverband Datei in TRN file not supported")
 
         zufall = varianten.get('PerZufallUebernehmen') != None
 
@@ -478,14 +478,14 @@ class FzgParser(ZusiParser):
                     renderer.renderImage(4).save(variante.bild_klein.storage.path(imgpath))
                 variante.bild_klein = imgpath
             except Exception:
-                logging.warn("Error rendering ls3")
+                self.logger.warn("Error rendering ls3")
 
         #Link the FTD
         fuehrerstand_el = var_el.find('DateiFuehrerstand[@Dateiname]')
         if(fuehrerstand_el != None):
             variante.fuehrerstand = Fuehrerstand.objects.get(path__iexact=fuehrerstand_el.get("Dateiname"))
             if(fuehrerstand_el.get("Dateiname") != variante.fuehrerstand.path):
-                logging.warn("Non matching Führerstand " + fuehrerstand_el.get("Dateiname"))
+                self.logger.warn("Non matching Führerstand " + fuehrerstand_el.get("Dateiname"))
 
         variante.save()
 
