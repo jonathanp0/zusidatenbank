@@ -243,9 +243,17 @@ class FahrzeugDetail(Annotater, MultiTableMixin, generic.DetailView):
                 FahrplanTable(Fahrplan.objects.withTableStatsLight().filter(zuege__fahrzeuge__id=fahrzeug.id)))
 
 class FahrplanList(SingleTableView):
-    queryset = Fahrplan.objects.withTableStats()
     table_class = FahrplanTable
     template_name = 'fahrplan/list.html'
+    
+    def get_queryset(self):
+        qs = Fahrplan.objects.withTableStats()
+        
+        if 'ordner' in self.request.GET:
+            folder = '\\' + self.request.GET['ordner'] + '\\'
+            qs = qs.filter(path__contains=folder)
+            
+        return qs
 
 class FahrplanDetail(Annotater, MultiTableMixin, generic.DetailView):
 
